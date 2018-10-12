@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Top level OpenQML module"""
+from ._version import __version__
+
 from .projectq import ProjectQSimulator
 from .projectq import ProjectQClassicalSimulator
 from .projectq import ProjectQIBMBackend

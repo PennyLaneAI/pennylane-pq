@@ -47,7 +47,7 @@ Running your quantum machine learning code on an IBM Quantum Experience simulato
 How to cite
 ===========
 
-If you are doing research using OpenQML, please cite #todo: adjust citation
+.. include:: doc/howtocite.rst
 
 Support
 =======

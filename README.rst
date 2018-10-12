@@ -56,12 +56,7 @@ Running your quantum machine learning code on an IBM Quantum Experience simulato
 How to cite
 ===========
 
-.. todo:: change reference
-	  
-If you are doing research using OpenQML, please cite `our whitepaper <https://arxiv.org/abs/1804.03159>`_: 
-
-  Nathan Killoran, Josh Izaac, Nicolás Quesada, Ville Bergholm, Matthew Amy, and Christian Weedbrook. Strawberry Fields: A Software Platform for Photonic Quantum Computing. *arXiv*, 2018. arXiv:1804.03159
-
+.. include:: doc/howtocite.rst
 
 Contributing
 ============
@@ -88,7 +83,7 @@ If you are having issues, please let us know by posting the issue on our Github 
 
 .. todo:: adjust this link
 
-We also have an `OpenQML Slack channel <https://u.openqml.ai/slack>`_ - 
+We also have an `OpenQML Slack channel <https://u.openqml.ai/slack>`_ -
 come join the discussion and chat with our OpenQML team.
 
 

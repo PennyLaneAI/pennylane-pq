@@ -1,0 +1,7 @@
+doc/_build/
+doc/_ext/
+OpenQML_PQ.egg-info/
+build/
+dist/
+openqml_pq/__pycache__/
+				

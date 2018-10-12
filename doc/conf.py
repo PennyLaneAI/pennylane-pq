@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# OpenQML documentation build configuration file, created by
+# OpenQML ProjectQ plugin documentation build configuration file, created by
 # sphinx-quickstart on Tue Apr 17 11:43:51 2018.
 #
 # This file is execfile()d with the current directory set to its
@@ -55,7 +55,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'OpenQML ProjectQ plugin'
+project = 'OpenQML ProjectQ Plugin'
 copyright = "Copyright 2018, Xanadu Inc."
 author = 'Xanadu Inc.'
 
@@ -63,9 +63,9 @@ author = 'Xanadu Inc.'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 
-import openqml
+import openqml_pq
 # The full version, including alpha/beta/rc tags.
-release = openqml.__version__
+release = openqml_pq.__version__
 
 # The short X.Y version.
 version = re.match(r'^(\d+\.\d+)', release).expand(r'\1')
@@ -251,7 +251,7 @@ html_theme_options = {
     # "projectlink": "http://myproject.url",
 }
 
-edit_on_github_project = 'XanaduAI/openqml'
+edit_on_github_project = 'XanaduAI/openqml_pq'
 edit_on_github_branch = 'master/doc'
 
 # -- Options for HTMLHelp output ------------------------------------------
@@ -296,7 +296,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'openqml', 'OpenQML ProjectQ Plugin Documentation',
+    (master_doc, 'openqml_pq', 'OpenQML ProjectQ Plugin Documentation',
      [author], 1)
 ]
 
