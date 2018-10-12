@@ -8,15 +8,15 @@ Features
 ========
 The following ProjecQ backends are supported by this plugin:
 
-- **projectq.backends.Simulator**:		Simulator is a compiler engine which simulates a quantum computer using C++-based kernels.
-- **projectq.backends.ClassicalSimulator**:	A simple simulator that only permits classical operations.
-- **projectq.backends.IBMBackend**		The IBM Backend class, which stores the circuit, transforms it to JSON QASM, and sends the circuit through the IBM API.
+- **projectq.backends.Simulator**:		A classical simulator of a quantum computer based on C++ kernels.
+- **projectq.backends.ClassicalSimulator**:	A simple classical simulator that only permits classical operations.
+- **projectq.backends.IBMBackend**:		The IBM Backend, which allows to run quantum computations on simulators and real quantum hardware via the IBM Q API.
 
 
 Installation
 ============
 
-This plugin requires Python version 3.5 and above, as well as OpenQML. Installation of this plugin, as well as all dependencies, can be done using pip:
+This plugin requires Python version 3.5 and above, as well as OpenQML and ProjectQ. Installation of this plugin, as well as all dependencies, can be done using pip:
 
 .. code-block:: bash
 
@@ -56,7 +56,11 @@ Running your quantum machine learning code on an IBM Quantum Experience simulato
 How to cite
 ===========
 
-If you are doing research using OpenQML, please cite #todo: adjust citation
+.. todo:: change reference
+	  
+If you are doing research using OpenQML, please cite `our whitepaper <https://arxiv.org/abs/1804.03159>`_: 
+
+  Nathan Killoran, Josh Izaac, Nicolás Quesada, Ville Bergholm, Matthew Amy, and Christian Weedbrook. Strawberry Fields: A Software Platform for Photonic Quantum Computing. *arXiv*, 2018. arXiv:1804.03159
 
 
 Contributing
@@ -73,10 +77,6 @@ Authors
 
 Christian Gogolin, Ville Bergholm, Maria Schuld, and Nathan Killoran.
 
-If you are doing research using OpenQML, please cite `our whitepaper <https://arxiv.org/abs/1804.03159>`_: .. todo:: change reference
-
-  Nathan Killoran, Josh Izaac, Nicolás Quesada, Ville Bergholm, Matthew Amy, and Christian Weedbrook. Strawberry Fields: A Software Platform for Photonic Quantum Computing. *arXiv*, 2018. arXiv:1804.03159
-
 
 Support
 =======
@@ -86,7 +86,9 @@ Support
 
 If you are having issues, please let us know by posting the issue on our Github issue tracker.
 
-We also have an `OpenQML Slack channel <https://u.openqml.ai/slack>`_ - .. todo:: adjust this link
+.. todo:: adjust this link
+
+We also have an `OpenQML Slack channel <https://u.openqml.ai/slack>`_ - 
 come join the discussion and chat with our OpenQML team.
 
 
