@@ -1,3 +1,6 @@
+Features
+========
+
 The following ProjecQ backends are supported by this plugin:
 
 - **projectq.backends.Simulator**:		A classical simulator of a quantum computer based on C++ kernels.

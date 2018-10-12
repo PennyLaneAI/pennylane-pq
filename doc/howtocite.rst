@@ -1,3 +1,6 @@
+How to cite
+===========
+
 .. todo:: change reference
 
 If you are doing research using OpenQML, please cite `our whitepaper <https://arxiv.org/abs/1804.03159>`_:

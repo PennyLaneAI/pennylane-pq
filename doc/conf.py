@@ -307,8 +307,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'OpenQML', 'OpenQML ProjectQ Plugin Documentation',
-     author, 'OpenQML', 'Xanadu quantum machine learning library.',
+    (master_doc, 'OpenQML ProjectQ Plugin', 'OpenQML ProjectQ Plugin Documentation',
+     author, 'OpenQML ProjectQ Plugin', 'ProjectQ plugin for the Xanadu quantum machine learning library.',
      'Miscellaneous'),
 ]
 
@@ -320,3 +320,6 @@ autodoc_member_order = 'bysource'
 
 # inheritance_diagram graphviz attributes
 inheritance_node_attrs = dict(color='lightskyblue1', style='filled')
+
+autodoc_default_flags = ['members']
+autosummary_generate = True
