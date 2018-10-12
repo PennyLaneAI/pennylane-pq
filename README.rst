@@ -6,6 +6,9 @@ OpenQML is a Python quantum machine learning library by Xanadu Inc. This plugin 
 
 Features
 ========
+
+[//]: # (.. include:: doc/features.rst)
+
 The following ProjecQ backends are supported by this plugin:
 
 - **projectq.backends.Simulator**:		A classical simulator of a quantum computer based on C++ kernels.
@@ -56,7 +59,14 @@ Running your quantum machine learning code on an IBM Quantum Experience simulato
 How to cite
 ===========
 
-.. include:: doc/howtocite.rst
+[//]: # (.. include:: doc/howtocite.rst)
+
+.. todo:: change reference
+
+If you are doing research using OpenQML, please cite `our whitepaper <https://arxiv.org/abs/1804.03159>`_:
+
+  Nathan Killoran, Josh Izaac, Nicolás Quesada, Ville Bergholm, Matthew Amy, and Christian Weedbrook. Strawberry Fields: A Software Platform for Photonic Quantum Computing. *arXiv*, 2018. arXiv:1804.03159
+
 
 Contributing
 ============
@@ -76,6 +86,8 @@ Christian Gogolin, Ville Bergholm, Maria Schuld, and Nathan Killoran.
 Support
 =======
 
+[//]: # (.. include:: doc/support.rst)
+
 - **Source Code:** https://github.com/XanaduAI/openqml-pq
 - **Issue Tracker:** https://github.com/XanaduAI/openqml-pq/issues
 
@@ -89,5 +101,7 @@ come join the discussion and chat with our OpenQML team.
 
 License
 =======
+
+[//]: # (.. include:: doc/license.rst)
 
 The OpenQML ProjectQ plugin is **free** and **open source**, released under the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
