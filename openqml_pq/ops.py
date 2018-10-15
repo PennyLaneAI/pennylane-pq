@@ -20,9 +20,6 @@ Operations
 .. todo::
     They way to present the following depends on the whether the `extra_operations` machinery makes it into the final release.
 
-.. todo::
-    How can I make the operations show up under the top-level openqm_pq namespace (I import them in __init__())?
-
 In addition to the suitable default operations native to OpenQML, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native OpenQML operations when defining quantum functions:
 
 .. autosummary::
@@ -31,6 +28,10 @@ In addition to the suitable default operations native to OpenQML, the devices of
    SqrtX
    SqrtSwap
    AllPauliZ
+
+.. note::
+   For convenience, and to mirror the behavior of the operations built into OpenQML, the operations defined here are also accessible directly under the top-level :code:`openqml_pq` context, i.e., you can use :code:`openqml_pq.S([0])` instead of :code:`openqml_pq.ops.S([0])` when defining a :code:`QNode` or :code:`qfunc`.
+
 """
 
 from openqml.operation import Operation
@@ -38,11 +39,7 @@ from openqml.operation import Operation
 class S(Operation):
     r"""S gate.
 
-    .. todo::
-        Why does the math not work here?
-
-    .. math::
-        S() = \begin(bmatrix)1&0\\0&i\end(bmatrix)
+    .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
 
     Args:
         wires (int): the subsystem the Operation acts on.
@@ -54,8 +51,7 @@ class S(Operation):
 class T(Operation):
     r"""T gate.
 
-    .. math::
-        T() = \begin(bmatrix)1&0\\0&exp(i \pi / 4)\end(bmatrix)
+    .. math:: T = \begin{bmatrix}1&0\\0&exp(i \pi / 4)\end{bmatrix}
 
     Args:
         wires (int): the subsystem the Operation acts on.
@@ -66,8 +62,7 @@ class T(Operation):
 class SqrtX(Operation):
     r"""Square root X gate.
 
-    .. math::
-        SqrtX() = \begin(bmatrix)1+i&1-i\\1-i&1+i\end(bmatrix)
+    .. math:: SqrtX = \begin{bmatrix}1+i&1-i\\1-i&1+i\end{bmatrix}
 
     Args:
         wires (int): the subsystem the Operation acts on.
@@ -78,8 +73,7 @@ class SqrtX(Operation):
 class SqrtSwap(Operation):
     r"""Square root SWAP gate.
 
-    .. math::
-        SqrtSwap() = \begin(bmatrix)1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\0&(1-i)/2 &(1+i)/2&0\\0&0&0&1\end(bmatrix)
+    .. math:: SqrtSwap = \begin{bmatrix}1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\0&(1-i)/2 &(1+i)/2&0\\0&0&0&1\end{bmatrix}
 
     Args:
         wires (seq[int]): the subsystems the Operation acts on.
@@ -90,8 +84,8 @@ class SqrtSwap(Operation):
 class AllPauliZ(Operation):
     r"""Apply Pauli Z to all wires.
 
-    .. math::
-        AllPauliZ() = Z \otimes\dots\otimes Z
+    .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
+
     """
     n_params = 0
     n_wires = 0

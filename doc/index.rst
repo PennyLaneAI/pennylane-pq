@@ -12,20 +12,15 @@
 
 .. toctree::
    :maxdepth: 2
-   :caption: Devices
+   :caption: Supported devices
 
    devices
 
 .. toctree::
    :maxdepth: 2
-   :caption: Operations
+   :caption: Supported operations
 
    operations
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Expectations
-
    expectations
 
 

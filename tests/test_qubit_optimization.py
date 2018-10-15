@@ -1,9 +1,10 @@
-"""Qubit optimization example for the ProjectQ plugin.
+"""Qubit optimization unit test for the ProjectQ plugin.
 
 In this demo, we perform rotation on one qubit, entangle it via a CNOT
 gate to a second qubit, and then measure the second qubit projected onto PauliZ.
 We then optimize the circuit such the resulting expectation value is 1.
 """
+
 import unittest
 from unittest_data_provider import data_provider
 
@@ -13,11 +14,12 @@ from openqml import numpy as np
 
 
 class QubitOptimizationTests(BaseTest):
-    """Test a simple one qubit rotation gate optimization."""
+    """Test a simple one qubit rotation gate optimization.
+    """
     num_subsystems = 2
     def setUp(self):
         super().setUp()
-        self.dev1 = qm.device('projectq.'+self.args.backend, wires=2, **vars(self.args))
+        self.dev1 = qm.device('projectq.'+self.args.backend, wires=self.num_subsystems, **vars(self.args))
 
 
     def all_optimizers():

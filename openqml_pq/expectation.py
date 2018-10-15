@@ -31,8 +31,8 @@ from openqml.operation import Expectation
 class AllPauliZ(Expectation):
     r"""Measure Pauli Z on all qubits.
 
-    .. math::
-        AllPauliZ() = Z \otimes\dots\otimes Z
+    .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
+
     """
     n_params = 0
     n_wires = 0
