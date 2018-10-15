@@ -24,6 +24,11 @@
 
    operations
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Expectations
+
+   expectations
 
 
 Indices and tables

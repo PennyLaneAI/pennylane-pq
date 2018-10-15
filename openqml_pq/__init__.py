@@ -14,6 +14,6 @@
 """Top level OpenQML module"""
 from ._version import __version__
 
-from .projectq import ProjectQSimulator
-from .projectq import ProjectQClassicalSimulator
-from .projectq import ProjectQIBMBackend
+from .devices import ProjectQSimulator
+from .devices import ProjectQIBMBackend
+from .devices import ProjectQClassicalSimulator

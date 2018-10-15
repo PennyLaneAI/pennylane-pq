@@ -1,2 +1,2 @@
 .. automodule::
-   openqml_pq.projectq
+   openqml_pq.devices

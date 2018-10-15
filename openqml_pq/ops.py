@@ -18,9 +18,6 @@ Operations
 .. currentmodule:: openqml_pq.ops
 
 .. todo::
-    Describe the supported standard operations. Maybe better do this in the Device section? Probably yes.
-
-.. todo::
     They way to present the following depends on the whether the `extra_operations` machinery makes it into the final release.
 
 In addition to the suitable default operations native to OpenQML, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native OpenQML operations when defining quantum functions:
@@ -30,12 +27,12 @@ In addition to the suitable default operations native to OpenQML, the devices of
    T
    SqrtX
    SqrtSwap
-   AllZ
 
 .. todo::
-  Split this into different modules for operations and expectations?
+    How do document the AllPauliZ Operation? There is an expectation of the same name,,,
 
 """
+
 from openqml.operation import Operation, Expectation
 
 class S(Operation):
@@ -89,12 +86,3 @@ class SqrtSwap(Operation):
     """
     n_params = 0
     n_wires = 2
-
-class AllZ(Expectation):
-    r"""Measure Z on all qubits.
-
-    .. math::
-        AllZ() = Z \otimes\dots\otimes Z
-    """
-    n_params = 0
-    n_wires = 0

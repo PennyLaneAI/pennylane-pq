@@ -18,13 +18,14 @@ Devices
 The following ProjecQ backends are supported by this plugin:
 
 .. autosummary::
+   :nosignatures:
+
    ProjectQSimulator
-   ProjectQClassicalSimulator
    ProjectQIBMBackend
+   ProjectQClassicalSimulator
 
 .. todo::
    Is there a way to add the individual devices to the toc?
-
 
 ----
 """
@@ -226,50 +227,6 @@ class ProjectQSimulator(_ProjectQDevice):
 
         return ev
 
-r"""
-Foo
----
-"""
-
-class ProjectQClassicalSimulator(_ProjectQDevice):
-    """ProjectQ ClassicalSimulator device for OpenQML.
-
-    Args:
-       wires (int): The number of qubits of the device.
-
-    Supported OpenQML Operations:
-      PauliX,
-
-    Supported OpenQML Expectations:
-      PauliZ,
-
-    Extra Operations:
-      AllPauliZ.
-
-    Extra Expectations:
-      AllPauliZ.
-    """
-
-    short_name = 'projectq.classicalsimulator'
-    _operator_map = {key:val for key, val in projectq_operator_map.items() if val in [XGate, CNOT]}
-    _observable_map = {key:val for key, val in _operator_map.items() if val in [ZGate, AllZGate]}
-    _circuits = {}
-    _backend_kwargs = []
-
-    def __init__(self, wires, **kwargs):
-        kwargs['backend'] = 'ClassicalSimulator'
-        super().__init__(wires, **kwargs)
-
-    def reset(self):
-        """Resets the engine and backend
-
-        After the reset the Device should be as if it was just constructed.
-        Most importantly the quantum state is reset to its initial value.
-        """
-        backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self.kwargs))
-        self.eng = pq.MainEngine(backend)
-        super().reset()
-
 class ProjectQIBMBackend(_ProjectQDevice):
     """ProjectQ IBMBackend device for OpenQML.
 
@@ -367,3 +324,42 @@ class ProjectQIBMBackend(_ProjectQDevice):
             raise DeviceError("Observable {} not supported by {}".format(observable, self.name))
 
         return ev
+
+class ProjectQClassicalSimulator(_ProjectQDevice):
+    """ProjectQ ClassicalSimulator device for OpenQML.
+
+    Args:
+       wires (int): The number of qubits of the device.
+
+    Supported OpenQML Operations:
+      PauliX,
+
+    Supported OpenQML Expectations:
+      PauliZ,
+
+    Extra Operations:
+      AllPauliZ.
+
+    Extra Expectations:
+      AllPauliZ.
+    """
+
+    short_name = 'projectq.classicalsimulator'
+    _operator_map = {key:val for key, val in projectq_operator_map.items() if val in [XGate, CNOT]}
+    _observable_map = {key:val for key, val in _operator_map.items() if val in [ZGate, AllZGate]}
+    _circuits = {}
+    _backend_kwargs = []
+
+    def __init__(self, wires, **kwargs):
+        kwargs['backend'] = 'ClassicalSimulator'
+        super().__init__(wires, **kwargs)
+
+    def reset(self):
+        """Resets the engine and backend
+
+        After the reset the Device should be as if it was just constructed.
+        Most importantly the quantum state is reset to its initial value.
+        """
+        backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self.kwargs))
+        self.eng = pq.MainEngine(backend)
+        super().reset()
