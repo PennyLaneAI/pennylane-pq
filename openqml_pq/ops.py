@@ -27,10 +27,7 @@ In addition to the suitable default operations native to OpenQML, the devices of
    T
    SqrtX
    SqrtSwap
-
-.. todo::
-    How do document the AllPauliZ Operation? There is an expectation of the same name,,,
-
+   AllPauliZ
 """
 
 from openqml.operation import Operation, Expectation
@@ -86,3 +83,12 @@ class SqrtSwap(Operation):
     """
     n_params = 0
     n_wires = 2
+
+class AllPauliZ(Operation):
+    r"""Apply Pauli Z to all wires.
+
+    .. math::
+        AllZ() = Z \otimes\dots\otimes Z
+    """
+    n_params = 0
+    n_wires = 0

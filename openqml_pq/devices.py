@@ -15,7 +15,7 @@ r"""
 Devices
 =======
 
-The following ProjecQ backends are supported by this plugin:
+This plugin offers access to the following ProjecQ backends by providing corresponding OpenQML devices:
 
 .. autosummary::
    :nosignatures:
@@ -27,7 +27,9 @@ The following ProjecQ backends are supported by this plugin:
 .. todo::
    Is there a way to add the individual devices to the toc?
 
-----
+.. todo::
+   How to suppress pre_expectations() and expectation() beeing documented below?
+
 """
 import logging as log
 import numpy as np

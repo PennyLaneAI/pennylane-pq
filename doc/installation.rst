@@ -3,6 +3,9 @@ Dependencies
 
 This plugin requires Python version 3.5 and above, as well as OpenQML and ProjectQ.
 
+.. todo::
+   The theme doesn't seem to cope well with pages that do have at least one long line.
+
 Installation
 ============
 Installation of this plugin, as well as all dependencies, can be done using pip:

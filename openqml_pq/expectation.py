@@ -29,7 +29,7 @@ In addition to the suitable default operations native to OpenQML, the devices of
 from openqml.operation import Expectation
 
 class AllZ(Expectation):
-    r"""Measure Z on all qubits.
+    r"""Measure Pauli Z on all qubits.
 
     .. math::
         AllZ() = Z \otimes\dots\otimes Z

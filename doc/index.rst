@@ -10,8 +10,6 @@
    howtocite
    license
 
-
-
 .. toctree::
    :maxdepth: 2
    :caption: Devices
