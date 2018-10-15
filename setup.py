@@ -22,14 +22,16 @@ with open("openqml_pq/_version.py") as f:
 
 
 with open("requirements.txt") as f:
-    #requirements = [line.strip() for line in f.readlines()]
-    requirements = ['projectq>=0.4.1', 'openqml']
+    requirements = [
+        'projectq>=0.4.1',
+        'openqml'
+    ]
 
 info = {
-    'name': 'OpenQML-PQ',
+    'name': 'OpenQML ProjectQ Plugin',
     'version': version,
     'maintainer': 'Xanadu Inc.',
-    'maintainer_email': 'cgogolin@xanadu.ai', #todo: What do we put here?
+    'maintainer_email': 'christiangogolin@xanadu.ai',
     'url': 'http://xanadu.ai',
     'license': 'Apache License 2.0',
     'packages': [

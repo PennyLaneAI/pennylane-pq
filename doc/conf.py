@@ -321,5 +321,5 @@ autodoc_member_order = 'bysource'
 # inheritance_diagram graphviz attributes
 inheritance_node_attrs = dict(color='lightskyblue1', style='filled')
 
-autodoc_default_flags = ['members']
+#autodoc_default_flags = ['members']
 autosummary_generate = True

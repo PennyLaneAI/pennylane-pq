@@ -15,7 +15,9 @@ r"""
 Devices
 =======
 
-This plugin offers access to the following ProjecQ backends by providing corresponding OpenQML devices:
+.. currentmodule:: openqml_pq.devices
+
+This plugin offers access to the following ProjectQ backends by providing corresponding OpenQML devices:
 
 .. autosummary::
    :nosignatures:
@@ -25,10 +27,28 @@ This plugin offers access to the following ProjecQ backends by providing corresp
    ProjectQClassicalSimulator
 
 .. todo::
-   Is there a way to add the individual devices to the toc?
+   Is there a way to do generate the following documentation more automatically?
 
 .. todo::
-   How to suppress pre_expectations() and expectation() beeing documented below?
+   Is there a nice way to link to the documentation of the OpenQML native Operations/Expectations?
+
+See below for a description of the devices and the supported Operations and Expectations.
+
+ProjectQSimulator
+#################
+
+.. autoclass:: ProjectQSimulator
+
+ProjectQIBMBackend
+##################
+
+.. autoclass:: ProjectQIBMBackend
+
+ProjectQClassicalSimulator
+##########################
+
+.. autoclass:: ProjectQClassicalSimulator
+
 
 """
 import logging as log
@@ -37,7 +57,6 @@ from openqml import Device, DeviceError
 
 import projectq as pq
 
-# import operations
 from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, Ph, StatePreparation, SGate, TGate, SqrtXGate, SqrtSwapGate)
 from .pqops import (CNOT, CZ, Toffoli, AllZGate, Rot, QubitUnitary)
 
@@ -115,7 +134,7 @@ class _ProjectQDevice(Device):
         self.kwargs = kwargs
         self.eng = None
         self.reg = None
-        #self.reset() #the actual initialization is done in reset(), but we don't need to call this manually as Device does it for us during __enter__()
+        self.reset() #the actual initialization is done in reset()
 
     def reset(self):
         self.reg = self.eng.allocate_qureg(self.num_wires)
@@ -148,7 +167,7 @@ class _ProjectQDevice(Device):
 
 
 class ProjectQSimulator(_ProjectQDevice):
-    """ProjectQ Simulator device for OpenQML.
+    """An OpenQML device for the `ProjectQ Simulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_ backend.
 
     Args:
        wires (int): The number of qubits of the device.
@@ -158,35 +177,35 @@ class ProjectQSimulator(_ProjectQDevice):
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
 
     Supported OpenQML Operations:
-      PauliX,
-      PauliY,
-      PauliZ,
-      CNOT,
-      CZ,
-      SWAP,
-      RX,
-      RY,
-      RZ,
-      PhaseShift,
-      QubitStateVector,
-      Hadamard,
-      Rot,
-      QubitUnitary.
+      :class:`openqml.PauliX`,
+      :class:`openqml.PauliY`,
+      :class:`openqml.PauliZ`,
+      :class:`openqml.CNOT`,
+      :class:`openqml.CZ`,
+      :class:`openqml.SWAP`,
+      :class:`openqml.RX`,
+      :class:`openqml.RY`,
+      :class:`openqml.RZ`,
+      :class:`openqml.PhaseShift`,
+      :class:`openqml.QubitStateVector`,
+      :class:`openqml.Hadamard`,
+      :class:`openqml.Rot`,
+      :class:`openqml.QubitUnitary`.
 
     Supported OpenQML Expectations:
-      PauliX,
-      PauliY,
-      PauliZ,
+      :class:`openqml.PauliX`,
+      :class:`openqml.PauliY`,
+      :class:`openqml.PauliZ`.
 
     Extra Operations:
-      S,
-      T,
-      SqrtX,
-      SqrtSwap,
-      AllPauliZ.
+      :class:`openqml_pq.ops.S`,
+      :class:`openqml_pq.ops.T`,
+      :class:`openqml_pq.ops.SqrtX`,
+      :class:`openqml_pq.ops.SqrtSwap`,
+      :class:`openqml_pq.ops.AllPauliZ`.
 
     Extra Expectations:
-      AllPauliZ.
+      :class:`openqml_pq.expectation.AllPauliZ`.
     """
 
     short_name = 'projectq.simulator'
@@ -200,11 +219,6 @@ class ProjectQSimulator(_ProjectQDevice):
         super().__init__(wires, **kwargs)
 
     def reset(self):
-        """Resets the engine and backend
-
-        After the reset the Device should be as if it was just constructed.
-        Most importantly the quantum state is reset to its initial value.
-        """
         backend = pq.backends.Simulator(**self.filter_kwargs_for_backend(self.kwargs))
         self.eng = pq.MainEngine(backend)
         super().reset()
@@ -230,7 +244,7 @@ class ProjectQSimulator(_ProjectQDevice):
         return ev
 
 class ProjectQIBMBackend(_ProjectQDevice):
-    """ProjectQ IBMBackend device for OpenQML.
+    """An OpenQML device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
 
     Args:
        wires (int): The number of qubits of the device.
@@ -245,35 +259,35 @@ class ProjectQIBMBackend(_ProjectQDevice):
       retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
 
     Supported OpenQML Operations:
-      PauliX,
-      PauliY,
-      PauliZ,
-      CNOT,
-      CZ,
-      SWAP,
-      RX,
-      RY,
-      RZ,
-      PhaseShift,
-      QubitStateVector,
-      Hadamard,
-      Rot,
-      QubitUnitary.
+      :class:`openqml.PauliX`,
+      :class:`openqml.PauliY`,
+      :class:`openqml.PauliZ`,
+      :class:`openqml.CNOT`,
+      :class:`openqml.CZ`,
+      :class:`openqml.SWAP`,
+      :class:`openqml.RX`,
+      :class:`openqml.RY`,
+      :class:`openqml.RZ`,
+      :class:`openqml.PhaseShift`,
+      :class:`openqml.QubitStateVector`,
+      :class:`openqml.Hadamard`,
+      :class:`openqml.Rot`,
+      :class:`openqml.QubitUnitary`.
 
     Supported OpenQML Expectations:
-      PauliX,
-      PauliY,
-      PauliZ,
+      :class:`openqml.PauliX`,
+      :class:`openqml.PauliY`,
+      :class:`openqml.PauliZ`.
 
     Extra Operations:
-      S,
-      T,
-      SqrtX,
-      SqrtSwap,
-      AllPauliZ.
+      :class:`openqml_pq.ops.S`,
+      :class:`openqml_pq.ops.T`,
+      :class:`openqml_pq.ops.SqrtX`,
+      :class:`openqml_pq.ops.SqrtSwap`,
+      :class:`openqml_pq.ops.AllPauliZ`.
 
     Extra Expectations:
-      AllPauliZ.
+      :class:`openqml_pq.expectation.AllPauliZ`.
     """
 
     short_name = 'projectq.ibmbackend'
@@ -295,11 +309,6 @@ class ProjectQIBMBackend(_ProjectQDevice):
         super().__init__(wires, **kwargs)
 
     def reset(self):
-        """Resets the engine and backend
-
-        After the reset the Device should be as if it was just constructed.
-        Most importantly the quantum state is reset to its initial value.
-        """
         backend = pq.backends.IBMBackend(**self.filter_kwargs_for_backend(self.kwargs))
         self.eng = pq.MainEngine(backend, engine_list=pq.setups.ibm.get_engine_list())
         super().reset()
@@ -328,22 +337,22 @@ class ProjectQIBMBackend(_ProjectQDevice):
         return ev
 
 class ProjectQClassicalSimulator(_ProjectQDevice):
-    """ProjectQ ClassicalSimulator device for OpenQML.
+    """An OpenQML device for the `ProjectQ ClassicalSimulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.ClassicalSimulator>`_ backend.
 
     Args:
        wires (int): The number of qubits of the device.
 
     Supported OpenQML Operations:
-      PauliX,
+      :class:`openqml.PauliX`.
 
     Supported OpenQML Expectations:
-      PauliZ,
+      :class:`openqml.PauliZ`.
 
     Extra Operations:
-      AllPauliZ.
+      :class:`openqml_pq.ops.AllPauliZ`.
 
     Extra Expectations:
-      AllPauliZ.
+      :class:`openqml_pq.expectation.AllPauliZ`.
     """
 
     short_name = 'projectq.classicalsimulator'
@@ -357,11 +366,6 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         super().__init__(wires, **kwargs)
 
     def reset(self):
-        """Resets the engine and backend
-
-        After the reset the Device should be as if it was just constructed.
-        Most importantly the quantum state is reset to its initial value.
-        """
         backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self.kwargs))
         self.eng = pq.MainEngine(backend)
         super().reset()

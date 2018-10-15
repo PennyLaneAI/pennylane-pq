@@ -23,16 +23,16 @@ Expectations
 In addition to the suitable default operations native to OpenQML, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native OpenQML operations when defining quantum functions:
 
 .. autosummary::
-   AllZ
+   AllPauliZ
 """
 
 from openqml.operation import Expectation
 
-class AllZ(Expectation):
+class AllPauliZ(Expectation):
     r"""Measure Pauli Z on all qubits.
 
     .. math::
-        AllZ() = Z \otimes\dots\otimes Z
+        AllPauliZ() = Z \otimes\dots\otimes Z
     """
     n_params = 0
     n_wires = 0

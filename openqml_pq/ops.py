@@ -20,6 +20,9 @@ Operations
 .. todo::
     They way to present the following depends on the whether the `extra_operations` machinery makes it into the final release.
 
+.. todo::
+    How can I make the operations show up under the top-level openqm_pq namespace (I import them in __init__())?
+
 In addition to the suitable default operations native to OpenQML, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native OpenQML operations when defining quantum functions:
 
 .. autosummary::
@@ -30,7 +33,7 @@ In addition to the suitable default operations native to OpenQML, the devices of
    AllPauliZ
 """
 
-from openqml.operation import Operation, Expectation
+from openqml.operation import Operation
 
 class S(Operation):
     r"""S gate.
@@ -88,7 +91,7 @@ class AllPauliZ(Operation):
     r"""Apply Pauli Z to all wires.
 
     .. math::
-        AllZ() = Z \otimes\dots\otimes Z
+        AllPauliZ() = Z \otimes\dots\otimes Z
     """
     n_params = 0
     n_wires = 0

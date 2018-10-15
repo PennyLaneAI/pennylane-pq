@@ -17,3 +17,5 @@ from ._version import __version__
 from .devices import ProjectQSimulator
 from .devices import ProjectQIBMBackend
 from .devices import ProjectQClassicalSimulator
+
+from .ops import *

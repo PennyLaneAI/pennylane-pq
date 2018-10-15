@@ -4,18 +4,6 @@ OpenQML ProjectQ Plugin
 OpenQML is a Python quantum machine learning library by Xanadu Inc. This plugin allows to use both the software and hardware backends of ProjectQ as devices for quantum machine learning with OpenQML.
 
 
-Features
-========
-
-.. [//]: # (.. include:: doc/features.rst)
-
-The following ProjecQ backends are supported by this plugin:
-
-- **projectq.backends.Simulator**:		A classical simulator of a quantum computer based on C++ kernels.
-- **projectq.backends.ClassicalSimulator**:	A simple classical simulator that only permits classical operations.
-- **projectq.backends.IBMBackend**:		The IBM Backend, which allows to run quantum computations on simulators and real quantum hardware via the IBM Q API.
-
-
 Installation
 ============
 
@@ -39,7 +27,7 @@ in the source folder.
 Getting started
 ===============
 
-You can instantiate a 'projectq.simulator' device with:
+You can instantiate a 'projectq.simulator' device for OpenQML with:
 
 .. code-block:: python
 
