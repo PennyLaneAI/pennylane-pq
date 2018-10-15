@@ -135,7 +135,7 @@ class ProjectQDevice(Device):
         #self.reset() #the actual initialization is done in reset(), but we don't need to call this manually as Device does it for us during __enter__()
 
     def reset(self):
-        self.reg = self.eng.allocate_qureg(self.wires)
+        self.reg = self.eng.allocate_qureg(self.num_wires)
 
     def __repr__(self):
         return super().__repr__() +'Backend: ' +self.backend +'\n'
