@@ -17,11 +17,23 @@ Operations
 
 .. currentmodule:: openqml_pq.ops
 
+.. todo::
+    Describe the supported standard operations. Maybe better do this in the Device section? Probably yes.
+
+.. todo::
+    They way to present the following depends on the whether the `extra_operations` machinery makes it into the final release.
+
 In addition to the suitable default operations native to OpenQML, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native OpenQML operations when defining quantum functions:
 
 .. autosummary::
    S
    T
+   SqrtX
+   SqrtSwap
+   AllZ
+
+.. todo::
+  Split this into different modules for operations and expectations?
 
 """
 from openqml.operation import Operation, Expectation
@@ -55,7 +67,7 @@ class T(Operation):
     n_wires = 1
 
 class SqrtX(Operation):
-    r"""Square toot X gate.
+    r"""Square root X gate.
 
     .. math::
         SqrtX() = \begin(bmatrix)1+i&1-i\\1-i&1+i\end(bmatrix)
@@ -67,7 +79,7 @@ class SqrtX(Operation):
     n_wires = 1
 
 class SqrtSwap(Operation):
-    r"""Square SWAP gate.
+    r"""Square root SWAP gate.
 
     .. math::
         SqrtSwap() = \begin(bmatrix)1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\0&(1-i)/2 &(1+i)/2&0\\0&0&0&1\end(bmatrix)

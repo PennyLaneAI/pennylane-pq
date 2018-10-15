@@ -153,6 +153,37 @@ class ProjectQSimulator(_ProjectQDevice):
     Keyword Args:
       gate_fusion (bool): If True, gates are cached and only executed once a certain gate-size has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
+
+    Supported OpenQML Operations:
+      PauliX,
+      PauliY,
+      PauliZ,
+      CNOT,
+      CZ,
+      SWAP,
+      RX,
+      RY,
+      RZ,
+      PhaseShift,
+      QubitStateVector,
+      Hadamard,
+      Rot,
+      QubitUnitary.
+
+    Supported OpenQML Expectations:
+      PauliX,
+      PauliY,
+      PauliZ,
+
+    Extra Operations:
+      S,
+      T,
+      SqrtX,
+      SqrtSwap,
+      AllPauliZ.
+
+    Extra Expectations:
+      AllPauliZ.
     """
 
     short_name = 'projectq.simulator'
@@ -205,6 +236,18 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     Args:
        wires (int): The number of qubits of the device.
+
+    Supported OpenQML Operations:
+      PauliX,
+
+    Supported OpenQML Expectations:
+      PauliZ,
+
+    Extra Operations:
+      AllPauliZ.
+
+    Extra Expectations:
+      AllPauliZ.
     """
 
     short_name = 'projectq.classicalsimulator'
@@ -241,6 +284,37 @@ class ProjectQIBMBackend(_ProjectQDevice):
       password (string): IBM Quantum Experience password
       device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
       retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
+
+    Supported OpenQML Operations:
+      PauliX,
+      PauliY,
+      PauliZ,
+      CNOT,
+      CZ,
+      SWAP,
+      RX,
+      RY,
+      RZ,
+      PhaseShift,
+      QubitStateVector,
+      Hadamard,
+      Rot,
+      QubitUnitary.
+
+    Supported OpenQML Expectations:
+      PauliX,
+      PauliY,
+      PauliZ,
+
+    Extra Operations:
+      S,
+      T,
+      SqrtX,
+      SqrtSwap,
+      AllPauliZ.
+
+    Extra Expectations:
+      AllPauliZ.
     """
 
     short_name = 'projectq.ibmbackend'

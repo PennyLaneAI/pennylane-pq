@@ -1,2 +1,2 @@
-.. automodule:: openqml_pq.ops
-   :members:
+.. automodule::
+   openqml_pq.ops
