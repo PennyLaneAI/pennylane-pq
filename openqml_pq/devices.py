@@ -176,6 +176,13 @@ class ProjectQSimulator(_ProjectQDevice):
       gate_fusion (bool): If True, gates are cached and only executed once a certain gate-size has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
 
+    This device can, for example, be instantiated from OpemQML as follows:
+
+    .. code-block:: python
+
+        import openqml as qm
+        dev = qm.device('projectq.simulator', wires=XXX)
+
     Supported OpenQML Operations:
       :class:`openqml.PauliX`,
       :class:`openqml.PauliY`,
@@ -257,6 +264,12 @@ class ProjectQIBMBackend(_ProjectQDevice):
       password (string): IBM Quantum Experience password
       device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
       retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
+    This device can, for example, be instantiated from OpemQML as follows:
+
+    .. code-block:: python
+
+        import openqml as qm
+        dev = qm.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
 
     Supported OpenQML Operations:
       :class:`openqml.PauliX`,
@@ -341,6 +354,13 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     Args:
        wires (int): The number of qubits of the device.
+
+    This device can, for example, be instantiated from OpemQML as follows:
+
+    .. code-block:: python
+
+        import openqml as qm
+        dev = qm.device('projectq.classical', wires=XXX)
 
     Supported OpenQML Operations:
       :class:`openqml.PauliX`.
