@@ -11,7 +11,6 @@ import openqml as qm
 from openqml import numpy as onp
 import numpy as np
 from openqml.optimize import GradientDescentOptimizer
-import matplotlib.pyplot as plt
 
 from math import isclose
 
@@ -105,7 +104,7 @@ def regularizer(weights):
     return reg
 
 
-def cost(weights, features, labels):
+def cost(weights, features=None, labels=None):
     """Cost (error) function to be minimized."""
 
     predictions = [quantum_neural_net(weights, x=x) for x in features]
@@ -130,12 +129,12 @@ Y_val = Y[index[num_train: ]]
 
 # initialize weight layers
 num_qubits = 4
-num_layers = 6
-weights0 = [np.random.randn(num_qubits, num_qubits)] * num_layers
+num_layers = 2
+weights0 = [np.random.randn(num_qubits, 3)] * num_layers
 
 # create optimizer
 o = GradientDescentOptimizer(0.1)
-batch_size = 3
+batch_size = 5
 
 # train the variational classifier
 weights = np.array(weights0)
@@ -145,7 +144,7 @@ for iteration in range(50):
     batch_index = np.random.randint(0, num_train, (batch_size, ))
     X_train_batch = X_train[batch_index]
     Y_train_batch = Y_train[batch_index]
-    weights = o.step(lambda w: cost(w, X_train_batch, Y_train_batch), weights)
+    weights = o.step(lambda w: cost(w, features=X_train_batch, labels=Y_train_batch), weights)
 
     # Compute predictions on train and validation set
     predictions_train = [np.sign(quantum_neural_net(weights, x=x)) for x in X_train]

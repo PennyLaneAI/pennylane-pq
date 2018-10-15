@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 from math import isclose
 
-dev = qm.device('default.qubit', wires=4)
+dev = qm.device('default.qubit', wires=2)
 
 
 def layer(W):
@@ -22,13 +22,19 @@ def layer(W):
 
     qm.Rot(W[0, 0], W[0, 1], W[0, 2], [0])
     qm.Rot(W[1, 0], W[1, 1], W[1, 2], [1])
-    qm.Rot(W[2, 0], W[2, 1], W[2, 2], [2])
-    qm.Rot(W[3, 0], W[3, 1], W[3, 2], [3])
 
     qm.CNOT([0, 1])
     qm.CNOT([1, 2])
-    qm.CNOT([2, 3])
-    qm.CNOT([3, 0])
+
+
+def get_coefficients(x):
+    """Compute coefficients needed to prepare a quantum state
+    whose ket vector is `x`"""
+    beta1 = 2*np.arcsin(np.sqrt(x[1]**2) / np.sqrt(x[0]**2 + x[1]**2))
+    beta2 = 2*np.arcsin(np.sqrt(x[3]**2) / np.sqrt(x[2]**2 + x[3]**2))
+    beta3 = 2*np.arcsin(np.sqrt(x[2]**2 + x[3]**2) / np.sqrt(x[0]**2 + x[1]**2 + x[2]**2 + x[3]**2))
+
+    return beta1, beta2, beta3
 
 
 def statepreparation(x):
@@ -36,8 +42,20 @@ def statepreparation(x):
     that first projects x -> x \otimes x. This gives the variational classifier
     more power."""
 
-    # We cheat and hard-set the initial quantum state to x \otimes x
-    qm.QubitStateVector(onp.kron(x, x), wires=[0, 1, 2, 3])
+    beta1, beta2, beta3 = get_coefficients(x)
+
+    qm.RY(beta1/2, [1])
+    qm.CNOT([0, 1])
+    qm.RY(-beta1/2, [1])
+    qm.CNOT([0, 1])
+    qm.RY(beta2/2, [1])
+    qm.X([0])
+    qm.CNOT([0, 1])
+    qm.RY(-beta2/2, [1])
+    qm.CNOT([0, 1])
+    qm.X([0])
+    qm.RY(beta3, [0])
+
 
 
 @qm.qfunc(dev)
