@@ -44,8 +44,8 @@ class S(Operation):
     Args:
         wires (int): the subsystem the Operation acts on.
     """
-    n_params = 0
-    n_wires = 1
+    num_params = 0
+    num_wires = 1
 
 
 class T(Operation):
@@ -56,8 +56,8 @@ class T(Operation):
     Args:
         wires (int): the subsystem the Operation acts on.
     """
-    n_params = 0
-    n_wires = 1
+    num_params = 0
+    num_wires = 1
 
 class SqrtX(Operation):
     r"""Square root X gate.
@@ -67,8 +67,8 @@ class SqrtX(Operation):
     Args:
         wires (int): the subsystem the Operation acts on.
     """
-    n_params = 0
-    n_wires = 1
+    num_params = 0
+    num_wires = 1
 
 class SqrtSwap(Operation):
     r"""Square root SWAP gate.
@@ -78,8 +78,8 @@ class SqrtSwap(Operation):
     Args:
         wires (seq[int]): the subsystems the Operation acts on.
     """
-    n_params = 0
-    n_wires = 2
+    num_params = 0
+    num_wires = 2
 
 class AllPauliZ(Operation):
     r"""Apply Pauli Z to all wires.
@@ -87,5 +87,5 @@ class AllPauliZ(Operation):
     .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
 
     """
-    n_params = 0
-    n_wires = 0
+    num_params = 0
+    num_wires = 0
