@@ -1,37 +1,29 @@
-OpenQML ProjectQ Plugin
-#######
+.. include:: ../README.rst
 
-:Release: |release|
-:Date: |today|
+.. toctree::
+   :maxdepth: 2
+   :caption: Getting started
+   :titlesonly:
 
-OpenQML is a Python quantum machine learning library by Xanadu Inc. This plugin allows to use both the software and hardware backends of ProjectQ as devices for quantum machine learning with OpenQML.
-
-Features
-========
-
-.. include:: features.rst
-
-Getting started
-===============
-
-.. include:: gettingstarted.rst
+   installation
+   support
+   howtocite
+   license
 
 
-How to cite
-===========
 
-.. include:: howtocite.rst
+.. toctree::
+   :maxdepth: 2
+   :caption: Devices
 
-Support
-=======
+   devices
 
-.. include:: support.rst
+.. toctree::
+   :maxdepth: 2
+   :caption: Operations
 
+   operations
 
-License
-=======
-
-.. include:: license.rst
 
 
 Indices and tables

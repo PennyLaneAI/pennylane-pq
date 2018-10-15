@@ -12,51 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 r"""
-ProjectQ plugin
-========================
+Devices
+=======
 
-**Module name:** :mod:`openqml.plugins.projectq`
-
-.. currentmodule:: openqml.plugins.projectq
-
-This plugin provides the interface between OpenQML and ProjecQ.
-It enables OpenQML to optimize quantum circuits simulable with ProjectQ.
-
-ProjecQ supports several different backends. Of those, the following are useful in the current context:
-
-- projectq.backends.Simulator([gate_fusion, ...])      Simulator is a compiler engine which simulates a quantum computer using C++-based kernels.
-- projectq.backends.ClassicalSimulator()               A simple introspective simulator that only permits classical operations.
-- projectq.backends.IBMBackend([use_hardware, ...])    The IBM Backend class, which stores the circuit, transforms it to JSON QASM, and sends the circuit through the IBM API.
-
-See PluginAPI._capabilities['backend'] for a list of backend options.
-
-Functions
----------
+The following ProjecQ backends are supported by this plugin:
 
 .. autosummary::
-   init_plugin
+   ProjectQSimulator
+   ProjectQClassicalSimulator
+   ProjectQIBMBackend
 
-Classes
--------
+.. todo::
+   Is there a way to add the individual devices to the toc?
 
-.. autosummary::
-   Gate
-   Observable
-   PluginAPI
 
 ----
 """
 import logging as log
 import numpy as np
-from numpy.random import (randn,)
 from openqml import Device, DeviceError
 
 import projectq as pq
 
 # import operations
-from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, Ph, StatePreparation, HGate, SGate, TGate, SqrtXGate, SqrtSwapGate
-)
-from .ops import (CNOT, CZ, Toffoli, AllZGate, Rot, QubitUnitary)
+from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, Ph, StatePreparation, SGate, TGate, SqrtXGate, SqrtSwapGate)
+from .pqops import (CNOT, CZ, Toffoli, AllZGate, Rot, QubitUnitary)
 
 from ._version import __version__
 
@@ -85,7 +65,7 @@ projectq_operator_map = {
     'QubitUnitary': QubitUnitary,
 }
 
-class ProjectQDevice(Device):
+class _ProjectQDevice(Device):
     """ProjectQ device for OpenQML.
 
     Args:
@@ -164,7 +144,7 @@ class ProjectQDevice(Device):
         return { key:value for key,value in kwargs.items() if key in self._backend_kwargs }
 
 
-class ProjectQSimulator(ProjectQDevice):
+class ProjectQSimulator(_ProjectQDevice):
     """ProjectQ Simulator device for OpenQML.
 
     Args:
@@ -173,6 +153,37 @@ class ProjectQSimulator(ProjectQDevice):
     Keyword Args:
       gate_fusion (bool): If True, gates are cached and only executed once a certain gate-size has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
+
+    Supported OpenQML Operations:
+      PauliX,
+      PauliY,
+      PauliZ,
+      CNOT,
+      CZ,
+      SWAP,
+      RX,
+      RY,
+      RZ,
+      PhaseShift,
+      QubitStateVector,
+      Hadamard,
+      Rot,
+      QubitUnitary.
+
+    Supported OpenQML Expectations:
+      PauliX,
+      PauliY,
+      PauliZ,
+
+    Extra Operations:
+      S,
+      T,
+      SqrtX,
+      SqrtSwap,
+      AllPauliZ.
+
+    Extra Expectations:
+      AllPauliZ.
     """
 
     short_name = 'projectq.simulator'
@@ -215,12 +226,28 @@ class ProjectQSimulator(ProjectQDevice):
 
         return ev
 
+r"""
+Foo
+---
+"""
 
-class ProjectQClassicalSimulator(ProjectQDevice):
+class ProjectQClassicalSimulator(_ProjectQDevice):
     """ProjectQ ClassicalSimulator device for OpenQML.
 
     Args:
        wires (int): The number of qubits of the device.
+
+    Supported OpenQML Operations:
+      PauliX,
+
+    Supported OpenQML Expectations:
+      PauliZ,
+
+    Extra Operations:
+      AllPauliZ.
+
+    Extra Expectations:
+      AllPauliZ.
     """
 
     short_name = 'projectq.classicalsimulator'
@@ -243,7 +270,7 @@ class ProjectQClassicalSimulator(ProjectQDevice):
         self.eng = pq.MainEngine(backend)
         super().reset()
 
-class ProjectQIBMBackend(ProjectQDevice):
+class ProjectQIBMBackend(_ProjectQDevice):
     """ProjectQ IBMBackend device for OpenQML.
 
     Args:
@@ -257,6 +284,37 @@ class ProjectQIBMBackend(ProjectQDevice):
       password (string): IBM Quantum Experience password
       device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
       retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
+
+    Supported OpenQML Operations:
+      PauliX,
+      PauliY,
+      PauliZ,
+      CNOT,
+      CZ,
+      SWAP,
+      RX,
+      RY,
+      RZ,
+      PhaseShift,
+      QubitStateVector,
+      Hadamard,
+      Rot,
+      QubitUnitary.
+
+    Supported OpenQML Expectations:
+      PauliX,
+      PauliY,
+      PauliZ,
+
+    Extra Operations:
+      S,
+      T,
+      SqrtX,
+      SqrtSwap,
+      AllPauliZ.
+
+    Extra Expectations:
+      AllPauliZ.
     """
 
     short_name = 'projectq.ibmbackend'

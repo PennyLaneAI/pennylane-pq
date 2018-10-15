@@ -1,5 +1,5 @@
 OpenQML ProjectQ Plugin
-#######
+#######################
 
 OpenQML is a Python quantum machine learning library by Xanadu Inc. This plugin allows to use both the software and hardware backends of ProjectQ as devices for quantum machine learning with OpenQML.
 
@@ -7,7 +7,7 @@ OpenQML is a Python quantum machine learning library by Xanadu Inc. This plugin 
 Features
 ========
 
-[//]: # (.. include:: doc/features.rst)
+.. [//]: # (.. include:: doc/features.rst)
 
 The following ProjecQ backends are supported by this plugin:
 
@@ -19,11 +19,21 @@ The following ProjecQ backends are supported by this plugin:
 Installation
 ============
 
+.. [//]: # (.. include:: doc/installation.rst)
+
 This plugin requires Python version 3.5 and above, as well as OpenQML and ProjectQ. Installation of this plugin, as well as all dependencies, can be done using pip:
 
 .. code-block:: bash
 
     $ python -m pip install openqml_pq
+
+To test that the OpenQML ProjectQ plugin is working correctly you can run
+
+.. code-block:: bash
+
+    $ make test
+
+in the source folder.
 
 
 Getting started
@@ -48,6 +58,12 @@ This device can then be used just like other devices for the definition and eval
         qm.CNOT(wires=[0, 1])
         return qm.expectation.PauliZ(wires=1)
 
+You can then execute the circuit like any other function to get the quantum mechanical expectation value.
+
+.. code-block:: python
+
+	circuit(0.2, 0.1, 0.3)
+
 Running your quantum machine learning code on an IBM Quantum Experience simulator or even a real hardware chip is just as easy. Instead of the device above, you would instantiate a 'projectq.ibm' device by giving your IBM Quantum Experience username and password:
 
 .. code-block:: python
@@ -59,7 +75,7 @@ Running your quantum machine learning code on an IBM Quantum Experience simulato
 How to cite
 ===========
 
-[//]: # (.. include:: doc/howtocite.rst)
+.. [//]: # (.. include:: doc/howtocite.rst)
 
 .. todo:: change reference
 
@@ -86,7 +102,7 @@ Christian Gogolin, Ville Bergholm, Maria Schuld, and Nathan Killoran.
 Support
 =======
 
-[//]: # (.. include:: doc/support.rst)
+.. [//]: # (.. include:: doc/support.rst)
 
 - **Source Code:** https://github.com/XanaduAI/openqml-pq
 - **Issue Tracker:** https://github.com/XanaduAI/openqml-pq/issues
@@ -102,6 +118,6 @@ come join the discussion and chat with our OpenQML team.
 License
 =======
 
-[//]: # (.. include:: doc/license.rst)
+.. [//]: # (.. include:: doc/license.rst)
 
 The OpenQML ProjectQ plugin is **free** and **open source**, released under the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.

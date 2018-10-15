@@ -17,4 +17,3 @@ from ._version import __version__
 from .projectq import ProjectQSimulator
 from .projectq import ProjectQClassicalSimulator
 from .projectq import ProjectQIBMBackend
-#from .ops import XDisplacement, ZDisplacement #todo
