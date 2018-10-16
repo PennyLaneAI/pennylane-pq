@@ -1,7 +1,6 @@
-"""Quantum Neural Network.
+"""Variational quantum classifier.
 
 In this demo we implement a variational classifier inspired by
-Farhi & Neven 2018 (arXiv:1802.06002) and
 Schuld et al. 2018 (arXiv:1804.00633).
 """
 
@@ -24,45 +23,39 @@ def layer(W):
     qm.Rot(W[1, 0], W[1, 1], W[1, 2], [1])
 
     qm.CNOT([0, 1])
-    qm.CNOT([1, 2])
 
 
-def get_coefficients(x):
+def get_beta(x):
     """Compute coefficients needed to prepare a quantum state
     whose ket vector is `x`"""
     beta1 = 2*np.arcsin(np.sqrt(x[1]**2) / np.sqrt(x[0]**2 + x[1]**2))
     beta2 = 2*np.arcsin(np.sqrt(x[3]**2) / np.sqrt(x[2]**2 + x[3]**2))
     beta3 = 2*np.arcsin(np.sqrt(x[2]**2 + x[3]**2) / np.sqrt(x[0]**2 + x[1]**2 + x[2]**2 + x[3]**2))
 
-    return beta1, beta2, beta3
+    return beta1/2, beta2/2, beta3
 
 
-def statepreparation(x):
-    """ Encodes data input x into a quantum state, using a feature map
-    that first projects x -> x \otimes x. This gives the variational classifier
-    more power."""
+def statepreparation(beta):
+    """ """
 
-    beta1, beta2, beta3 = get_coefficients(x)
-
-    qm.RY(beta1/2, [1])
+    qm.RY(beta[0], [1])
     qm.CNOT([0, 1])
-    qm.RY(-beta1/2, [1])
+    qm.RY(-beta[0], [1])
     qm.CNOT([0, 1])
-    qm.RY(beta2/2, [1])
-    qm.X([0])
+    qm.RY(beta[1], [1])
+    qm.PauliX([0])
     qm.CNOT([0, 1])
-    qm.RY(-beta2/2, [1])
+    qm.RY(-beta[1], [1])
     qm.CNOT([0, 1])
-    qm.X([0])
-    qm.RY(beta3, [0])
-
+    qm.PauliX([0])
+    qm.RY(beta[2], [0])
 
 
 @qm.qfunc(dev)
-def variational_classifier(weights, x=None):
+def variational_classifier(weights, data=None):
     """The circuit of the variational classifier."""
 
-    statepreparation(x)
+    statepreparation(data)
 
     for W in weights:
         layer(W)
@@ -125,7 +118,7 @@ def regularizer(weights):
 def cost(weights, features, labels):
     """Cost (error) function to be minimized."""
 
-    predictions = [variational_classifier(weights, x=x) for x in features]
+    predictions = [variational_classifier(weights, data=f) for f in features]
 
     return square_loss(labels, predictions) #+ regularizer(weights)
 
@@ -134,23 +127,25 @@ def cost(weights, features, labels):
 data = np.loadtxt("iris_scaled.txt")
 X = data[:, :-1]
 normalization = np.sqrt(np.sum(X ** 2, -1))
-X = (X.T / normalization).T  # normalize each feature vector
+X = (X.T / normalization).T  # normalize each input
+features = np.array([get_beta(x) for x in X]) # compute feature vectors
+
 Y = data[:, -1]
-Y = Y*2 - np.ones(len(Y))  # shift label from {0, 1} to {-1, 1}
+labels = Y*2 - np.ones(len(Y))  # shift from {0, 1} to {-1, 1}
 
 # split into training and validation set
-num_data = len(X)
+num_data = len(labels)
 num_train = int(0.75*num_data)
 index = np.random.permutation(range(num_data))
-X_train = X[index[: num_train]]
-Y_train = Y[index[: num_train]]
-X_val = X[index[num_train: ]]
-Y_val = Y[index[num_train: ]]
+feats_train = features[index[: num_train]]
+labels_train = labels[index[: num_train]]
+feats_val = features[index[num_train: ]]
+labels_val = labels[index[num_train: ]]
 
 # initialize weight layers
-num_qubits = 4
-num_layers = 4
-weights0 = 0.01*np.array([np.random.randn(num_qubits, num_qubits)] * num_layers)
+num_qubits = 2
+num_layers = 6
+weights0 = 0.01*np.array([np.random.randn(num_qubits, 3)] * num_layers)
 
 # create optimizer
 o = AdagradOptimizer(0.1)
@@ -163,17 +158,17 @@ for iteration in range(50):
 
     # Update the weights by one optimizer step
     batch_index = np.random.randint(0, num_train, (batch_size, ))
-    X_train_batch = X_train[batch_index]
-    Y_train_batch = Y_train[batch_index]
-    weights = o.step(lambda w: cost(w, X_train_batch, Y_train_batch), weights)
+    feats_train_batch = feats_train[batch_index]
+    labels_train_batch = labels_train[batch_index]
+    weights = o.step(lambda w: cost(w, feats_train_batch, labels_train_batch), weights)
 
     # Compute predictions on train and validation set
-    predictions_train = [np.sign(variational_classifier(weights, x=x)) for x in X_train]
-    predictions_val = [np.sign(variational_classifier(weights, x=x)) for x in X_val]
+    predictions_train = [np.sign(variational_classifier(weights, data=f)) for f in feats_train]
+    predictions_val = [np.sign(variational_classifier(weights, data=f)) for f in feats_val]
 
     # Compute accuracy on train and validation set
-    acc_train = accuracy(Y_train, predictions_train)
-    acc_val = accuracy(Y_val, predictions_val)
+    acc_train = accuracy(labels_train, predictions_train)
+    acc_val = accuracy(labels_val, predictions_val)
 
     print("Iter: {:5d} | Cost: {:0.7f} | Acc train: {:0.7f} | Acc validation: {:0.7f} "
           "".format(iteration, cost(weights, X, Y), acc_train, acc_val))
@@ -194,12 +189,12 @@ cnt = plt.contourf(xx, yy, Z, levels=np.arange(-1, 1.1, 0.1), cmap=cm, alpha=.8,
 plt.colorbar(cnt, ticks=[-1, 0, 1])
 
 # plot data
-trf0 = [d for i, d in enumerate(X_train) if Y_train[i] == -1]
-trf1 = [d for i, d in enumerate(X_train) if Y_train[i] == 1]
+trf0 = [d for i, d in enumerate(feats_train) if labels_train[i] == -1]
+trf1 = [d for i, d in enumerate(feats_train) if labels_train[i] == 1]
 plt.scatter([c[0] for c in trf1], [c[1] for c in trf1], c='r', marker='^', edgecolors='k')
 plt.scatter([c[0] for c in trf0], [c[1] for c in trf0], c='r', marker='o', edgecolors='k')
-tes0 = [d for i, d in enumerate(X_val) if Y_val[i] == -1]
-tes1 = [d for i, d in enumerate(X_val) if Y_val[i] == 1]
+tes0 = [d for i, d in enumerate(feats_val) if labels_val[i] == -1]
+tes1 = [d for i, d in enumerate(feats_val) if labels_val[i] == 1]
 plt.scatter([c[0] for c in tes1], [c[1] for c in tes1], c='g', marker='^', edgecolors='k')
 plt.scatter([c[0] for c in tes0], [c[1] for c in tes0], c='g', marker='o', edgecolors='k')
 

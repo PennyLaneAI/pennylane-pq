@@ -32,19 +32,24 @@ def layer(W):
     qm.CNOT([3, 0])
 
 
-def statepreparation(x):
+def statepreparation(features):
     """ Encodes data input x into quantum state."""
 
-    for i in range(len(x)):
-        if x[i] == 1:
+    for i in range(len(features)):
+        if features[i] == 1:
             qm.PauliX([i])
 
 
 @qm.qfunc(dev)
-def quantum_neural_net(weights, x=None):
+def quantum_neural_net(weights, features=None):
     """The quantum neural net variational circuit."""
 
-    statepreparation(x)
+    #statepreparation(features)
+    print([f.val for f in features])
+
+    for i in range(len(features)):
+        if features[i] == 1:
+            qm.PauliX([i])
 
     for W in weights:
         layer(W)
@@ -107,7 +112,7 @@ def regularizer(weights):
 def cost(weights, features=None, labels=None):
     """Cost (error) function to be minimized."""
 
-    predictions = [quantum_neural_net(weights, x=x) for x in features]
+    predictions = [quantum_neural_net(weights, features=f) for f in features]
 
     return square_loss(labels, predictions) # + regularizer
 
@@ -129,7 +134,7 @@ Y_val = Y[index[num_train: ]]
 
 # initialize weight layers
 num_qubits = 4
-num_layers = 2
+num_layers = 1
 weights0 = [np.random.randn(num_qubits, 3)] * num_layers
 
 # create optimizer
@@ -138,7 +143,7 @@ batch_size = 5
 
 # train the variational classifier
 weights = np.array(weights0)
-for iteration in range(50):
+for iteration in range(1):
 
     # Update the weights by one optimizer step
     batch_index = np.random.randint(0, num_train, (batch_size, ))
