@@ -40,7 +40,7 @@ def statepreparation(x):
     qm.QubitStateVector(onp.kron(x, x), wires=[0, 1, 2, 3])
 
 
-@qm.qfunc(dev)
+@qm.qnode(dev)
 def variational_classifier(weights, x=None):
     """The circuit of the variational classifier."""
 

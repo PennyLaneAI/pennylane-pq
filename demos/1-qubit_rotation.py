@@ -13,7 +13,7 @@ from openqml.optimize import GradientDescentOptimizer, AdagradOptimizer
 dev = qm.device('projectq.simulator', wires=1)
 
 
-@qm.qfunc(dev)
+@qm.qnode(dev)
 def circuit(variables):
     """QNode"""
     qm.RX(variables[0], [0])

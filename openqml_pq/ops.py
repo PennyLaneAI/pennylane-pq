@@ -30,7 +30,7 @@ In addition to the suitable default operations native to OpenQML, the devices of
    AllPauliZ
 
 .. note::
-   For convenience, and to mirror the behavior of the operations built into OpenQML, the operations defined here are also accessible directly under the top-level :code:`openqml_pq` context, i.e., you can use :code:`openqml_pq.S([0])` instead of :code:`openqml_pq.ops.S([0])` when defining a :code:`QNode` or :code:`qfunc`.
+   For convenience, and to mirror the behavior of the operations built into OpenQML, the operations defined here are also accessible directly under the top-level :code:`openqml_pq` context, i.e., you can use :code:`openqml_pq.S([0])` instead of :code:`openqml_pq.ops.S([0])` when defining a :code:`QNode` using the :code:`qnode` decorator.
 
 """
 

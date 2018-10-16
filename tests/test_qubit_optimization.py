@@ -32,7 +32,7 @@ class QubitOptimizationTests(BaseTest):
             # SGD requires a dataset
             return
 
-        @qm.qfunc(self.dev1)
+        @qm.qnode(self.dev1)
         def circuit(x, y, z):
             qm.RZ(z, [0])
             qm.RY(y, [0])

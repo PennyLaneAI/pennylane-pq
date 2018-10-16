@@ -38,7 +38,7 @@ This device can then be used just like other devices for the definition and eval
 
 .. code-block:: python
 
-    @qm.qfunc(dev)
+    @qm.qnode(dev)
     def circuit(x, y, z):
         qm.RZ(z, wires=[0])
         qm.RY(y, wires=[0])

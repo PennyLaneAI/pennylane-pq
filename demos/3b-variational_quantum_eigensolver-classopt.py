@@ -25,14 +25,14 @@ def ansatz():
     qm.CNOT([0, 1])
 
 
-@qm.qfunc(dev)
+@qm.qnode(dev)
 def circuit_X():
     """Circuit measuring the X operator for the second qubit"""
     ansatz()
     return qm.expval.PauliX(1)
 
 
-@qm.qfunc(dev)
+@qm.qnode(dev)
 def circuit_Y():
     """Circuit measuring the Y operator for the second qubit"""
     ansatz()

@@ -41,7 +41,7 @@ def statepreparation(x):
             qm.PauliX([i])
 
 
-@qm.qfunc(dev)
+@qm.qnode(dev)
 def quantum_neural_net(weights, x=None):
     """The quantum neural net variational circuit."""
 
