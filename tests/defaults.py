@@ -20,7 +20,7 @@ import openqml_pq
 
 
 BACKEND = "simulator"
-OPTIMIZER = "SGD"
+OPTIMIZER = "GradientDescentOptimizer"
 TOLERANCE = 1e-3
 BATCH_SIZE = 2
 BATCHED = False
@@ -51,7 +51,7 @@ def get_commandline_args():
     parser.add_argument('--batch_size',      type=int,   default=BATCH_SIZE,         help='Batch size.')
     parser.add_argument("--user", help="IBM Quantum Experience user name")
     parser.add_argument("--password", help="IBM Quantum Experience password")
-    parser.add_argument("--optimizer", default=OPTIMIZER, choices=qm.optimizer.OPTIMIZER_NAMES, help="optimizer to use")
+    parser.add_argument("--optimizer", default=OPTIMIZER, choices=qm.optimize.__all__, help="optimizer to use")
 
     batch_parser = parser.add_mutually_exclusive_group(required=False)
     batch_parser.add_argument('--batched', dest='batched', action='store_true')

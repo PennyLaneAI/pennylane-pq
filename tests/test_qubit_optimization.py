@@ -10,6 +10,7 @@ from unittest_data_provider import data_provider
 
 from defaults import BaseTest
 import openqml as qm
+import openqml_pq
 from openqml import numpy as np
 
 
@@ -23,7 +24,7 @@ class QubitOptimizationTests(BaseTest):
 
 
     def all_optimizers():
-        return tuple([(optimizer,) for optimizer in qm.optimizer.OPTIMIZER_NAMES])
+        return tuple([(optimizer,) for optimizer in qm.optimize.__all__])
 
     @data_provider(all_optimizers)
     def test_qubit_optimization(self, optimizer):
@@ -56,3 +57,12 @@ class QubitOptimizationTests(BaseTest):
         self.assertAllAlmostEqual(circuit(*o.weights), 1, delta=0.002, msg="Optimizer "+optimizer+" failed to achieve the optimal value.")
         self.assertAllAlmostEqual(o.weights[0], 0, delta=0.002, msg="Optimizer "+optimizer+" failed to find the optimal x angles.")
         self.assertAllAlmostEqual(o.weights[1], 0, delta=0.002, msg="Optimizer "+optimizer+" failed to find the optimal y angles.")
+
+
+if __name__ == '__main__':
+    # run the tests in this file
+    suite = unittest.TestSuite()
+    for t in (QubitOptimizationTests, ):
+        ttt = unittest.TestLoader().loadTestsFromTestCase(t)
+        suite.addTests(ttt)
+    unittest.TextTestRunner().run(suite)

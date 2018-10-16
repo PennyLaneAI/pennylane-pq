@@ -51,7 +51,7 @@ class S(Operation):
 class T(Operation):
     r"""T gate.
 
-    .. math:: T = \begin{bmatrix}1&0\\0&exp(i \pi / 4)\end{bmatrix}
+    .. math:: T = \begin{bmatrix}1&0\\0&\exp(i \pi / 4)\end{bmatrix}
 
     Args:
         wires (int): the subsystem the Operation acts on.
