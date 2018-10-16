@@ -212,7 +212,7 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`openqml_pq.ops.AllPauliZ`.
 
     Extra Expectations:
-      :class:`openqml_pq.expectation.AllPauliZ`.
+      :class:`openqml_pq.expval.AllPauliZ`.
     """
 
     short_name = 'projectq.simulator'
@@ -300,7 +300,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`openqml_pq.ops.AllPauliZ`.
 
     Extra Expectations:
-      :class:`openqml_pq.expectation.AllPauliZ`.
+      :class:`openqml_pq.expval.AllPauliZ`.
     """
 
     short_name = 'projectq.ibmbackend'
@@ -372,7 +372,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
       :class:`openqml_pq.ops.AllPauliZ`.
 
     Extra Expectations:
-      :class:`openqml_pq.expectation.AllPauliZ`.
+      :class:`openqml_pq.expval.AllPauliZ`.
     """
 
     short_name = 'projectq.classicalsimulator'

@@ -18,7 +18,7 @@ def circuit(variables):
     """QNode"""
     qm.RX(variables[0], [0])
     qm.RY(variables[1], [0])
-    return qm.expectation.PauliZ(0)
+    return qm.expval.PauliZ(0)
 
 
 def objective(variables):

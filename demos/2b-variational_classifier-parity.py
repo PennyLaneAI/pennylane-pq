@@ -50,7 +50,7 @@ def quantum_neural_net(weights, x=None):
     for W in weights:
         layer(W)
 
-    return qm.expectation.PauliZ(0)
+    return qm.expval.PauliZ(0)
 
 
 def square_loss(labels, predictions):
@@ -157,4 +157,3 @@ for iteration in range(50):
 
     print("Iter: {:5d} | Cost: {:0.7f} | Acc train: {:0.7f} | Acc validation: {:0.7f} "
           "".format(iteration, cost(weights, X, Y), acc_train, acc_val))
-

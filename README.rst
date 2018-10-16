@@ -44,7 +44,7 @@ This device can then be used just like other devices for the definition and eval
         qm.RY(y, wires=[0])
         qm.RX(x, wires=[0])
         qm.CNOT(wires=[0, 1])
-        return qm.expectation.PauliZ(wires=1)
+        return qm.expval.PauliZ(wires=1)
 
 You can then execute the circuit like any other function to get the quantum mechanical expectation value.
 

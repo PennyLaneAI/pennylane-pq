@@ -1,3 +1,3 @@
 .. automodule::
-   openqml_pq.expectation
+   openqml_pq.expval
    :members:

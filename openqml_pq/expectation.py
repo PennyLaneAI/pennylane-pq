@@ -15,7 +15,7 @@ r"""
 Expectations
 ############
 
-.. currentmodule:: openqml_pq.expectation
+.. currentmodule:: openqml_pq.expval
 
 .. todo::
     They way to present the following depends on the whether the `extra_operations` machinery makes it into the final release.

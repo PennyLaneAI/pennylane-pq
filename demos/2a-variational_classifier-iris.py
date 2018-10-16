@@ -49,7 +49,7 @@ def variational_classifier(weights, x=None):
     for W in weights:
         layer(W)
 
-    return qm.expectation.PauliZ(0)
+    return qm.expval.PauliZ(0)
 
 
 def square_loss(labels, predictions):

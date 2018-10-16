@@ -29,14 +29,14 @@ def ansatz():
 def circuit_X():
     """Circuit measuring the X operator for the second qubit"""
     ansatz()
-    return qm.expectation.PauliX(1)
+    return qm.expval.PauliX(1)
 
 
 @qm.qfunc(dev)
 def circuit_Y():
     """Circuit measuring the Y operator for the second qubit"""
     ansatz()
-    return qm.expectation.PauliY(1)
+    return qm.expval.PauliY(1)
 
 
 def cost(weights):
