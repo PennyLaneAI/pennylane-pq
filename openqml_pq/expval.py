@@ -33,6 +33,9 @@ class AllPauliZ(Expectation):
 
     .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
 
+    .. todo:: Potentially remove this Operation depending on how https://github.com/XanaduAI/openqml/issues/61 is resolved.
+
     """
-    n_params = 0
-    n_wires = 0
+    num_params = 0
+    num_wires = 0
+    par_domain = None

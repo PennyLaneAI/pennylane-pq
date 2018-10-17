@@ -46,6 +46,7 @@ class S(Operation):
     """
     num_params = 0
     num_wires = 1
+    par_domain = None
 
 
 class T(Operation):
@@ -58,6 +59,7 @@ class T(Operation):
     """
     num_params = 0
     num_wires = 1
+    par_domain = None
 
 class SqrtX(Operation):
     r"""Square root X gate.
@@ -69,6 +71,7 @@ class SqrtX(Operation):
     """
     num_params = 0
     num_wires = 1
+    par_domain = None
 
 class SqrtSwap(Operation):
     r"""Square root SWAP gate.
@@ -80,12 +83,16 @@ class SqrtSwap(Operation):
     """
     num_params = 0
     num_wires = 2
+    par_domain = None
 
 class AllPauliZ(Operation):
     r"""Apply Pauli Z to all wires.
 
     .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
 
+    .. todo:: Potentially remove this Operation depending on how https://github.com/XanaduAI/openqml/issues/61 is resolved.
+
     """
     num_params = 0
     num_wires = 0
+    par_domain = None

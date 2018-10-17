@@ -241,10 +241,10 @@ class ProjectQSimulator(_ProjectQDevice):
                 wire = wires[0]
 
             ev = self.eng.backend.get_expectation_value(pq.ops.QubitOperator(str(observable)[-1]+'0'), [self.reg[wire]])
-            variance = 1 - ev**2
-        # elif observable == 'AllPauliZ':
-        #     ev = [ self.eng.backend.get_expectation_value(pq.ops.QubitOperator("Z"+'0'), [qubit]) for qubit in self.reg]
-        #     variance = [1 - e**2 for e in ev]
+            #variance = 1 - ev**2
+        elif observable == 'AllPauliZ':
+             ev = [ self.eng.backend.get_expectation_value(pq.ops.QubitOperator("Z"+'0'), [qubit]) for qubit in self.reg]
+             #variance = [1 - e**2 for e in ev]
         else:
             raise DeviceError("Observable {} not supported by {}".format(observable, self.name))
 
@@ -340,10 +340,10 @@ class ProjectQIBMBackend(_ProjectQDevice):
                 wire = wires[0]
 
             ev = ((2*sum(p for (state,p) in probabilities.items() if state[wire] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[wire] == '0')-1))
-            variance = 1 - ev**2
-        # elif observable == 'AllPauliZ':
-        #     ev = [ ((2*sum(p for (state,p) in probabilities.items() if state[i] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[i] == '0')-1)) for i in range(len(self.reg)) ]
-        #     variance = [1 - e**2 for e in ev]
+            #variance = 1 - ev**2
+        elif observable == 'AllPauliZ':
+            ev = [ ((2*sum(p for (state,p) in probabilities.items() if state[i] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[i] == '0')-1)) for i in range(len(self.reg)) ]
+            #variance = [1 - e**2 for e in ev]
         else:
             raise DeviceError("Observable {} not supported by {}".format(observable, self.name))
 
