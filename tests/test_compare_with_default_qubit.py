@@ -28,7 +28,7 @@ import openqml_pq
 import openqml_pq.expval
 from openqml_pq.devices import ProjectQSimulator
 
-import traceback #todo: remove once we no longer capture the exception further down
+#import traceback #todo: remove once we no longer capture the exception further down
 
 log.getLogger('defaults')
 
@@ -105,9 +105,9 @@ class CompareWithDefaultQubitTest(BaseTest):
                             observable_class = getattr(openqml_pq.expval, observable)
 
                         if operation_class.num_wires > self.num_subsystems:
-                            raise IgnoreOperationException('Skipping because the operation '+operation+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
+                            raise IgnoreOperationException('Skipping in automatic test because of the operation '+operation+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
                         if observable_class.num_wires > self.num_subsystems:
-                            raise IgnoreOperationException('Skipping because the observable '+observable+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
+                            raise IgnoreOperationException('Skipping in automatic test because of the observable '+observable+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
 
                         if operation_class.par_domain == 'N':
                             operation_pars = rnd_int_pool[:operation_class.num_params]
@@ -143,13 +143,13 @@ class CompareWithDefaultQubitTest(BaseTest):
 
                     except IgnoreOperationException as e:
                         print(e)
-                    except Exception as e:
-                        print(e)#todo: currently it is good that this just prints all the errors to get a quick overview, but we either want an assert here or not catch the exception in the first place
-                        try:
-                            raise e
-                        except:
-                            pass
-                        traceback.print_exc()
+                    # except Exception as e:
+                    #     print(e)#todo: currently it is good that this just prints all the errors to get a quick overview, but we either want an assert here or not catch the exception in the first place
+                    #     try:
+                    #         raise e
+                    #     except:
+                    #         pass
+                    #     traceback.print_exc()
 
         #if we could run the circuit on more than one device assert that both should have given the same output
         for (key,val) in outputs.items():
@@ -157,15 +157,15 @@ class CompareWithDefaultQubitTest(BaseTest):
                 self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs of "+str(list(val.keys()))+" do not agree for a circuit consisting of "+str(key))
 
 
-    def test_all_pauli_z(self):
-        for dev in [ProjectQSimulator(wires=self.num_subsystems)]:
-            @qm.qnode(dev)
-            def circuit():
-                qm.RZ(-np.pi/8, 0)
-                openqml_pq.AllPauliZ([0,1,2])
-                return qm.expval.PauliZ(0)
+    # def test_all_pauli_z(self):
+    #     for dev in [ProjectQSimulator(wires=self.num_subsystems)]:
+    #         @qm.qnode(dev)
+    #         def circuit():
+    #             qm.RZ(-np.pi/8, 0)
+    #             openqml_pq.AllPauliZ([0,1,2])
+    #             return qm.expval.PauliZ(0)
 
-            print("Result: "+str(circuit()))
+    #         print("Result: "+str(circuit()))
 
 
 if __name__ == '__main__':

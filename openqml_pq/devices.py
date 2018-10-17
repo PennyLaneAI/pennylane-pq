@@ -64,6 +64,7 @@ from ._version import __version__
 
 
 projectq_operator_map = {
+    #native OpenQML operations also native to ProjectQ
     'PauliX': XGate,
     'PauliY': YGate,
     'PauliZ': ZGate,
@@ -74,17 +75,19 @@ projectq_operator_map = {
     'RY': Ry,
     'RZ': Rz,
     'PhaseShift': R,
-    'QubitStateVector': StatePreparation,
     'Hadamard': HGate,
-    #gates not native to OpenQML
+    #operations not natively implemented in ProjectQ but provided in pqops.py
+    'Rot': Rot,
+    'QubitUnitary': QubitUnitary,
+    #additional operations not native to OpenQML but present in ProjectQ
     'S': SGate,
     'T': TGate,
     'SqrtX': SqrtXGate,
     'SqrtSwap': SqrtSwapGate,
-    'AllPauliZ': AllZGate,
-    #gates not implemented in ProjectQ
-    'Rot': Rot,
-    'QubitUnitary': QubitUnitary,
+    #operations/expectations of ProjectQ that do work with OpenQML
+#    'AllPauliZ': AllZGate, #todo: enable once https://github.com/XanaduAI/openqml/issues/61 is resolved
+    #operations/expectations of OpenQML that do work with ProjectQ
+#    'QubitStateVector': StatePreparation,
 }
 
 class _ProjectQDevice(Device):
@@ -151,7 +154,7 @@ class _ProjectQDevice(Device):
     def apply(self, gate_name, wires, par):
         gate = self._operator_map[gate_name](*par)
         list = [self.reg[i] for i in wires]
-        if isinstance(gate, pq.ops._metagates.ControlledGate):
+        if not isinstance(gate, pq.ops._metagates.Tensor):
             gate | tuple(list) #pylint: disable=pointless-statement
         else:
             gate | list #pylint: disable=pointless-statement
