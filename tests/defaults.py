@@ -1,14 +1,13 @@
 """
 Default parameters, commandline arguments and common routines for the unit tests.
 """
-
-import argparse
 import unittest
 import os
 import sys
-#import numpy as np
+import logging
+import argparse
 
-import openqml as qm
+import openqml
 from openqml import numpy as np
 
 # Make sure openqml_pq is always imported from the same source distribution where the tests reside, not e.g. from site-packages.
@@ -17,26 +16,25 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import openqml_pq
 
-
-
+# defaults
 BACKEND = "simulator"
-OPTIMIZER = "SGD"
+OPTIMIZER = "GradientDescentOptimizer"
 TOLERANCE = 1e-3
 BATCH_SIZE = 2
 BATCHED = False
 MIXED = False
 
-if "BACKEND" in os.environ:
-    BACKEND = os.environ["BACKEND"]
-    print('Backend:', BACKEND)
 
-if "BATCHED" in os.environ:
-    BATCHED = bool(int(os.environ["BATCHED"]))
-    print('Batched:', BATCHED)
+# set up logging
+if "LOGGING" in os.environ:
+    logLevel = os.environ["LOGGING"]
+    print('Logging:', logLevel)
+    numeric_level = getattr(logging, logLevel.upper(), 10)
+else:
+    numeric_level = 100
 
-if "MIXED" in os.environ:
-    MIXED = bool(int(os.environ["MIXED"]))
-    print('Mixed:', MIXED)
+logging.getLogger().setLevel(numeric_level)
+logging.captureWarnings(True)
 
 def get_commandline_args():
     """Parse the commandline arguments for the unit tests.
@@ -51,7 +49,7 @@ def get_commandline_args():
     parser.add_argument('--batch_size',      type=int,   default=BATCH_SIZE,         help='Batch size.')
     parser.add_argument("--user", help="IBM Quantum Experience user name")
     parser.add_argument("--password", help="IBM Quantum Experience password")
-    parser.add_argument("--optimizer", default=OPTIMIZER, choices=qm.optimizer.OPTIMIZER_NAMES, help="optimizer to use")
+    parser.add_argument("--optimizer", default=OPTIMIZER, choices=openqml.optimize.__all__, help="optimizer to use")
 
     batch_parser = parser.add_mutually_exclusive_group(required=False)
     batch_parser.add_argument('--batched', dest='batched', action='store_true')
@@ -65,18 +63,14 @@ def get_commandline_args():
 
     # HACK: We only parse known args to enable unittest test discovery without parsing errors.
     args, _ = parser.parse_known_args()
-    setup_plugin(args)
     return args
-
-def setup_plugin(args):
-    pass
 
 # parse any possible commandline arguments
 args = get_commandline_args()
 
 class BaseTest(unittest.TestCase):
     """ABC for tests.
-    Encapsulates the user-given commandline parameters for the test run.
+    Encapsulates the user-given commandline parameters for the test run as class attributes.
     """
     num_subsystems = None  #: int: number of wires for the backend, must be overridden by child classes
 
@@ -93,6 +87,15 @@ class BaseTest(unittest.TestCase):
             self.bsize = args.batch_size
         else:
             self.bsize = 1
+
+    def logTestName(self):
+        logging.info('{}'.format(self.id()))
+
+    def assertAllElementsAlmostEqual(self, l, delta, msg=None):
+        l = list(l)
+        first = l.pop()
+        for value in l:
+            self.assertAllAlmostEqual(first, value, delta, msg)
 
     def assertAllAlmostEqual(self, first, second, delta, msg=None):
         """

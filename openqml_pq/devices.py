@@ -12,56 +12,59 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 r"""
-ProjectQ plugin
-========================
+Devices
+=======
 
-**Module name:** :mod:`openqml.plugins.projectq`
+.. currentmodule:: openqml_pq.devices
 
-.. currentmodule:: openqml.plugins.projectq
-
-This plugin provides the interface between OpenQML and ProjecQ.
-It enables OpenQML to optimize quantum circuits simulable with ProjectQ.
-
-ProjecQ supports several different backends. Of those, the following are useful in the current context:
-
-- projectq.backends.Simulator([gate_fusion, ...])      Simulator is a compiler engine which simulates a quantum computer using C++-based kernels.
-- projectq.backends.ClassicalSimulator()               A simple introspective simulator that only permits classical operations.
-- projectq.backends.IBMBackend([use_hardware, ...])    The IBM Backend class, which stores the circuit, transforms it to JSON QASM, and sends the circuit through the IBM API.
-
-See PluginAPI._capabilities['backend'] for a list of backend options.
-
-Functions
----------
+This plugin offers access to the following ProjectQ backends by providing corresponding OpenQML devices:
 
 .. autosummary::
-   init_plugin
+   :nosignatures:
 
-Classes
--------
+   ProjectQSimulator
+   ProjectQIBMBackend
+   ProjectQClassicalSimulator
 
-.. autosummary::
-   Gate
-   Observable
-   PluginAPI
+.. todo::
+   Is there a way to do generate the following documentation more automatically?
 
-----
+.. todo::
+   Is there a nice way to link to the documentation of the OpenQML native Operations/Expectations?
+
+See below for a description of the devices and the supported Operations and Expectations.
+
+ProjectQSimulator
+#################
+
+.. autoclass:: ProjectQSimulator
+
+ProjectQIBMBackend
+##################
+
+.. autoclass:: ProjectQIBMBackend
+
+ProjectQClassicalSimulator
+##########################
+
+.. autoclass:: ProjectQClassicalSimulator
+
+
 """
 import logging as log
 import numpy as np
-from numpy.random import (randn,)
 from openqml import Device, DeviceError
 
 import projectq as pq
 
-# import operations
-from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, Ph, StatePreparation, HGate, SGate, TGate, SqrtXGate, SqrtSwapGate
-)
-from .ops import (CNOT, CZ, Toffoli, AllZGate, Rot, QubitUnitary)
+from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, Ph, StatePreparation, SGate, TGate, SqrtXGate, SqrtSwapGate)
+from .pqops import (CNOT, CZ, Toffoli, AllZGate, Rot, QubitUnitary)
 
 from ._version import __version__
 
 
 projectq_operator_map = {
+    #native OpenQML operations also native to ProjectQ
     'PauliX': XGate,
     'PauliY': YGate,
     'PauliZ': ZGate,
@@ -72,20 +75,22 @@ projectq_operator_map = {
     'RY': Ry,
     'RZ': Rz,
     'PhaseShift': R,
-    'QubitStateVector': StatePreparation,
     'Hadamard': HGate,
-    #gates not native to OpenQML
+    #operations not natively implemented in ProjectQ but provided in pqops.py
+    'Rot': Rot,
+    'QubitUnitary': QubitUnitary,
+    #additional operations not native to OpenQML but present in ProjectQ
     'S': SGate,
     'T': TGate,
     'SqrtX': SqrtXGate,
     'SqrtSwap': SqrtSwapGate,
-    'AllPauliZ': AllZGate,
-    #gates not implemented in ProjectQ
-    'Rot': Rot,
-    'QubitUnitary': QubitUnitary,
+    #operations/expectations of ProjectQ that do work with OpenQML
+#    'AllPauliZ': AllZGate, #todo: enable once https://github.com/XanaduAI/openqml/issues/61 is resolved
+    #operations/expectations of OpenQML that do work with ProjectQ
+#    'QubitStateVector': StatePreparation,
 }
 
-class ProjectQDevice(Device):
+class _ProjectQDevice(Device):
     """ProjectQ device for OpenQML.
 
     Args:
@@ -132,7 +137,7 @@ class ProjectQDevice(Device):
         self.kwargs = kwargs
         self.eng = None
         self.reg = None
-        #self.reset() #the actual initialization is done in reset(), but we don't need to call this manually as Device does it for us during __enter__()
+        self.reset() #the actual initialization is done in reset()
 
     def reset(self):
         self.reg = self.eng.allocate_qureg(self.num_wires)
@@ -148,7 +153,11 @@ class ProjectQDevice(Device):
 
     def apply(self, gate_name, wires, par):
         gate = self._operator_map[gate_name](*par)
-        gate | tuple([self.reg[i] for i in wires]) #pylint: disable=pointless-statement
+        list = [self.reg[i] for i in wires]
+        if not isinstance(gate, pq.ops._metagates.Tensor):
+            gate | tuple(list) #pylint: disable=pointless-statement
+        else:
+            gate | list #pylint: disable=pointless-statement
 
     def _deallocate(self):
         """Deallocate all qubits to make ProjectQ happy
@@ -164,8 +173,8 @@ class ProjectQDevice(Device):
         return { key:value for key,value in kwargs.items() if key in self._backend_kwargs }
 
 
-class ProjectQSimulator(ProjectQDevice):
-    """ProjectQ Simulator device for OpenQML.
+class ProjectQSimulator(_ProjectQDevice):
+    """An OpenQML device for the `ProjectQ Simulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_ backend.
 
     Args:
        wires (int): The number of qubits of the device.
@@ -173,6 +182,44 @@ class ProjectQSimulator(ProjectQDevice):
     Keyword Args:
       gate_fusion (bool): If True, gates are cached and only executed once a certain gate-size has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
+
+    This device can, for example, be instantiated from OpemQML as follows:
+
+    .. code-block:: python
+
+        import openqml as qm
+        dev = qm.device('projectq.simulator', wires=XXX)
+
+    Supported OpenQML Operations:
+      :class:`openqml.PauliX`,
+      :class:`openqml.PauliY`,
+      :class:`openqml.PauliZ`,
+      :class:`openqml.CNOT`,
+      :class:`openqml.CZ`,
+      :class:`openqml.SWAP`,
+      :class:`openqml.RX`,
+      :class:`openqml.RY`,
+      :class:`openqml.RZ`,
+      :class:`openqml.PhaseShift`,
+      :class:`openqml.QubitStateVector`,
+      :class:`openqml.Hadamard`,
+      :class:`openqml.Rot`,
+      :class:`openqml.QubitUnitary`.
+
+    Supported OpenQML Expectations:
+      :class:`openqml.PauliX`,
+      :class:`openqml.PauliY`,
+      :class:`openqml.PauliZ`.
+
+    Extra Operations:
+      :class:`openqml_pq.ops.S`,
+      :class:`openqml_pq.ops.T`,
+      :class:`openqml_pq.ops.SqrtX`,
+      :class:`openqml_pq.ops.SqrtSwap`,
+      :class:`openqml_pq.ops.AllPauliZ`.
+
+    Extra Expectations:
+      :class:`openqml_pq.expval.AllPauliZ`.
     """
 
     short_name = 'projectq.simulator'
@@ -186,11 +233,6 @@ class ProjectQSimulator(ProjectQDevice):
         super().__init__(wires, **kwargs)
 
     def reset(self):
-        """Resets the engine and backend
-
-        After the reset the Device should be as if it was just constructed.
-        Most importantly the quantum state is reset to its initial value.
-        """
         backend = pq.backends.Simulator(**self.filter_kwargs_for_backend(self.kwargs))
         self.eng = pq.MainEngine(backend)
         super().reset()
@@ -206,45 +248,17 @@ class ProjectQSimulator(ProjectQDevice):
                 wire = wires[0]
 
             ev = self.eng.backend.get_expectation_value(pq.ops.QubitOperator(str(observable)[-1]+'0'), [self.reg[wire]])
-            variance = 1 - ev**2
-        # elif observable == 'AllPauliZ':
-        #     ev = [ self.eng.backend.get_expectation_value(pq.ops.QubitOperator("Z"+'0'), [qubit]) for qubit in self.reg]
-        #     variance = [1 - e**2 for e in ev]
+            #variance = 1 - ev**2
+        elif observable == 'AllPauliZ':
+             ev = [ self.eng.backend.get_expectation_value(pq.ops.QubitOperator("Z"+'0'), [qubit]) for qubit in self.reg]
+             #variance = [1 - e**2 for e in ev]
         else:
             raise DeviceError("Observable {} not supported by {}".format(observable, self.name))
 
         return ev
 
-
-class ProjectQClassicalSimulator(ProjectQDevice):
-    """ProjectQ ClassicalSimulator device for OpenQML.
-
-    Args:
-       wires (int): The number of qubits of the device.
-    """
-
-    short_name = 'projectq.classicalsimulator'
-    _operator_map = {key:val for key, val in projectq_operator_map.items() if val in [XGate, CNOT]}
-    _observable_map = {key:val for key, val in _operator_map.items() if val in [ZGate, AllZGate]}
-    _circuits = {}
-    _backend_kwargs = []
-
-    def __init__(self, wires, **kwargs):
-        kwargs['backend'] = 'ClassicalSimulator'
-        super().__init__(wires, **kwargs)
-
-    def reset(self):
-        """Resets the engine and backend
-
-        After the reset the Device should be as if it was just constructed.
-        Most importantly the quantum state is reset to its initial value.
-        """
-        backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self.kwargs))
-        self.eng = pq.MainEngine(backend)
-        super().reset()
-
-class ProjectQIBMBackend(ProjectQDevice):
-    """ProjectQ IBMBackend device for OpenQML.
+class ProjectQIBMBackend(_ProjectQDevice):
+    """An OpenQML device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
 
     Args:
        wires (int): The number of qubits of the device.
@@ -257,6 +271,43 @@ class ProjectQIBMBackend(ProjectQDevice):
       password (string): IBM Quantum Experience password
       device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
       retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
+    This device can, for example, be instantiated from OpemQML as follows:
+
+    .. code-block:: python
+
+        import openqml as qm
+        dev = qm.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
+
+    Supported OpenQML Operations:
+      :class:`openqml.PauliX`,
+      :class:`openqml.PauliY`,
+      :class:`openqml.PauliZ`,
+      :class:`openqml.CNOT`,
+      :class:`openqml.CZ`,
+      :class:`openqml.SWAP`,
+      :class:`openqml.RX`,
+      :class:`openqml.RY`,
+      :class:`openqml.RZ`,
+      :class:`openqml.PhaseShift`,
+      :class:`openqml.QubitStateVector`,
+      :class:`openqml.Hadamard`,
+      :class:`openqml.Rot`,
+      :class:`openqml.QubitUnitary`.
+
+    Supported OpenQML Expectations:
+      :class:`openqml.PauliX`,
+      :class:`openqml.PauliY`,
+      :class:`openqml.PauliZ`.
+
+    Extra Operations:
+      :class:`openqml_pq.ops.S`,
+      :class:`openqml_pq.ops.T`,
+      :class:`openqml_pq.ops.SqrtX`,
+      :class:`openqml_pq.ops.SqrtSwap`,
+      :class:`openqml_pq.ops.AllPauliZ`.
+
+    Extra Expectations:
+      :class:`openqml_pq.expval.AllPauliZ`.
     """
 
     short_name = 'projectq.ibmbackend'
@@ -278,11 +329,6 @@ class ProjectQIBMBackend(ProjectQDevice):
         super().__init__(wires, **kwargs)
 
     def reset(self):
-        """Resets the engine and backend
-
-        After the reset the Device should be as if it was just constructed.
-        Most importantly the quantum state is reset to its initial value.
-        """
         backend = pq.backends.IBMBackend(**self.filter_kwargs_for_backend(self.kwargs))
         self.eng = pq.MainEngine(backend, engine_list=pq.setups.ibm.get_engine_list())
         super().reset()
@@ -301,11 +347,52 @@ class ProjectQIBMBackend(ProjectQDevice):
                 wire = wires[0]
 
             ev = ((2*sum(p for (state,p) in probabilities.items() if state[wire] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[wire] == '0')-1))
-            variance = 1 - ev**2
-        # elif observable == 'AllPauliZ':
-        #     ev = [ ((2*sum(p for (state,p) in probabilities.items() if state[i] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[i] == '0')-1)) for i in range(len(self.reg)) ]
-        #     variance = [1 - e**2 for e in ev]
+            #variance = 1 - ev**2
+        elif observable == 'AllPauliZ':
+            ev = [ ((2*sum(p for (state,p) in probabilities.items() if state[i] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[i] == '0')-1)) for i in range(len(self.reg)) ]
+            #variance = [1 - e**2 for e in ev]
         else:
             raise DeviceError("Observable {} not supported by {}".format(observable, self.name))
 
         return ev
+
+class ProjectQClassicalSimulator(_ProjectQDevice):
+    """An OpenQML device for the `ProjectQ ClassicalSimulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.ClassicalSimulator>`_ backend.
+
+    Args:
+       wires (int): The number of qubits of the device.
+
+    This device can, for example, be instantiated from OpemQML as follows:
+
+    .. code-block:: python
+
+        import openqml as qm
+        dev = qm.device('projectq.classical', wires=XXX)
+
+    Supported OpenQML Operations:
+      :class:`openqml.PauliX`.
+
+    Supported OpenQML Expectations:
+      :class:`openqml.PauliZ`.
+
+    Extra Operations:
+      :class:`openqml_pq.ops.AllPauliZ`.
+
+    Extra Expectations:
+      :class:`openqml_pq.expval.AllPauliZ`.
+    """
+
+    short_name = 'projectq.classicalsimulator'
+    _operator_map = {key:val for key, val in projectq_operator_map.items() if val in [XGate, CNOT]}
+    _observable_map = {key:val for key, val in _operator_map.items() if val in [ZGate, AllZGate]}
+    _circuits = {}
+    _backend_kwargs = []
+
+    def __init__(self, wires, **kwargs):
+        kwargs['backend'] = 'ClassicalSimulator'
+        super().__init__(wires, **kwargs)
+
+    def reset(self):
+        backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self.kwargs))
+        self.eng = pq.MainEngine(backend)
+        super().reset()

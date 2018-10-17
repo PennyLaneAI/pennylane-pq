@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Top level OpenQML module"""
-from .projectq import ProjectQSimulator
-from .projectq import ProjectQClassicalSimulator
-from .projectq import ProjectQIBMBackend
-#from .ops import XDisplacement, ZDisplacement #todo
+from ._version import __version__
+
+from .devices import ProjectQSimulator
+from .devices import ProjectQIBMBackend
+from .devices import ProjectQClassicalSimulator
+
+from .ops import *
