@@ -16,7 +16,7 @@ dev = qm.device('projectq.simulator', wires=2)
 def ansatz(weights):
     """ Ansatz of the variational circuit."""
 
-    qm.Hadamard([0])
+    qm.Rot(0.3, 1.8, 5.4, [1])
     qm.RX(weights[0], [0])
     qm.RY(weights[1], [1])
     qm.CNOT([0, 1])
@@ -42,17 +42,17 @@ def cost(vars):
     expX = circuit_X(vars)
     expY = circuit_Y(vars)
 
-    return 0.1*expX + 0.5*expY
+    return (0.1*expX + 0.5*expY)**2
 
 
 # optimizer
 o = GradientDescentOptimizer(0.5)
 
 # minimize cost
-vars = np.array([0., 0.])
+vars = np.array([0.3, 2.5])
 for it in range(20):
     vars = o.step(cost, vars)
 
-    print('Cost after step {:5d}: {: .7} | Variables: [{: .5},{: .5}]'
-          .format(it+1, cost(vars), vars[0], vars[1]) )
+    print('Cost after step {:5d}: {: .7f} | Variables: [{: .5f},{: .5f}]'
+          .format(it+1, cost(vars), vars[0], vars[1]))
 

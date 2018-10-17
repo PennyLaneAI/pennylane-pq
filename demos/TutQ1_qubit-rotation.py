@@ -24,7 +24,7 @@ def objective(vars):
     return circuit(vars)
 
 
-vars_init = np.array([0.01, 0.01])
+vars_init = np.array([0.011, 0.012])
 
 o = GradientDescentOptimizer(0.5)
 

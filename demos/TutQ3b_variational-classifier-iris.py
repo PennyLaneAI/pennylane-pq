@@ -28,6 +28,7 @@ def layer(W):
 def get_beta(x):
     """Compute coefficients needed to prepare a quantum state
     whose ket vector is `x`"""
+
     beta1 = 2*np.arcsin(np.sqrt(x[1]**2) / np.sqrt(x[0]**2 + x[1]**2))
     beta2 = 2*np.arcsin(np.sqrt(x[3]**2) / np.sqrt(x[2]**2 + x[3]**2))
     beta3 = 2*np.arcsin(np.sqrt(x[2]**2 + x[3]**2) / np.sqrt(x[0]**2 + x[1]**2 + x[2]**2 + x[3]**2))
@@ -52,15 +53,26 @@ def statepreparation(beta):
 
 
 @qm.qnode(dev)
-def variational_classifier(weights, data=None):
+def circuit(weights, x=None):
     """The circuit of the variational classifier."""
 
-    statepreparation(data)
+    #statepreparation(data)
+
+    qm.QubitStateVector(x, [0, 1])
 
     for W in weights:
         layer(W)
 
     return qm.expval.PauliZ(0)
+
+
+def variational_classifier(vars, x=None, shape=None):
+    """The variational classifier."""
+
+    weights = onp.reshape(vars[1:], shape)
+    outp = circuit(weights, x=x)
+
+    return outp + vars[0]
 
 
 def square_loss(labels, predictions):
@@ -115,10 +127,10 @@ def regularizer(weights):
     return reg
 
 
-def cost(weights, features, labels):
+def cost(weights, features, labels, shape=None):
     """Cost (error) function to be minimized."""
 
-    predictions = [variational_classifier(weights, data=f) for f in features]
+    predictions = [variational_classifier(weights, x=f, shape=shape) for f in features]
 
     return square_loss(labels, predictions) #+ regularizer(weights)
 
@@ -128,7 +140,8 @@ data = np.loadtxt("iris_scaled.txt")
 X = data[:, :-1]
 normalization = np.sqrt(np.sum(X ** 2, -1))
 X = (X.T / normalization).T  # normalize each input
-features = np.array([get_beta(x) for x in X]) # compute feature vectors
+features = X
+#features = np.array([get_beta(x) for x in X]) # compute feature vectors
 
 Y = data[:, -1]
 labels = Y*2 - np.ones(len(Y))  # shift from {0, 1} to {-1, 1}
@@ -144,27 +157,29 @@ labels_val = labels[index[num_train: ]]
 
 # initialize weight layers
 num_qubits = 2
-num_layers = 6
-weights0 = 0.01*np.array([np.random.randn(num_qubits, 3)] * num_layers)
+num_layers = 4
+weights0 = 0.01*np.random.randn(num_qubits*3*num_layers+1)
+shp = (num_qubits, 3, num_layers)
 
 # create optimizer
-o = AdagradOptimizer(0.1)
+o = AdagradOptimizer(0.01)
 
 # train the variational classifier
 batch_size = 5
-weights = np.array(weights0)
+weights = weights0
 
-for iteration in range(50):
+for iteration in range(15):
+    print(weights[0])
 
     # Update the weights by one optimizer step
     batch_index = np.random.randint(0, num_train, (batch_size, ))
     feats_train_batch = feats_train[batch_index]
     labels_train_batch = labels_train[batch_index]
-    weights = o.step(lambda w: cost(w, feats_train_batch, labels_train_batch), weights)
+    weights = o.step(lambda w: cost(w, feats_train_batch, labels_train_batch, shape=shp), weights)
 
     # Compute predictions on train and validation set
-    predictions_train = [np.sign(variational_classifier(weights, data=f)) for f in feats_train]
-    predictions_val = [np.sign(variational_classifier(weights, data=f)) for f in feats_val]
+    predictions_train = [np.sign(variational_classifier(weights, x=f, shape=shp)) for f in feats_train]
+    predictions_val = [np.sign(variational_classifier(weights, x=f, shape=shp)) for f in feats_val]
 
     # Compute accuracy on train and validation set
     acc_train = accuracy(labels_train, predictions_train)
@@ -174,13 +189,15 @@ for iteration in range(50):
           "".format(iteration, cost(weights, X, Y), acc_train, acc_val))
 
 
-# start plotting
+
+import matplotlib.pyplot as plt
+
 plt.figure()
 cm = plt.cm.RdBu
 
 # make data for decision regions
 xx, yy = np.meshgrid(np.linspace(-1.1, 1.1, 20), np.linspace(-1.1, 1.1, 20))
-X_grid = [np.array([x, y]) for x, y in zip(xx.flatten(), yy.flatten())]
+X_grid = [np.array([0, 0, x, y]) for x, y in zip(xx.flatten(), yy.flatten())]
 predictions_grid = [variational_classifier(weights, x=x) for x in X_grid]
 Z = np.reshape(predictions_grid, xx.shape)
 
