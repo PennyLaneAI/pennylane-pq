@@ -150,7 +150,11 @@ class _ProjectQDevice(Device):
 
     def apply(self, gate_name, wires, par):
         gate = self._operator_map[gate_name](*par)
-        gate | tuple([self.reg[i] for i in wires]) #pylint: disable=pointless-statement
+        list = [self.reg[i] for i in wires]
+        if isinstance(gate, pq.ops._metagates.ControlledGate):
+            gate | tuple(list) #pylint: disable=pointless-statement
+        else:
+            gate | list #pylint: disable=pointless-statement
 
     def _deallocate(self):
         """Deallocate all qubits to make ProjectQ happy

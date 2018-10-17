@@ -151,12 +151,22 @@ class CompareWithDefaultQubitTest(BaseTest):
                             pass
                         traceback.print_exc()
 
-        print(outputs)
-
         #if we could run the circuit on more than one device assert that both should have given the same output
         for (key,val) in outputs.items():
             if len(val) >= 2:
                 self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs of "+str(list(val.keys()))+" do not agree for a circuit consisting of "+str(key))
+
+
+    def test_all_pauli_z(self):
+        for dev in [ProjectQSimulator(wires=self.num_subsystems)]:
+            @qm.qnode(dev)
+            def circuit():
+                qm.RZ(-np.pi/8, 0)
+                openqml_pq.AllPauliZ([0,1,2])
+                return qm.expval.PauliZ(0)
+
+            print("Result: "+str(circuit()))
+
 
 if __name__ == '__main__':
     print('Testing OpenQML ProjectQ Plugin version ' + qm.version() + ', Device class.')
