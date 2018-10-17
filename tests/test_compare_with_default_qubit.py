@@ -37,6 +37,23 @@ class CompareWithDefaultQubitTest(BaseTest):
     """
     num_subsystems = 3 #This should be as large as the largest gate/observable, but we cannot know that before instantiating the device. We thus check later that all gates/observables fit.
 
+    devices = None
+    def setUp(self):
+        self.devices = [DefaultQubit(wires=self.num_subsystems), ProjectQSimulator(wires=self.num_subsystems)]
+        super().setUp()
+
+    # def test_rot(self):
+    #     for dev in self.devices:
+    #         @qm.qnode(dev)
+    #         def circuit():
+    #             qm.Rot(np.pi/8,np.pi/4,np.pi/16, 0)
+    #             qm.RZ(-np.pi/16, 0)
+    #             qm.RY(-np.pi/4, 0)
+    #             qm.RZ(-np.pi/8, 0)
+    #             return qm.expval.PauliX(0)
+
+    #         print("Result: "+str(circuit()))
+
     def test_simple_circuits(self):
         """Automatically compare the behavior on simple circuits"""
         self.logTestName()
@@ -64,12 +81,12 @@ class CompareWithDefaultQubitTest(BaseTest):
         #     return
 
         outputs = {}
-        devices = [DefaultQubit(wires=self.num_subsystems), ProjectQSimulator(wires=self.num_subsystems) ]
+
 
         rnd_int_pool = np.random.randint(0, 5, 100)
         rnd_float_pool = np.random.randn(100)
 
-        for dev in devices:
+        for dev in self.devices:
 
             # run all single operation circuits
             for operation in dev.gates:
@@ -132,7 +149,6 @@ class CompareWithDefaultQubitTest(BaseTest):
                             raise e
                         except:
                             pass
-
                         traceback.print_exc()
 
         print(outputs)
@@ -140,7 +156,7 @@ class CompareWithDefaultQubitTest(BaseTest):
         #if we could run the circuit on more than one device assert that both should have given the same output
         for (key,val) in outputs.items():
             if len(val) >= 2:
-                self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs of "+str(list(val.keys()))+" do not agree for circuit consisting of "+str(key))
+                self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs of "+str(list(val.keys()))+" do not agree for a circuit consisting of "+str(key))
 
 if __name__ == '__main__':
     print('Testing OpenQML ProjectQ Plugin version ' + qm.version() + ', Device class.')
