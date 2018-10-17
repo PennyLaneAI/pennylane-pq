@@ -7,8 +7,8 @@ We express the Hamiltonian as a sum of two Pauli operators.
 """
 
 import openqml as qm
-from openqml import numpy as np
 from openqml.optimize import GradientDescentOptimizer
+import numpy as np
 
 dev = qm.device('projectq.simulator', wires=2)
 
@@ -16,10 +16,7 @@ dev = qm.device('projectq.simulator', wires=2)
 def ansatz():
     """ Ansatz of the variational circuit."""
 
-    # Prepare initial state
     qm.Hadamard([0])
-
-    # Execute some parametrized quantum gates
     qm.RX(0.5, [0])
     qm.RY(0.9, [1])
     qm.CNOT([0, 1])
@@ -39,23 +36,24 @@ def circuit_Y():
     return qm.expval.PauliY(1)
 
 
-def cost(weights):
+def cost(vars):
     """Cost (error) function to be minimized."""
 
     expX = circuit_X()
     expY = circuit_Y()
 
-    return weights[0]*expX + weights[1]*expY
+    return vars[0]*expX + vars[1]*expY
 
 
-print("initializing weights")
-weights0 = np.array([0., 0.])
-print('Initial weights:', weights0)
-
-print("optimizing the cost")
+# optimizer
 o = GradientDescentOptimizer(0.5)
-weights = weights0
-for iteration in np.arange(1, 201):
-    weights = o.step(cost, weights)
-    print('Cost after step {:5d}: {: .7}'.format(iteration, cost(weights)))
-print('Optimized weights:', weights)
+
+# minimize the cost
+vars = np.array([0., 0.])
+for it in range(20):
+    vars = o.step(cost, vars)
+
+    print('Cost after step {:5d}: {: .7f} | Variables: [{: .5f},{: .5f}]'
+          .format(it+1, cost(vars), vars[0], vars[1]))
+
+

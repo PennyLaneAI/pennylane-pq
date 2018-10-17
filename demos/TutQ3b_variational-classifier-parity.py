@@ -11,7 +11,6 @@ import openqml as qm
 from openqml import numpy as onp
 import numpy as np
 from openqml.optimize import GradientDescentOptimizer
-import matplotlib.pyplot as plt
 
 from math import isclose
 
@@ -33,12 +32,11 @@ def layer(W):
     qm.CNOT([3, 0])
 
 
-def statepreparation(x):
+def statepreparation(features):
     """ Encodes data input x into quantum state."""
 
-    for i in range(len(x)):
-        if x[i] == 1:
-            qm.PauliX([i])
+    #TODO: Frombitstring!
+
 
 
 @qm.qnode(dev)
@@ -50,7 +48,7 @@ def quantum_neural_net(weights, x=None):
     for W in weights:
         layer(W)
 
-    return qm.expval.PauliZ(0)
+    return qm.expectation.PauliZ(0)
 
 
 def square_loss(labels, predictions):
@@ -105,21 +103,21 @@ def regularizer(weights):
     return reg
 
 
-def cost(weights, features, labels):
+def cost(weights, features=None, labels=None):
     """Cost (error) function to be minimized."""
 
-    predictions = [quantum_neural_net(weights, x=x) for x in features]
+    predictions = [quantum_neural_net(weights, features=f) for f in features]
 
     return square_loss(labels, predictions) # + regularizer
 
 
-print("Loading Iris data and normalizing feature vectors")
+# load Iris data and normalise feature vectors
 data = np.loadtxt("parity.txt")
 X = data[:, :-1]
 Y = data[:, -1]
 Y = Y*2 - np.ones(len(Y))  # shift label from {0, 1} to {-1, 1}
 
-print("splitting into training and validation set")
+# split into training and validation set
 num_data = len(X)
 num_train = int(0.75*num_data)
 index = np.random.permutation(range(num_data))
@@ -128,24 +126,24 @@ Y_train = Y[index[: num_train]]
 X_val = X[index[num_train: ]]
 Y_val = Y[index[num_train: ]]
 
-print("initializing weight layers")
+# initialize weight layers
 num_qubits = 4
-num_layers = 6
-weights0 = [np.random.randn(num_qubits, num_qubits)] * num_layers
+num_layers = 1
+weights0 = [np.random.randn(num_qubits, 3)] * num_layers
 
-print("creating optimizer")
+# create optimizer
 o = GradientDescentOptimizer(0.1)
-batch_size = 3
+batch_size = 5
 
-print("training the variational classifier")
+# train the variational classifier
 weights = np.array(weights0)
-for iteration in range(50):
+for iteration in range(1):
 
     # Update the weights by one optimizer step
     batch_index = np.random.randint(0, num_train, (batch_size, ))
     X_train_batch = X_train[batch_index]
     Y_train_batch = Y_train[batch_index]
-    weights = o.step(lambda w: cost(w, X_train_batch, Y_train_batch), weights)
+    weights = o.step(lambda w: cost(w, features=X_train_batch, labels=Y_train_batch), weights)
 
     # Compute predictions on train and validation set
     predictions_train = [np.sign(quantum_neural_net(weights, x=x)) for x in X_train]
@@ -157,3 +155,4 @@ for iteration in range(50):
 
     print("Iter: {:5d} | Cost: {:0.7f} | Acc train: {:0.7f} | Acc validation: {:0.7f} "
           "".format(iteration, cost(weights, X, Y), acc_train, acc_val))
+
