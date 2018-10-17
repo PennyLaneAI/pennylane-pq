@@ -15,7 +15,7 @@ from openqml.optimize import GradientDescentOptimizer
 from math import isclose
 
 
-dev = qm.device('projectq.simulator', wires=4)
+dev = qm.device('default.qubit', wires=4)
 
 
 def layer(W):
@@ -32,11 +32,10 @@ def layer(W):
     qm.CNOT([3, 0])
 
 
-def statepreparation(features):
+def statepreparation(x):
     """ Encodes data input x into quantum state."""
 
-    #TODO: Frombitstring!
-
+    qm.BasisState(x, wires=[0, 1, 2, 3])
 
 
 @qm.qnode(dev)
@@ -48,7 +47,7 @@ def quantum_neural_net(weights, x=None):
     for W in weights:
         layer(W)
 
-    return qm.expectation.PauliZ(0)
+    return qm.expval.PauliZ(0)
 
 
 def square_loss(labels, predictions):
@@ -106,7 +105,7 @@ def regularizer(weights):
 def cost(weights, features=None, labels=None):
     """Cost (error) function to be minimized."""
 
-    predictions = [quantum_neural_net(weights, features=f) for f in features]
+    predictions = [quantum_neural_net(weights, x=f) for f in features]
 
     return square_loss(labels, predictions) # + regularizer
 
@@ -128,7 +127,7 @@ Y_val = Y[index[num_train: ]]
 
 # initialize weight layers
 num_qubits = 4
-num_layers = 1
+num_layers = 5
 weights0 = [np.random.randn(num_qubits, 3)] * num_layers
 
 # create optimizer
@@ -137,7 +136,7 @@ batch_size = 5
 
 # train the variational classifier
 weights = np.array(weights0)
-for iteration in range(1):
+for iteration in range(10):
 
     # Update the weights by one optimizer step
     batch_index = np.random.randint(0, num_train, (batch_size, ))
@@ -148,6 +147,9 @@ for iteration in range(1):
     # Compute predictions on train and validation set
     predictions_train = [np.sign(quantum_neural_net(weights, x=x)) for x in X_train]
     predictions_val = [np.sign(quantum_neural_net(weights, x=x)) for x in X_val]
+
+    print([quantum_neural_net(weights, x=x) for x in X_train])
+    print(Y_train)
 
     # Compute accuracy on train and validation set
     acc_train = accuracy(Y_train, predictions_train)
