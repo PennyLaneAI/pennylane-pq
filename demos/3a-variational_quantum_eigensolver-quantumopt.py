@@ -55,7 +55,7 @@ print('Initial weights:', weights0)
 # optimize the cost
 o = GradientDescentOptimizer(0.5)
 weights = weights0
-for iteration in np.arange(1, 21):
+for iteration in np.arange(1, 181):
     weights = o.step(cost, weights)
     print('Cost after step {:5d}: {: .7}'.format(iteration, cost(weights)))
 print('Optimized weights:', weights)

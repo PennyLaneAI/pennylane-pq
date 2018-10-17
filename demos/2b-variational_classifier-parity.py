@@ -113,13 +113,13 @@ def cost(weights, features, labels):
     return square_loss(labels, predictions) # + regularizer
 
 
-# load Iris data and normalise feature vectors
+print("Loading Iris data and normalizing feature vectors")
 data = np.loadtxt("parity.txt")
 X = data[:, :-1]
 Y = data[:, -1]
 Y = Y*2 - np.ones(len(Y))  # shift label from {0, 1} to {-1, 1}
 
-# split into training and validation set
+print("splitting into training and validation set")
 num_data = len(X)
 num_train = int(0.75*num_data)
 index = np.random.permutation(range(num_data))
@@ -128,16 +128,16 @@ Y_train = Y[index[: num_train]]
 X_val = X[index[num_train: ]]
 Y_val = Y[index[num_train: ]]
 
-# initialize weight layers
+print("initializing weight layers")
 num_qubits = 4
 num_layers = 6
 weights0 = [np.random.randn(num_qubits, num_qubits)] * num_layers
 
-# create optimizer
+print("creating optimizer")
 o = GradientDescentOptimizer(0.1)
 batch_size = 3
 
-# train the variational classifier
+print("training the variational classifier")
 weights = np.array(weights0)
 for iteration in range(50):
 

@@ -4,4 +4,4 @@ OpenQML_PQ.egg-info/
 build/
 dist/
 openqml_pq/__pycache__/
-				
+tests/__pycache__/

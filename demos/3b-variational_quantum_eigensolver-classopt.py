@@ -48,14 +48,14 @@ def cost(weights):
     return weights[0]*expX + weights[1]*expY
 
 
-# initialize weights
+print("initializing weights")
 weights0 = np.array([0., 0.])
 print('Initial weights:', weights0)
 
-# optimize the cost
+print("optimizing the cost")
 o = GradientDescentOptimizer(0.5)
 weights = weights0
-for iteration in np.arange(1, 21):
+for iteration in np.arange(1, 201):
     weights = o.step(cost, weights)
     print('Cost after step {:5d}: {: .7}'.format(iteration, cost(weights)))
 print('Optimized weights:', weights)
