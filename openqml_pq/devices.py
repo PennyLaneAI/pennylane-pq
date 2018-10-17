@@ -58,7 +58,7 @@ from openqml import Device, DeviceError
 import projectq as pq
 
 from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, Ph, StatePreparation, SGate, TGate, SqrtXGate, SqrtSwapGate)
-from .pqops import (CNOT, CZ, Toffoli, AllZGate, Rot, QubitUnitary)
+from .pqops import (CNOT, CZ, Toffoli, AllZGate, Rot, QubitUnitary, BasisState)
 
 from ._version import __version__
 
@@ -79,6 +79,7 @@ projectq_operator_map = {
     #operations not natively implemented in ProjectQ but provided in pqops.py
     'Rot': Rot,
     'QubitUnitary': QubitUnitary,
+    'BasisState': BasisState,
     #additional operations not native to OpenQML but present in ProjectQ
     'S': SGate,
     'T': TGate,
