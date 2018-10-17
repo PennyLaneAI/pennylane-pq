@@ -35,21 +35,15 @@ def layer(W):
 def statepreparation(features):
     """ Encodes data input x into quantum state."""
 
-    for i in range(len(features)):
-        if features[i] == 1:
-            qm.PauliX([i])
+    #TODO: Frombitstring!
 
 
-@qm.qfunc(dev)
-def quantum_neural_net(weights, features=None):
+
+@qm.qnode(dev)
+def quantum_neural_net(weights, x=None):
     """The quantum neural net variational circuit."""
 
-    #statepreparation(features)
-    print([f.val for f in features])
-
-    for i in range(len(features)):
-        if features[i] == 1:
-            qm.PauliX([i])
+    statepreparation(x)
 
     for W in weights:
         layer(W)

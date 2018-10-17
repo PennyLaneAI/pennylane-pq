@@ -1,14 +1,14 @@
 """Variational quantum eigensolver example.
 
-In this demo we optimize a variational circuit to lower
+In this example we optimize a variational circuit to lower
 the energy expectation of a user-defined Hamiltonian.
 
 We express the Hamiltonian as a sum of two Pauli operators.
 """
 
 import openqml as qm
-from openqml import numpy as np
 from openqml.optimize import GradientDescentOptimizer
+import numpy as np
 
 dev = qm.device('projectq.simulator', wires=2)
 
@@ -16,46 +16,43 @@ dev = qm.device('projectq.simulator', wires=2)
 def ansatz(weights):
     """ Ansatz of the variational circuit."""
 
-    # Prepare initial state
     qm.Hadamard([0])
-
-    # Execute some parametrized quantum gates
     qm.RX(weights[0], [0])
     qm.RY(weights[1], [1])
     qm.CNOT([0, 1])
 
 
-@qm.qfunc(dev)
-def circuit_X(weights):
+@qm.qnode(dev)
+def circuit_X(vars):
     """Circuit measuring the X operator for the second qubit"""
-    ansatz(weights)
-    return qm.expectation.PauliX(1)
+    ansatz(vars)
+    return qm.expval.PauliX(1)
 
 
-@qm.qfunc(dev)
-def circuit_Y(weights):
+@qm.qnode(dev)
+def circuit_Y(vars):
     """Circuit measuring the Y operator for the second qubit"""
-    ansatz(weights)
-    return qm.expectation.PauliY(1)
+    ansatz(vars)
+    return qm.expval.PauliY(1)
 
 
-def cost(weights):
+def cost(vars):
     """Cost (error) function to be minimized."""
 
-    expX = circuit_X(weights)
-    expY = circuit_Y(weights)
+    expX = circuit_X(vars)
+    expY = circuit_Y(vars)
 
     return 0.1*expX + 0.5*expY
 
 
-# initialize weights
-weights0 = np.array([0., 0.])
-print('Initial weights:', weights0)
-
-# optimize the cost
+# optimizer
 o = GradientDescentOptimizer(0.5)
-weights = weights0
-for iteration in np.arange(1, 21):
-    weights = o.step(cost, weights)
-    print('Cost after step {:5d}: {: .7}'.format(iteration, cost(weights)))
-print('Optimized weights:', weights)
+
+# minimize cost
+vars = np.array([0., 0.])
+for it in range(20):
+    vars = o.step(cost, vars)
+
+    print('Cost after step {:5d}: {: .7} | Variables: [{: .5},{: .5}]'
+          .format(it+1, cost(vars), vars[0], vars[1]) )
+

@@ -51,7 +51,7 @@ def statepreparation(beta):
     qm.RY(beta[2], [0])
 
 
-@qm.qfunc(dev)
+@qm.qnode(dev)
 def variational_classifier(weights, data=None):
     """The circuit of the variational classifier."""
 
@@ -60,7 +60,7 @@ def variational_classifier(weights, data=None):
     for W in weights:
         layer(W)
 
-    return qm.expectation.PauliZ(0)
+    return qm.expval.PauliZ(0)
 
 
 def square_loss(labels, predictions):

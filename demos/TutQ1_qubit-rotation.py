@@ -11,28 +11,29 @@ from openqml.optimize import GradientDescentOptimizer
 dev = qm.device('projectq.simulator', wires=1)
 
 
-@qm.qfunc(dev)
-def circuit(variables):
+@qm.qnode(dev)
+def circuit(vars):
     """QNode"""
-    qm.RX(variables[0], [0])
-    qm.RY(variables[1], [0])
-    return qm.expectation.PauliZ(0)
+    qm.RX(vars[0], [0])
+    qm.RY(vars[1], [0])
+    return qm.expval.PauliZ(0)
 
 
-def objective(variables):
+def objective(vars):
     """Cost function to be minimized."""
-    return circuit(variables)
+    return circuit(vars)
 
 
-vars_init = np.array([0.001, 0.001])
-print('Initial rotation angles:', vars_init)
-print('Initial cost: {: 0.7f}'.format(objective(vars_init)))
+vars_init = np.array([0.01, 0.01])
 
-print('\nGradient descent Optimizer')
 o = GradientDescentOptimizer(0.5)
-variables = vars_init
+
+vars = vars_init
 for it in range(100):
-    variables = o.step(objective, variables)
-    if it % 5 == 0:
-        print('Cost after step {:5d}: {: 0.7f} | Variables: {}'
-              .format(it+1, objective(variables), variables))
+    vars = o.step(objective, vars)
+
+    if (it+1) % 5 == 0:
+        print('Cost after step {:5d}: {: 0.7f}'
+              .format(it+1, objective(vars)))
+
+print('\nOptimized rotation angles: {}'.format(vars))
