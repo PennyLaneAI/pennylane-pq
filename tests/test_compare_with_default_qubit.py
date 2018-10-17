@@ -42,43 +42,12 @@ class CompareWithDefaultQubitTest(BaseTest):
         self.devices = [DefaultQubit(wires=self.num_subsystems), ProjectQSimulator(wires=self.num_subsystems)]
         super().setUp()
 
-    # def test_rot(self):
-    #     for dev in self.devices:
-    #         @qm.qnode(dev)
-    #         def circuit():
-    #             qm.Rot(np.pi/8,np.pi/4,np.pi/16, 0)
-    #             qm.RZ(-np.pi/16, 0)
-    #             qm.RY(-np.pi/4, 0)
-    #             qm.RZ(-np.pi/8, 0)
-    #             return qm.expval.PauliX(0)
-
-    #         print("Result: "+str(circuit()))
-
     def test_simple_circuits(self):
         """Automatically compare the behavior on simple circuits"""
         self.logTestName()
 
         class IgnoreOperationException(Exception):
             pass
-
-        #fullargspec = inspect.getfullargspec(obj)
-        #print(fullargspec)
-        #print(fullargspec.args[1::])
-
-        # sig = inspect.signature(obj)
-
-        # if 'cutoff_dim' in sig.parameters:
-        #     bind = sig.bind_partial(wires=self.num_subsystems, cutoff_dim=5)
-        # else:
-        #     bind = sig.bind_partial(wires=self.num_subsystems)
-        # bind.apply_defaults()
-
-        # try:
-        #     dev = device(*bind.args, **bind.kwargs)
-
-        # except (ValueError, TypeError) as e:
-        #     print("The device "+plugin.name+" could not be instantiated with only the standard parameters because ("+str(e)+"). Skipping automatic test.")
-        #     return
 
         outputs = {}
 
@@ -91,7 +60,7 @@ class CompareWithDefaultQubitTest(BaseTest):
             # run all single operation circuits
             for operation in dev.gates:
                 for observable in dev.observables:
-                    print("Testing "+str(type(dev))+" with circuit consisting of : "+operation+" and "+observable)
+                    print("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by an "+observable+" Expectation")
 
                     @qm.qnode(dev)
                     def circuit():
@@ -105,16 +74,23 @@ class CompareWithDefaultQubitTest(BaseTest):
                             observable_class = getattr(openqml_pq.expval, observable)
 
                         if operation_class.num_wires > self.num_subsystems:
-                            raise IgnoreOperationException('Skipping in automatic test because of the operation '+operation+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
+                            raise IgnoreOperationException('Skipping in automatic test because the operation '+operation+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
                         if observable_class.num_wires > self.num_subsystems:
-                            raise IgnoreOperationException('Skipping in automatic test because of the observable '+observable+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
+                            raise IgnoreOperationException('Skipping in automatic test because the observable '+observable+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
 
                         if operation_class.par_domain == 'N':
                             operation_pars = rnd_int_pool[:operation_class.num_params]
                         elif operation_class.par_domain == 'R':
                             operation_pars = np.abs(rnd_float_pool[:operation_class.num_params]) #todo: some operations/expectations fail when parameters are negative (e.g. thermal state) but par_domain is not fine grained enough to capture this
                         elif operation_class.par_domain == 'A':
-                            raise IgnoreOperationException('Skipping because of the operation '+operation)#todo: For these operations it is impossible to guess the size and all constrains on the matrix
+                            if str(operation) == "QubitUnitary":
+                                operation_pars = [np.array([[1,0],[0,-1]])]
+                            elif str(operation) == "QubitStateVector":
+                                random_ket = np.random.uniform(-1,1,2**self.num_subsystems)
+                                random_ket = random_ket / np.linalg.norm(random_ket)
+                                operation_pars = [np.array(random_ket)]
+                            else:
+                                raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the operation '+operation)
                         else:
                             operation_pars = {}
 
@@ -123,7 +99,10 @@ class CompareWithDefaultQubitTest(BaseTest):
                         if observable_class.par_domain == 'R':
                             observable_pars = np.abs(rnd_float_pool[:observable_class.num_params]) #todo: some operations/expectations fail when parameters are negative (e.g. thermal state) but par_domain is not fine grained enough to capture this
                         elif observable_class.par_domain == 'A':
-                            raise IgnoreOperationException('Skipping because of the observable '+observable)#todo: For these expectations it is impossible to guess the size and all constrains on the matrix
+                            if str(observable) == "Hermitian":
+                                observable_pars = [np.array([[1,0],[0,0]])]
+                            else:
+                                raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the observable '+observable)
                         else:
                             observable_pars = {}
 
@@ -143,29 +122,11 @@ class CompareWithDefaultQubitTest(BaseTest):
 
                     except IgnoreOperationException as e:
                         print(e)
-                    # except Exception as e:
-                    #     print(e)#todo: currently it is good that this just prints all the errors to get a quick overview, but we either want an assert here or not catch the exception in the first place
-                    #     try:
-                    #         raise e
-                    #     except:
-                    #         pass
-                    #     traceback.print_exc()
 
         #if we could run the circuit on more than one device assert that both should have given the same output
         for (key,val) in outputs.items():
             if len(val) >= 2:
                 self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs of "+str(list(val.keys()))+" do not agree for a circuit consisting of "+str(key))
-
-
-    # def test_all_pauli_z(self):
-    #     for dev in [ProjectQSimulator(wires=self.num_subsystems)]:
-    #         @qm.qnode(dev)
-    #         def circuit():
-    #             qm.RZ(-np.pi/8, 0)
-    #             openqml_pq.AllPauliZ([0,1,2])
-    #             return qm.expval.PauliZ(0)
-
-    #         print("Result: "+str(circuit()))
 
 
 if __name__ == '__main__':
