@@ -177,18 +177,20 @@ class ProjectQSimulator(_ProjectQDevice):
     """An OpenQML device for the `ProjectQ Simulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_ backend.
 
     Args:
-       wires (int): The number of qubits of the device.
+       wires (int): The number of qubits of the device
 
     Keyword Args:
-      gate_fusion (bool): If True, gates are cached and only executed once a certain gate-size has been reached (only has an effect for the c++ simulator).
-      rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
+      gate_fusion (bool): If True, gates are cached and only executed once a certain gate-size has been reached (only has an effect for the C++ simulator)
+      rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default)
 
-    This device can, for example, be instantiated from OpemQML as follows:
+    This device can, for example, be instantiated from OpenQML as follows:
 
     .. code-block:: python
 
         import openqml as qm
         dev = qm.device('projectq.simulator', wires=XXX)
+
+    .. todo:: update these links to main library
 
     Supported OpenQML Operations:
       :class:`openqml.PauliX`,
@@ -204,22 +206,24 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`openqml.QubitStateVector`,
       :class:`openqml.Hadamard`,
       :class:`openqml.Rot`,
-      :class:`openqml.QubitUnitary`.
+      :class:`openqml.QubitUnitary`
 
     Supported OpenQML Expectations:
       :class:`openqml.PauliX`,
       :class:`openqml.PauliY`,
-      :class:`openqml.PauliZ`.
+      :class:`openqml.PauliZ`
+
+    .. todo:: do we want to update these to be available at top level of openqml_pq, as in the main library?
 
     Extra Operations:
       :class:`openqml_pq.ops.S`,
       :class:`openqml_pq.ops.T`,
       :class:`openqml_pq.ops.SqrtX`,
       :class:`openqml_pq.ops.SqrtSwap`,
-      :class:`openqml_pq.ops.AllPauliZ`.
+      :class:`openqml_pq.ops.AllPauliZ`
 
     Extra Expectations:
-      :class:`openqml_pq.expval.AllPauliZ`.
+      :class:`openqml_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.simulator'
@@ -261,22 +265,24 @@ class ProjectQIBMBackend(_ProjectQDevice):
     """An OpenQML device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
 
     Args:
-       wires (int): The number of qubits of the device.
+       wires (int): The number of qubits of the device
 
     Keyword Args:
       use_hardware (bool): If True, the code is run on the IBM quantum chip (instead of using the IBM simulator)
-      num_runs (int): Number of runs to collect statistics. (default is 1024)
-      verbose (bool): If True, statistics are printed, in addition to the measurement result being registered (at the end of the circuit).
+      num_runs (int): Number of runs to collect statistics (default is 1024)
+      verbose (bool): If True, statistics are printed, in addition to the measurement result being registered (at the end of the circuit)
       user (string): IBM Quantum Experience user name
       password (string): IBM Quantum Experience password
-      device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
-      retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
-    This device can, for example, be instantiated from OpemQML as follows:
+      device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if :code:`use_hardware` is set to True. Default is 'ibmqx4'.
+      retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out)
+    This device can, for example, be instantiated from OpenQML as follows:
 
     .. code-block:: python
 
         import openqml as qm
         dev = qm.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
+
+    .. todo:: update these links to main library
 
     Supported OpenQML Operations:
       :class:`openqml.PauliX`,
@@ -292,22 +298,24 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`openqml.QubitStateVector`,
       :class:`openqml.Hadamard`,
       :class:`openqml.Rot`,
-      :class:`openqml.QubitUnitary`.
+      :class:`openqml.QubitUnitary`
 
     Supported OpenQML Expectations:
       :class:`openqml.PauliX`,
       :class:`openqml.PauliY`,
-      :class:`openqml.PauliZ`.
+      :class:`openqml.PauliZ`
+
+    .. todo:: do we want to update these to be available at top level of openqml_pq, as in the main library?
 
     Extra Operations:
       :class:`openqml_pq.ops.S`,
       :class:`openqml_pq.ops.T`,
       :class:`openqml_pq.ops.SqrtX`,
       :class:`openqml_pq.ops.SqrtSwap`,
-      :class:`openqml_pq.ops.AllPauliZ`.
+      :class:`openqml_pq.ops.AllPauliZ`
 
     Extra Expectations:
-      :class:`openqml_pq.expval.AllPauliZ`.
+      :class:`openqml_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.ibmbackend'
@@ -360,9 +368,9 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     """An OpenQML device for the `ProjectQ ClassicalSimulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.ClassicalSimulator>`_ backend.
 
     Args:
-       wires (int): The number of qubits of the device.
+       wires (int): The number of qubits of the device
 
-    This device can, for example, be instantiated from OpemQML as follows:
+    This device can, for example, be instantiated from OpenQML as follows:
 
     .. code-block:: python
 
@@ -370,16 +378,16 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         dev = qm.device('projectq.classical', wires=XXX)
 
     Supported OpenQML Operations:
-      :class:`openqml.PauliX`.
+      :class:`openqml.PauliX`
 
     Supported OpenQML Expectations:
-      :class:`openqml.PauliZ`.
+      :class:`openqml.PauliZ`
 
     Extra Operations:
-      :class:`openqml_pq.ops.AllPauliZ`.
+      :class:`openqml_pq.ops.AllPauliZ`
 
     Extra Expectations:
-      :class:`openqml_pq.expval.AllPauliZ`.
+      :class:`openqml_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.classicalsimulator'
