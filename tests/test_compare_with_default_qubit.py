@@ -26,7 +26,7 @@ from openqml import numpy as np
 from openqml.plugins.default_qubit import DefaultQubit
 import openqml_pq
 import openqml_pq.expval
-from openqml_pq.devices import ProjectQSimulator
+from openqml_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator
 
 #import traceback #todo: remove once we no longer capture the exception further down
 
@@ -39,7 +39,7 @@ class CompareWithDefaultQubitTest(BaseTest):
 
     devices = None
     def setUp(self):
-        self.devices = [DefaultQubit(wires=self.num_subsystems), ProjectQSimulator(wires=self.num_subsystems)]
+        self.devices = [DefaultQubit(wires=self.num_subsystems), ProjectQSimulator(wires=self.num_subsystems), ProjectQClassicalSimulator(wires=self.num_subsystems)]
         super().setUp()
 
     def test_simple_circuits(self):
@@ -60,7 +60,7 @@ class CompareWithDefaultQubitTest(BaseTest):
             # run all single operation circuits
             for operation in dev.operations:
                 for observable in dev.expectations:
-                    print("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by an "+observable+" Expectation")
+                    print("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by a "+observable+" Expectation")
 
                     @qm.qnode(dev)
                     def circuit():

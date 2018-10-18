@@ -259,7 +259,7 @@ class ProjectQSimulator(_ProjectQDevice):
              #variance = [1 - e**2 for e in ev]
         else:
             raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
-            
+
         return ev
 
 class ProjectQIBMBackend(_ProjectQDevice):
@@ -342,7 +342,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         self.eng = pq.MainEngine(backend, engine_list=pq.setups.ibm.get_engine_list())
         super().reset()
 
-    def pre_expvals(self):
+    def pre_expval(self):
         pq.ops.All(pq.ops.Measure) | self.reg
         self.eng.flush()
 
@@ -393,7 +393,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     short_name = 'projectq.classicalsimulator'
     _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [XGate, CNOT]}
-    _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate, AllZGate]}
+    _expectation_map = {key:val for key, val in projectq_operation_map.items() if val in [ZGate, AllZGate]}
     _circuits = {}
     _backend_kwargs = []
 
@@ -406,4 +406,23 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         self.eng = pq.MainEngine(backend)
         super().reset()
 
-    #todo: shomehow the implementation of expval() in the classical simulator was lost!?!
+    def pre_expval(self):
+        pq.ops.All(pq.ops.Measure) | self.reg
+        self.eng.flush()
+
+    def expval(self, expectation, wires, par):
+        if expectation == 'PauliZ':
+            if isinstance(wires, int):
+                wire = wires
+            else:
+                wire = wires[0]
+
+            ev = 1 - 2*int(self.reg[wire])
+            #variance = 1 - ev**2
+        elif expectation == 'AllPauliZ':
+            ev = [ 1 - 2*int(self.reg[wire]) for wire in self.reg]
+            #variance = [1 - e**2 for e in ev]
+        else:
+            raise DeviceError("Expectation {} not supported by {}".format(observable, self.name))
+
+        return ev
