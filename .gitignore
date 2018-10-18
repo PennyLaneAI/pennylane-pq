@@ -3,3 +3,4 @@ OpenQML_PQ.egg-info/
 build/
 dist/
 __pycache__
+OpenQML_ProjectQ_Plugin.egg-info
