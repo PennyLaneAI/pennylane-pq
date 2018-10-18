@@ -83,11 +83,11 @@ class Rot(BasicProjectQGate):
     ProjectQ does not currently have an arbitrary single qubit rotation gate, so we provide a class that return a suitable combination of rotation gates assembled into a single gate from the constructor of this class.
     """
     def __new__(*par):
-        gate1 = pq.ops.Rz(par[1])
-        gate2 = pq.ops.Ry(par[2])
-        gate3 = pq.ops.Rz(par[3])
+        operation1 = pq.ops.Rz(par[1])
+        operation2 = pq.ops.Ry(par[2])
+        operation3 = pq.ops.Rz(par[3])
         rot_gate = BasicProjectQGate(par[0].__name__)
-        rot_gate.matrix = np.dot(gate3.matrix, gate2.matrix, gate1.matrix) #todo: fix depending on how https://github.com/XanaduAI/openqml/issues/87 is resolved.
+        rot_gate.matrix = np.dot(operation3.matrix, operation2.matrix, operation1.matrix)
         return rot_gate
 
 class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
@@ -99,3 +99,16 @@ class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
         unitary_gate = BasicProjectQGate(par[0].__name__)
         unitary_gate.matrix = np.matrix(par[1])
         return unitary_gate
+
+class BasisState(BasicProjectQGate): # pylint: disable=too-few-public-methods
+    """Class for the BasisState preparation.
+
+    ProjectQ does not currently have a dedicated gate for this, so we implement it here.
+    """
+    def __new__(*par):
+        assert isinstance(par[1], list)
+        qubits_for_flip = par[1]
+        number_of_state = sum([a*2**idx for idx, a in enumerate(qubits_for_flip)])
+        prep = pq.ops.StatePreparation([ 1 if i==number_of_state else 0 for i in range(2**len(qubits_for_flip))])
+        prep.name = par[0].__name__
+        return prep

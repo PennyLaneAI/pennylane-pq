@@ -18,9 +18,11 @@ Expectations
 .. currentmodule:: openqml_pq.expval
 
 .. todo::
-    They way to present the following depends on the whether the `extra_operations` machinery makes it into the final release.
+    They way to present the following depends on the whether the `extra_operations` machinery makes it into the initial release.
 
 In addition to the suitable default operations native to OpenQML, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native OpenQML operations when defining quantum functions:
+
+.. todo: class signature does not render properly in compiled docs. Check with Josh how to fix
 
 .. autosummary::
    AllPauliZ

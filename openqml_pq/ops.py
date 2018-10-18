@@ -18,9 +18,11 @@ Operations
 .. currentmodule:: openqml_pq.ops
 
 .. todo::
-    They way to present the following depends on the whether the `extra_operations` machinery makes it into the final release.
+    The way to present the following depends on the whether the `extra_operations` machinery makes it into the initial release.
 
 In addition to the suitable default operations native to OpenQML, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native OpenQML operations when defining quantum functions:
+
+.. todo:: these gates are not rendering correctly in the compiled docs. Check with Josh on how to fix
 
 .. autosummary::
    S
@@ -42,7 +44,7 @@ class S(Operation):
     .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
 
     Args:
-        wires (int): the subsystem the Operation acts on.
+        wires (int): the subsystem the gate acts on
     """
     num_params = 0
     num_wires = 1
@@ -55,7 +57,7 @@ class T(Operation):
     .. math:: T = \begin{bmatrix}1&0\\0&\exp(i \pi / 4)\end{bmatrix}
 
     Args:
-        wires (int): the subsystem the Operation acts on.
+        wires (int): the subsystem the gate acts on
     """
     num_params = 0
     num_wires = 1
@@ -67,7 +69,7 @@ class SqrtX(Operation):
     .. math:: SqrtX = \begin{bmatrix}1+i&1-i\\1-i&1+i\end{bmatrix}
 
     Args:
-        wires (int): the subsystem the Operation acts on.
+        wires (int): the subsystem the gate acts on
     """
     num_params = 0
     num_wires = 1
@@ -79,7 +81,7 @@ class SqrtSwap(Operation):
     .. math:: SqrtSwap = \begin{bmatrix}1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\0&(1-i)/2 &(1+i)/2&0\\0&0&0&1\end{bmatrix}
 
     Args:
-        wires (seq[int]): the subsystems the Operation acts on.
+        wires (seq[int]): the subsystems the gate acts on
     """
     num_params = 0
     num_wires = 2
@@ -90,7 +92,7 @@ class AllPauliZ(Operation):
 
     .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
 
-    .. todo:: Potentially remove this Operation depending on how https://github.com/XanaduAI/openqml/issues/61 is resolved.
+    .. todo:: Potentially remove this gate depending on how https://github.com/XanaduAI/openqml/issues/61 is resolved.
 
     """
     num_params = 0

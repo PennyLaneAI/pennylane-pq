@@ -1,5 +1,4 @@
 doc/_build/
-doc/_ext/
 OpenQML_PQ.egg-info/
 build/
 dist/
@@ -8,3 +7,5 @@ tests/__pycache__/
 .idea
 *.ipynp
 *.ipynb_checkpoints
+__pycache__
+
