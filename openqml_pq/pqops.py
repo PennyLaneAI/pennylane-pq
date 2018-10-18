@@ -106,9 +106,9 @@ class BasisState(BasicProjectQGate): # pylint: disable=too-few-public-methods
     ProjectQ does not currently have a dedicated gate for this, so we implement it here.
     """
     def __new__(*par):
-        assert isinstance(par[1], list)
-        qubits_for_flip = par[1]
+        qubits_for_flip = list(par[1])
         number_of_state = sum([a*2**idx for idx, a in enumerate(qubits_for_flip)])
-        prep = pq.ops.StatePreparation([ 1 if i==number_of_state else 0 for i in range(2**len(qubits_for_flip))])
+        state_ket = [ 1 if i==number_of_state else 0 for i in range(2**len(qubits_for_flip))]
+        prep = pq.ops.StatePreparation(state_ket)
         prep.name = par[0].__name__
         return prep
