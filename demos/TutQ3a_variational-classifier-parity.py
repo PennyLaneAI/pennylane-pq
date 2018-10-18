@@ -1,19 +1,14 @@
-"""Variational classifier
+"""Variational quantum classifier
 
-We train a variational classifier to learn the parity function
-from examples.
-
-REF: Farhi & Neven 2018
+This example shows that a variational quantum classifier
+can be optimized to reproduce the parity function.
 
 """
 
 import openqml as qm
 from openqml import numpy as onp
 import numpy as np
-from openqml.optimize import GradientDescentOptimizer
-
-from math import isclose
-
+from openqml.optimize import AdagradOptimizer
 
 dev = qm.device('default.qubit', wires=4)
 
@@ -39,8 +34,8 @@ def statepreparation(x):
 
 
 @qm.qnode(dev)
-def quantum_neural_net(weights, x=None):
-    """The quantum neural net variational circuit."""
+def circuit(weights, x=None):
+    """The circuit of the variational classifier."""
 
     statepreparation(x)
 
@@ -48,6 +43,15 @@ def quantum_neural_net(weights, x=None):
         layer(W)
 
     return qm.expval.PauliZ(0)
+
+
+def variational_classifier(vars, x=None, shape=None):
+    """The variational classifier."""
+
+    weights = onp.reshape(vars[1:], shape)
+    outp = circuit(weights, x=x)
+
+    return outp + vars[0]
 
 
 def square_loss(labels, predictions):
@@ -79,82 +83,51 @@ def accuracy(labels, predictions):
 
     loss = 0
     for l, p in zip(labels, predictions):
-        if isclose(l, p, abs_tol=1e-5):
+        if abs(l-p) < 1e-5:
             loss += 1
     loss = loss/len(labels)
 
     return loss
 
 
-def regularizer(weights):
-    """L2 Regularizer penalty on weights
-
-    Args:
-        weights (array[float]): The array of trainable weights
-    Returns:
-        float: regularization penalty
-    """
-    w_flat = weights.flatten()
-
-    # Compute the l2 norm
-    reg = onp.abs(onp.inner(w_flat, w_flat))
-
-    return reg
-
-
-def cost(weights, features=None, labels=None):
+def cost(weights, features, labels, shape=None):
     """Cost (error) function to be minimized."""
 
-    predictions = [quantum_neural_net(weights, x=f) for f in features]
+    predictions = [variational_classifier(weights, x=f, shape=shape) for f in features]
 
-    return square_loss(labels, predictions) # + regularizer
+    return square_loss(labels, predictions)
 
 
-# load Iris data and normalise feature vectors
+# load parity data
 data = np.loadtxt("parity.txt")
 X = data[:, :-1]
 Y = data[:, -1]
 Y = Y*2 - np.ones(len(Y))  # shift label from {0, 1} to {-1, 1}
 
-# split into training and validation set
-num_data = len(X)
-num_train = int(0.75*num_data)
-index = np.random.permutation(range(num_data))
-X_train = X[index[: num_train]]
-Y_train = Y[index[: num_train]]
-X_val = X[index[num_train: ]]
-Y_val = Y[index[num_train: ]]
-
 # initialize weight layers
 num_qubits = 4
-num_layers = 5
-weights0 = [np.random.randn(num_qubits, 3)] * num_layers
+num_layers = 2
+vars_init = 0.01 * np.random.randn(num_qubits*3*num_layers+1)
+shp = (num_layers, num_qubits, 3)
 
 # create optimizer
-o = GradientDescentOptimizer(0.1)
+o = AdagradOptimizer(0.5)
 batch_size = 5
 
 # train the variational classifier
-weights = np.array(weights0)
-for iteration in range(10):
+vars = vars_init
+for it in range(5):
 
     # Update the weights by one optimizer step
-    batch_index = np.random.randint(0, num_train, (batch_size, ))
-    X_train_batch = X_train[batch_index]
-    Y_train_batch = Y_train[batch_index]
-    weights = o.step(lambda w: cost(w, features=X_train_batch, labels=Y_train_batch), weights)
+    batch_index = np.random.randint(0, len(X), (batch_size, ))
+    X_batch = X[batch_index]
+    Y_batch = Y[batch_index]
+    vars = o.step(lambda v: cost(v, X, Y, shape=shp), vars)
 
-    # Compute predictions on train and validation set
-    predictions_train = [np.sign(quantum_neural_net(weights, x=x)) for x in X_train]
-    predictions_val = [np.sign(quantum_neural_net(weights, x=x)) for x in X_val]
+    # Compute accuracy
+    predictions = [np.sign(variational_classifier(vars, x=x, shape=shp)) for x in X]
+    acc = accuracy(Y, predictions)
 
-    print([quantum_neural_net(weights, x=x) for x in X_train])
-    print(Y_train)
-
-    # Compute accuracy on train and validation set
-    acc_train = accuracy(Y_train, predictions_train)
-    acc_val = accuracy(Y_val, predictions_val)
-
-    print("Iter: {:5d} | Cost: {:0.7f} | Acc train: {:0.7f} | Acc validation: {:0.7f} "
-          "".format(iteration, cost(weights, X, Y), acc_train, acc_val))
+    print("Iter: {:5d} | Cost: {:0.7f} | Accuracy: {:0.7f} "
+          "".format(it+1, cost(vars, X, Y), acc))
 
