@@ -149,7 +149,7 @@ class _ProjectQDevice(Device):
     def __str__(self):
         return super().__str__() +'Backend: ' +self.backend +'\n'
 
-    def post_expectations(self):
+    def post_expval(self):
         self._deallocate()
 
     def apply(self, operation_name, wires, par):
@@ -238,7 +238,7 @@ class ProjectQSimulator(_ProjectQDevice):
         self.eng = pq.MainEngine(backend)
         super().reset()
 
-    def pre_expectations(self):
+    def pre_expval(self):
         self.eng.flush(deallocate_qubits=False)
 
     def expval(self, expectation, wires, par):
@@ -334,7 +334,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         self.eng = pq.MainEngine(backend, engine_list=pq.setups.ibm.get_engine_list())
         super().reset()
 
-    def pre_expectations(self):
+    def pre_expval(self):
         pq.ops.All(pq.ops.Measure) | self.reg
         self.eng.flush()
 
