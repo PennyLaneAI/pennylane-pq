@@ -98,7 +98,7 @@ class _ProjectQDevice(Device):
        wires (int): The number of qubits of the device.
 
     Keyword Args for Simulator backend:
-      gate_fusion (bool): If True, gates are cached and only executed once a certain gate-size has been reached (only has an effect for the c++ simulator).
+      gate_fusion (bool): If True, operations are cached and only executed once a certain number of operations has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
 
     Keyword Args for IBMBackend backend:
@@ -152,13 +152,13 @@ class _ProjectQDevice(Device):
     def post_expval(self):
         self._deallocate()
 
-    def apply(self, gate_name, wires, par):
-        gate = self._operation_map[gate_name](*par)
+    def apply(self, operation_name, wires, par):
+        operation = self._operation_map[operation_name](*par)
         list = [self.reg[i] for i in wires]
-        if not isinstance(gate, pq.ops._metagates.Tensor):
-            gate | tuple(list) #pylint: disable=pointless-statement
+        if not isinstance(operation, pq.ops._metagates.Tensor):
+            operation | tuple(list) #pylint: disable=pointless-statement
         else:
-            gate | list #pylint: disable=pointless-statement
+            operation | list #pylint: disable=pointless-statement
 
     def _deallocate(self):
         """Deallocate all qubits to make ProjectQ happy
@@ -181,8 +181,8 @@ class ProjectQSimulator(_ProjectQDevice):
        wires (int): The number of qubits of the device
 
     Keyword Args:
-      gate_fusion (bool): If True, gates are cached and only executed once a certain gate-size has been reached (only has an effect for the C++ simulator)
-      rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default)
+      gate_fusion (bool): If True, operations are cached and only executed once a certain number of operations has been reached (only has an effect for the c++ simulator).
+      rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
 
     This device can, for example, be instantiated from OpenQML as follows:
 
@@ -258,8 +258,8 @@ class ProjectQSimulator(_ProjectQDevice):
              ev = [ self.eng.backend.get_expectation_value(pq.ops.QubitOperator("Z"+'0'), [qubit]) for qubit in self.reg]
              #variance = [1 - e**2 for e in ev]
         else:
-            raise DeviceError("Observable {} not supported by {}".format(expectation, self.name))
-
+            raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
+            
         return ev
 
 class ProjectQIBMBackend(_ProjectQDevice):
@@ -361,7 +361,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
             ev = [ ((2*sum(p for (state,p) in probabilities.items() if state[i] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[i] == '0')-1)) for i in range(len(self.reg)) ]
             #variance = [1 - e**2 for e in ev]
         else:
-            raise DeviceError("Observable {} not supported by {}".format(expectation, self.name))
+            raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
 
         return ev
 
@@ -405,3 +405,5 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self.kwargs))
         self.eng = pq.MainEngine(backend)
         super().reset()
+
+    #todo: shomehow the implementation of expval() in the classical simulator was lost!?!
