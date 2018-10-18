@@ -54,6 +54,9 @@ class CompareWithDefaultQubitTest(BaseTest):
 
         rnd_int_pool = np.random.randint(0, 5, 100)
         rnd_float_pool = np.random.randn(100)
+        random_ket = np.random.uniform(-1,1,2**self.num_subsystems)
+        random_ket = random_ket / np.linalg.norm(random_ket)
+        random_zero_one_pool = np.random.randint(2, size=100)
 
         for dev in self.devices:
 
@@ -86,9 +89,10 @@ class CompareWithDefaultQubitTest(BaseTest):
                             if str(operation) == "QubitUnitary":
                                 operation_pars = [np.array([[1,0],[0,-1]])]
                             elif str(operation) == "QubitStateVector":
-                                random_ket = np.random.uniform(-1,1,2**self.num_subsystems)
-                                random_ket = random_ket / np.linalg.norm(random_ket)
                                 operation_pars = [np.array(random_ket)]
+                            elif str(operation) == "BasisState":
+                                operation_pars = [random_zero_one_pool[:self.num_subsystems]]
+                                operation_class.num_wires = self.num_subsystems
                             else:
                                 raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the operation '+operation)
                         else:
@@ -100,7 +104,7 @@ class CompareWithDefaultQubitTest(BaseTest):
                             observable_pars = np.abs(rnd_float_pool[:observable_class.num_params]) #todo: some operations/expectations fail when parameters are negative (e.g. thermal state) but par_domain is not fine grained enough to capture this
                         elif observable_class.par_domain == 'A':
                             if str(observable) == "Hermitian":
-                                observable_pars = [np.array([[1,0],[0,0]])]
+                                observable_pars = [np.array([[1,1j],[-1j,0]])]
                             else:
                                 raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the observable '+observable)
                         else:

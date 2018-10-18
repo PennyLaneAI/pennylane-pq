@@ -138,10 +138,12 @@ class _ProjectQDevice(Device):
         self.kwargs = kwargs
         self.eng = None
         self.reg = None
+        self.first_operation = True
         self.reset() #the actual initialization is done in reset()
 
     def reset(self):
         self.reg = self.eng.allocate_qureg(self.num_wires)
+        self.first_operation = True
 
     def __repr__(self):
         return super().__repr__() +'Backend: ' +self.backend +'\n'
@@ -154,11 +156,14 @@ class _ProjectQDevice(Device):
 
     def apply(self, operation_name, wires, par):
         operation = self._operation_map[operation_name](*par)
+        if isinstance(operation, pq.ops._state_prep.StatePreparation) and not self.first_operation:
+            raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation_name, self.short_name))
+        self.first_operation = False
+
         list = [self.reg[i] for i in wires]
-        if not isinstance(operation, pq.ops._metagates.Tensor):
-            operation | tuple(list) #pylint: disable=pointless-statement
-        else:
-            operation | list #pylint: disable=pointless-statement
+        if isinstance(operation, (pq.ops._metagates.ControlledGate, pq.ops._gates.SqrtSwapGate, pq.ops._gates.SwapGate)):
+            list = tuple(list)
+        operation | list #pylint: disable=pointless-statement
 
     def _deallocate(self):
         """Deallocate all qubits to make ProjectQ happy
@@ -259,7 +264,7 @@ class ProjectQSimulator(_ProjectQDevice):
              #variance = [1 - e**2 for e in ev]
         else:
             raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
-            
+
         return ev
 
 class ProjectQIBMBackend(_ProjectQDevice):
@@ -342,7 +347,8 @@ class ProjectQIBMBackend(_ProjectQDevice):
         self.eng = pq.MainEngine(backend, engine_list=pq.setups.ibm.get_engine_list())
         super().reset()
 
-    def pre_expvals(self):
+
+    def pre_expval(self):
         pq.ops.All(pq.ops.Measure) | self.reg
         self.eng.flush()
 
