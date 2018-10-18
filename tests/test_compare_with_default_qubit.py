@@ -58,8 +58,8 @@ class CompareWithDefaultQubitTest(BaseTest):
         for dev in self.devices:
 
             # run all single operation circuits
-            for operation in dev.gates:
-                for observable in dev.observables:
+            for operation in dev.operations:
+                for observable in dev.expectations:
                     print("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by an "+observable+" Expectation")
 
                     @qm.qnode(dev)

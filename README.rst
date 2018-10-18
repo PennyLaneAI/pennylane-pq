@@ -1,7 +1,7 @@
 OpenQML ProjectQ Plugin
 #######################
 
-OpenQML is a Python quantum machine learning library by Xanadu Inc. This plugin allows to use both the software and hardware backends of ProjectQ as devices for quantum machine learning with OpenQML.
+OpenQML is a Python quantum machine learning library by Xanadu Inc. This plugin opens up both the software and hardware backends of ProjectQ to be used as devices for quantum machine learning with OpenQML.
 
 
 Installation
@@ -27,14 +27,14 @@ in the source folder.
 Getting started
 ===============
 
-You can instantiate a 'projectq.simulator' device for OpenQML with:
+You can instantiate a :code:`'projectq.simulator'` device for OpenQML with:
 
 .. code-block:: python
 
     import openqml as qm
     dev = qm.device('projectq.simulator', wires=2)
 
-This device can then be used just like other devices for the definition and evaluation of QNodes within OpenQML. As simple quantum function that returns the expectation value of a measurement and depends on three classical input parameters would:
+This device can then be used just like other devices for the definition and evaluation of QNodes within OpenQML. A simple quantum function that returns the expectation value of a measurement and depends on three classical input parameters would look like:
 
 .. code-block:: python
 
@@ -52,7 +52,7 @@ You can then execute the circuit like any other function to get the quantum mech
 
 	circuit(0.2, 0.1, 0.3)
 
-Running your quantum machine learning code on an IBM Quantum Experience simulator or even a real hardware chip is just as easy. Instead of the device above, you would instantiate a 'projectq.ibm' device by giving your IBM Quantum Experience username and password:
+Running your code on an IBM Quantum Experience simulator or even a real hardware chip is just as easy. Instead of the device above, you would instantiate a :code:`'projectq.ibm'` device by giving your IBM Quantum Experience username and password:
 
 .. code-block:: python
 
@@ -65,11 +65,11 @@ How to cite
 
 .. [//]: # (.. include:: doc/howtocite.rst)
 
-.. todo:: change reference
+.. todo:: change reference and link
 
-If you are doing research using OpenQML, please cite `our whitepaper <https://arxiv.org/abs/1804.03159>`_:
+If you are doing research using OpenQML, please cite `our whitepaper <https://arxiv.org/abs/XXXX.XXXXX>`_:
 
-  Nathan Killoran, Josh Izaac, Nicolás Quesada, Ville Bergholm, Matthew Amy, and Christian Weedbrook. Strawberry Fields: A Software Platform for Photonic Quantum Computing. *arXiv*, 2018. arXiv:1804.03159
+  Authors. OpenQML. *arXiv*, 2018. arXiv:XXXX.XXXXX
 
 
 Contributing
@@ -83,6 +83,8 @@ We also encourage bug reports, suggestions for new features and enhancements, an
 
 Authors
 =======
+
+.. todo:: confirm author list
 
 Christian Gogolin, Ville Bergholm, Maria Schuld, and Nathan Killoran.
 
