@@ -42,13 +42,10 @@ class BasisStateTest(BaseTest):
         for bits_to_flip in [np.array([0,0,0,0]), np.array([0,1,1,0]), np.array([1,1,1,0]), np.array([1,1,1,1])]:
             @qm.qnode(dev)
             def circuit():
-                qm.BasisState(bits_to_flip, wires=range(self.num_subsystems))
-                #return (qm.expval.PauliZ(i) for i in range(self.num_subsystems))
+                qm.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
                 return qm.expval.PauliZ(0), qm.expval.PauliZ(1), qm.expval.PauliZ(2), qm.expval.PauliZ(3)
 
-            print(bits_to_flip)
-            print(circuit())
-            #self.assertAllAlmostEqual(bits_to_flip, np.array(circuit()), delta=self.tol)
+            self.assertAllAlmostEqual([1]*self.num_subsystems-2*bits_to_flip, np.array(circuit()), delta=self.tol)
 
 if __name__ == '__main__':
     print('Testing OpenQML ProjectQ Plugin version ' + qm.version() + ', BasisState operation.')
