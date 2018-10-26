@@ -19,7 +19,7 @@ import openqml_pq
 # defaults
 DEVICE = os.environ['DEVICE'] if 'DEVICE' in os.environ and os.environ['DEVICE'] is not None else "all"
 OPTIMIZER = "GradientDescentOptimizer"
-if DEVICE == "all" or DEVICE == "ibmbackend":
+if DEVICE == "all" or DEVICE == "ibm":
     TOLERANCE = 3e-2
 else:
     TOLERANCE = 1e-3
@@ -44,7 +44,7 @@ def get_commandline_args():
       argparse.Namespace: parsed arguments in a namespace container
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--device',   type=str,   default=DEVICE,   help='Device(s) to use for tests.', choices=['simulator', 'ibm', 'classicalsimulator', 'all'])
+    parser.add_argument('-d', '--device',   type=str,   default=DEVICE,   help='Device(s) to use for tests.', choices=['simulator', 'ibm', 'classical', 'all'])
     parser.add_argument('-t', '--tolerance', type=float, default=TOLERANCE, help='Numerical tolerance for equality tests.')
     parser.add_argument("--user", help="IBM Quantum Experience user name")
     parser.add_argument("--password", help="IBM Quantum Experience password")

@@ -61,7 +61,3 @@ coverage: coverage-simulator
 coverage-%:
 	@echo "Generating coverage report for $(subst coverage-,,$@) backend..."
 	export BACKEND=$(subst coverage-,,$@) && $(COVERAGE) $(COPTS) $(TESTRUNNER)
-
-batch-coverage-%:
-	@echo "Generating coverage report for $(subst batch-coverage-,,$@) backend in batch mode..."
-	export BACKEND=$(subst batch-coverage-,,$@) && export BATCHED=1 && $(COVERAGE) $(COPTS) $(TESTRUNNER)
