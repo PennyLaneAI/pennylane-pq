@@ -26,11 +26,8 @@ This plugin offers access to the following ProjectQ backends by providing corres
    ProjectQIBMBackend
    ProjectQClassicalSimulator
 
-.. todo::
-   Is there a way to do generate the following documentation more automatically?
+.. todo:: Is there a nice way to link to the documentation of the OpenQML native Operations/Expectations? I would like to do this in the description of the supported operations below. Probably http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html is a good solution, but for that the documentation of core OpenQML must be online first.
 
-.. todo::
-   Is there a nice way to link to the documentation of the OpenQML native Operations/Expectations?
 
 See below for a description of the devices and the supported Operations and Expectations.
 
@@ -138,10 +135,12 @@ class _ProjectQDevice(Device):
         self.kwargs = kwargs
         self.eng = None
         self.reg = None
+        self.first_operation = True
         self.reset() #the actual initialization is done in reset()
 
     def reset(self):
         self.reg = self.eng.allocate_qureg(self.num_wires)
+        self.first_operation = True
 
     def __repr__(self):
         return super().__repr__() +'Backend: ' +self.backend +'\n'
@@ -154,11 +153,14 @@ class _ProjectQDevice(Device):
 
     def apply(self, operation_name, wires, par):
         operation = self._operation_map[operation_name](*par)
+        if isinstance(operation, pq.ops._state_prep.StatePreparation) and not self.first_operation:
+            raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation_name, self.short_name))
+        self.first_operation = False
+
         list = [self.reg[i] for i in wires]
-        if not isinstance(operation, pq.ops._metagates.Tensor):
-            operation | tuple(list) #pylint: disable=pointless-statement
-        else:
-            operation | list #pylint: disable=pointless-statement
+        if isinstance(operation, (pq.ops._metagates.ControlledGate, pq.ops._gates.SqrtSwapGate, pq.ops._gates.SwapGate)):
+            list = tuple(list)
+        operation | list #pylint: disable=pointless-statement
 
     def _deallocate(self):
         """Deallocate all qubits to make ProjectQ happy
@@ -191,8 +193,6 @@ class ProjectQSimulator(_ProjectQDevice):
         import openqml as qm
         dev = qm.device('projectq.simulator', wires=XXX)
 
-    .. todo:: update these links to main library
-
     Supported OpenQML Operations:
       :class:`openqml.PauliX`,
       :class:`openqml.PauliY`,
@@ -214,17 +214,19 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`openqml.PauliY`,
       :class:`openqml.PauliZ`
 
-    .. todo:: do we want to update these to be available at top level of openqml_pq, as in the main library?
-
     Extra Operations:
-      :class:`openqml_pq.ops.S`,
-      :class:`openqml_pq.ops.T`,
-      :class:`openqml_pq.ops.SqrtX`,
-      :class:`openqml_pq.ops.SqrtSwap`,
-      :class:`openqml_pq.ops.AllPauliZ`
+      :class:`openqml_pq.S <openqml_pq.ops.S>`,
+      :class:`openqml_pq.S <openqml_pq.ops.S>`,
+      :class:`openqml_pq.T <openqml_pq.ops.T>`,
+      :class:`openqml_pq.SqrtX <openqml_pq.ops.SqrtX>`,
+      :class:`openqml_pq.SqrtSwap <openqml_pq.ops.SqrtSwap>`
 
-    Extra Expectations:
-      :class:`openqml_pq.expval.AllPauliZ`
+    ..
+       :class:`openqml_pq.AllPauliZ <openqml_pq.ops.AllPauliZ>`
+
+       Extra Expectations:
+         :class:`openqml_pq.expval.AllPauliZ`
+
     """
 
     short_name = 'projectq.simulator'
@@ -259,11 +261,13 @@ class ProjectQSimulator(_ProjectQDevice):
              #variance = [1 - e**2 for e in ev]
         else:
             raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
-            
+
         return ev
 
 class ProjectQIBMBackend(_ProjectQDevice):
     """An OpenQML device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
+
+    .. note:: This device computes expectation values by averaging over a finite number of runs of the quantum circuit. Irrespective of whether this is done on real quantum hardware, or on the IBM simulator, this means that expectation values (and therefore also gradients) will have a finite accuracy and fluctuate from run to run.
 
     Args:
        wires (int): The number of qubits of the device
@@ -283,7 +287,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         import openqml as qm
         dev = qm.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
 
-    .. todo:: update these links to main library
+    .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your OpenQML configuration file.
 
     Supported OpenQML Operations:
       :class:`openqml.PauliX`,
@@ -306,17 +310,17 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`openqml.PauliY`,
       :class:`openqml.PauliZ`
 
-    .. todo:: do we want to update these to be available at top level of openqml_pq, as in the main library?
-
     Extra Operations:
-      :class:`openqml_pq.ops.S`,
-      :class:`openqml_pq.ops.T`,
-      :class:`openqml_pq.ops.SqrtX`,
-      :class:`openqml_pq.ops.SqrtSwap`,
-      :class:`openqml_pq.ops.AllPauliZ`
+      :class:`openqml_pq.S <openqml_pq.ops.S>`,
+      :class:`openqml_pq.T <openqml_pq.ops.T>`,
+      :class:`openqml_pq.SqrtX <openqml_pq.ops.SqrtX>`,
+      :class:`openqml_pq.SqrtSwap <openqml_pq.ops.SqrtSwap>`,
 
-    Extra Expectations:
-      :class:`openqml_pq.expval.AllPauliZ`
+    ..
+       :class:`openqml_pq.AllPauliZ <openqml_pq.ops.AllPauliZ>`
+
+       Extra Expectations:
+         :class:`openqml_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.ibmbackend'
@@ -342,7 +346,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         self.eng = pq.MainEngine(backend, engine_list=pq.setups.ibm.get_engine_list())
         super().reset()
 
-    def pre_expvals(self):
+    def pre_expval(self):
         pq.ops.All(pq.ops.Measure) | self.reg
         self.eng.flush()
 
@@ -355,10 +359,10 @@ class ProjectQIBMBackend(_ProjectQDevice):
             else:
                 wire = wires[0]
 
-            ev = ((2*sum(p for (state,p) in probabilities.items() if state[wire] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[wire] == '0')-1))
+            ev = (1-(2*sum(p for (state,p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[wire] == '0')))/2
             #variance = 1 - ev**2
         elif expectation == 'AllPauliZ':
-            ev = [ ((2*sum(p for (state,p) in probabilities.items() if state[i] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[i] == '0')-1)) for i in range(len(self.reg)) ]
+            ev = [ ((1-2*sum(p for (state,p) in probabilities.items() if state[i] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[i] == '0')))/2 for i in range(len(self.reg)) ]
             #variance = [1 - e**2 for e in ev]
         else:
             raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
@@ -379,21 +383,23 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         dev = qm.device('projectq.classical', wires=XXX)
 
     Supported OpenQML Operations:
-      :class:`openqml.PauliX`
+      :class:`openqml.PauliX`,
+      :class:`openqml.CNOT`
 
     Supported OpenQML Expectations:
       :class:`openqml.PauliZ`
 
-    Extra Operations:
-      :class:`openqml_pq.ops.AllPauliZ`
+    ..
+       Extra Operations:
+         :class:`openqml_pq.AllPauliZ <openqml_pq.ops.AllPauliZ>`
 
-    Extra Expectations:
-      :class:`openqml_pq.expval.AllPauliZ`
+       Extra Expectations:
+         :class:`openqml_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.classicalsimulator'
     _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [XGate, CNOT]}
-    _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate, AllZGate]}
+    _expectation_map = {key:val for key, val in projectq_operation_map.items() if val in [ZGate, AllZGate]}
     _circuits = {}
     _backend_kwargs = []
 
@@ -406,4 +412,23 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         self.eng = pq.MainEngine(backend)
         super().reset()
 
-    #todo: shomehow the implementation of expval() in the classical simulator was lost!?!
+    def pre_expval(self):
+        pq.ops.All(pq.ops.Measure) | self.reg
+        self.eng.flush()
+
+    def expval(self, expectation, wires, par):
+        if expectation == 'PauliZ':
+            if isinstance(wires, int):
+                wire = wires
+            else:
+                wire = wires[0]
+
+            ev = 1 - 2*int(self.reg[wire])
+            #variance = 1 - ev**2
+        elif expectation == 'AllPauliZ':
+            ev = [ 1 - 2*int(self.reg[wire]) for wire in self.reg]
+            #variance = [1 - e**2 for e in ev]
+        else:
+            raise DeviceError("Expectation {} not supported by {}".format(observable, self.name))
+
+        return ev

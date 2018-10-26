@@ -19,7 +19,7 @@ import openqml_pq
 # defaults
 BACKEND = "simulator"
 OPTIMIZER = "GradientDescentOptimizer"
-TOLERANCE = 1e-3
+TOLERANCE = 2e-2
 BATCH_SIZE = 2
 BATCHED = False
 MIXED = False
