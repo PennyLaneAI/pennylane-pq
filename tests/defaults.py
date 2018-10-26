@@ -19,8 +19,10 @@ import openqml_pq
 # defaults
 DEVICE = os.environ['DEVICE'] if os.environ['DEVICE'] is not None else "all"
 OPTIMIZER = "GradientDescentOptimizer"
-TOLERANCE = 2e-2
-
+if DEVICE == "all" or DEVICE == "ibmbackend":
+    TOLERANCE = 3e-2
+else:
+    TOLERANCE = 1e-3
 
 
 # set up logging
