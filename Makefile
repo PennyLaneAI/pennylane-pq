@@ -48,15 +48,11 @@ docs:
 clean-docs:
 	make -C doc clean
 
-test: test-simulator
+test: test-all
 
 test-%:
-	@echo "Testing $(subst test-,,$@) backend..."
-	export BACKEND=$(subst test-,,$@) && $(PYTHON) $(TESTRUNNER)
-
-batch-test-%:
-	@echo "Testing $(subst batch-test-,,$@) backend in batch mode..."
-	export BACKEND=$(subst batch-test-,,$@) && export BATCHED=1 && $(PYTHON) $(TESTRUNNER)
+	@echo "Testing device: $(subst test-,,$@)..."
+	export DEVICE=$(subst test-,,$@) && $(PYTHON) $(TESTRUNNER)
 
 coverage: coverage-simulator
 	$(COVERAGE) report
