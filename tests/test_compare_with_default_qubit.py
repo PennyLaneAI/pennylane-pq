@@ -24,9 +24,10 @@ from defaults import openqml as qm, BaseTest
 from openqml import Device
 from openqml import numpy as np
 from openqml.plugins.default_qubit import DefaultQubit
+import openqml
 import openqml_pq
 import openqml_pq.expval
-from openqml_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator
+from openqml_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 
 #import traceback #todo: remove once we no longer capture the exception further down
 
@@ -39,7 +40,17 @@ class CompareWithDefaultQubitTest(BaseTest):
 
     devices = None
     def setUp(self):
-        self.devices = [DefaultQubit(wires=self.num_subsystems), ProjectQSimulator(wires=self.num_subsystems), ProjectQClassicalSimulator(wires=self.num_subsystems)]
+        self.devices = [
+            DefaultQubit(wires=self.num_subsystems),
+            ProjectQSimulator(wires=self.num_subsystems),
+            ProjectQClassicalSimulator(wires=self.num_subsystems)
+        ]
+        ibm_options = openqml.default_config['projectq.ibmbackend']
+        if "user" in ibm_options and "password" in ibm_options:
+            self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
+        else:
+            log.info("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the openqml configuration file.")
+
         super().setUp()
 
     def test_simple_circuits(self):
@@ -50,7 +61,6 @@ class CompareWithDefaultQubitTest(BaseTest):
             pass
 
         outputs = {}
-
 
         rnd_int_pool = np.random.randint(0, 5, 100)
         rnd_float_pool = np.random.randn(100)
@@ -63,7 +73,7 @@ class CompareWithDefaultQubitTest(BaseTest):
             # run all single operation circuits
             for operation in dev.operations:
                 for observable in dev.expectations:
-                    print("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by a "+observable+" Expectation")
+                    log.info("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by a "+observable+" Expectation")
 
                     @qm.qnode(dev)
                     def circuit():
@@ -125,16 +135,18 @@ class CompareWithDefaultQubitTest(BaseTest):
                         outputs[(operation, observable)][type(dev)] = output
 
                     except IgnoreOperationException as e:
-                        print(e)
+                        log.info(e)
 
         #if we could run the circuit on more than one device assert that both should have given the same output
         for (key,val) in outputs.items():
             if len(val) >= 2:
-                self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs of "+str(list(val.keys()))+" do not agree for a circuit consisting of "+str(key))
+                self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs "+str(list(val.values()))+" of devices "+str(list(val.keys()))+" do not agree for a circuit consisting of a "+str(key[0])+" Operation followed by a "+str(key[0])+" Expectation." )
+                #print(str(list(val.keys()))+" "+str(key))
+                #print(str(list(val.values())))
 
 
 if __name__ == '__main__':
-    print('Testing OpenQML ProjectQ Plugin version ' + qm.version() + ', Device class.')
+    log.info('Testing OpenQML ProjectQ Plugin version ' + qm.version() + ', Device class.')
     # run the tests in this file
     suite = unittest.TestSuite()
     for t in (CompareWithDefaultQubitTest, ):
