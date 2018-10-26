@@ -50,9 +50,8 @@ o = GradientDescentOptimizer(0.5)
 
 # minimize cost
 vars = np.array([0.3, 2.5])
-for it in range(20):
+for it in range(60):
     vars = o.step(cost, vars)
 
     print('Cost after step {:5d}: {: .7f} | Variables: [{: .5f},{: .5f}]'
           .format(it+1, cost(vars), vars[0], vars[1]))
-
