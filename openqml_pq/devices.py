@@ -27,10 +27,7 @@ This plugin offers access to the following ProjectQ backends by providing corres
    ProjectQClassicalSimulator
 
 .. todo::
-   Is there a way to do generate the following documentation more automatically?
-
-.. todo::
-   Is there a nice way to link to the documentation of the OpenQML native Operations/Expectations?
+   Is there a nice way to link to the documentation of the OpenQML native Operations/Expectations? I would like to do this in the description of the supported operations below. Probably http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html is a good solution, but for that the documentation of core OpenQML must be online first.
 
 See below for a description of the devices and the supported Operations and Expectations.
 
@@ -196,8 +193,6 @@ class ProjectQSimulator(_ProjectQDevice):
         import openqml as qm
         dev = qm.device('projectq.simulator', wires=XXX)
 
-    .. todo:: update these links to main library
-
     Supported OpenQML Operations:
       :class:`openqml.PauliX`,
       :class:`openqml.PauliY`,
@@ -219,7 +214,7 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`openqml.PauliY`,
       :class:`openqml.PauliZ`
 
-    .. todo:: do we want to update these to be available at top level of openqml_pq, as in the main library?
+    .. todo:: The extra operations are accessible (and should be accessed) through the top level openqml_pq namespace, i.e., as openqml_pq.S(). How can I make them appear under this namespace, but still link to the correct page in the documentation?
 
     Extra Operations:
       :class:`openqml_pq.ops.S`,
@@ -270,6 +265,8 @@ class ProjectQSimulator(_ProjectQDevice):
 class ProjectQIBMBackend(_ProjectQDevice):
     """An OpenQML device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
 
+    .. note:: This device computes expectation values by averaging over a finite number of runs of the quantum circuit. Irrespective of whether this is done on real quantum hardware, or on the IBM simulator, this means that expectation values (and therefore also gradients) will have a finite accuracy and fluctuate from run to run.
+
     Args:
        wires (int): The number of qubits of the device
 
@@ -288,7 +285,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         import openqml as qm
         dev = qm.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
 
-    .. todo:: update these links to main library
+    .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your OpenQML configuration file.
 
     Supported OpenQML Operations:
       :class:`openqml.PauliX`,
@@ -311,7 +308,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`openqml.PauliY`,
       :class:`openqml.PauliZ`
 
-    .. todo:: do we want to update these to be available at top level of openqml_pq, as in the main library?
+    .. todo:: The extra operations are accessible (and should be accessed) through the top level openqml_pq namespace, i.e., as openqml_pq.S(). How can I make them appear under this namespace, but still link to the correct page in the documentation?
 
     Extra Operations:
       :class:`openqml_pq.ops.S`,
@@ -360,10 +357,10 @@ class ProjectQIBMBackend(_ProjectQDevice):
             else:
                 wire = wires[0]
 
-            ev = ((2*sum(p for (state,p) in probabilities.items() if state[wire] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[wire] == '0')-1))
+            ev = (1-(2*sum(p for (state,p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[wire] == '0')))/2
             #variance = 1 - ev**2
         elif expectation == 'AllPauliZ':
-            ev = [ ((2*sum(p for (state,p) in probabilities.items() if state[i] == '1')-1)-(2*sum(p for (state,p) in probabilities.items() if state[i] == '0')-1)) for i in range(len(self.reg)) ]
+            ev = [ ((1-2*sum(p for (state,p) in probabilities.items() if state[i] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[i] == '0')))/2 for i in range(len(self.reg)) ]
             #variance = [1 - e**2 for e in ev]
         else:
             raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
