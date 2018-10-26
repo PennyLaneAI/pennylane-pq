@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import openqml_pq
 
 # defaults
-DEVICE = os.environ['DEVICE'] if os.environ['DEVICE'] is not None else "all"
+DEVICE = os.environ['DEVICE'] if 'DEVICE' in os.environ and os.environ['DEVICE'] is not None else "all"
 OPTIMIZER = "GradientDescentOptimizer"
 if DEVICE == "all" or DEVICE == "ibmbackend":
     TOLERANCE = 3e-2

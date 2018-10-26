@@ -43,7 +43,6 @@ class CompareWithDefaultQubitTest(BaseTest):
         super().setUp()
 
         self.devices = [DefaultQubit(wires=self.num_subsystems)]
-
         if self.args.device == 'simulator' or self.args.device == 'all':
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems))
         if self.args.device == 'ibmbackend' or self.args.device == 'all':

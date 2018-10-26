@@ -82,9 +82,9 @@ projectq_operation_map = {
     'T': TGate,
     'SqrtX': SqrtXGate,
     'SqrtSwap': SqrtSwapGate,
-    #operations/expectations of ProjectQ that do work with OpenQML
+    #operations/expectations of ProjectQ that do not work with OpenQML
 #    'AllPauliZ': AllZGate, #todo: enable once https://github.com/XanaduAI/openqml/issues/61 is resolved
-    #operations/expectations of OpenQML that do work with ProjectQ
+    #operations/expectations of OpenQML that do not work with ProjectQ
 #    'QubitStateVector': StatePreparation,
 }
 
@@ -207,7 +207,8 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`openqml.QubitStateVector`,
       :class:`openqml.Hadamard`,
       :class:`openqml.Rot`,
-      :class:`openqml.QubitUnitary`
+      :class:`openqml.QubitUnitary`,
+      :class:`openqml.BasisState`
 
     Supported OpenQML Expectations:
       :class:`openqml.PauliX`,
@@ -303,7 +304,8 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`openqml.QubitStateVector`,
       :class:`openqml.Hadamard`,
       :class:`openqml.Rot`,
-      :class:`openqml.QubitUnitary`
+      :class:`openqml.QubitUnitary`,
+      :class:`openqml.BasisState`
 
     Supported OpenQML Expectations:
       :class:`openqml.PauliX`,
@@ -324,7 +326,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
     """
 
     short_name = 'projectq.ibmbackend'
-    _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT, CZ]}
+    _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT, CZ, BasisState]}
     _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate, AllZGate]}
     _circuits = {}
     _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device', 'retrieve_execution']
