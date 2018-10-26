@@ -40,18 +40,19 @@ class CompareWithDefaultQubitTest(BaseTest):
 
     devices = None
     def setUp(self):
-        self.devices = [
-            DefaultQubit(wires=self.num_subsystems),
-            ProjectQSimulator(wires=self.num_subsystems),
-            ProjectQClassicalSimulator(wires=self.num_subsystems)
-        ]
-        ibm_options = openqml.default_config['projectq.ibmbackend']
-        if "user" in ibm_options and "password" in ibm_options:
-            self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
-        else:
-            log.info("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the openqml configuration file.")
-
         super().setUp()
+
+        self.devices = [DefaultQubit(wires=self.num_subsystems)]
+        if self.args.device == 'simulator' or self.args.device == 'all':
+            self.devices.append(ProjectQSimulator(wires=self.num_subsystems))
+        if self.args.device == 'ibm' or self.args.device == 'all':
+            ibm_options = openqml.default_config['projectq.ibm']
+            if "user" in ibm_options and "password" in ibm_options:
+                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
+            else:
+                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the openqml configuration file.")
+        if self.args.device == 'classical' or self.args.device == 'all':
+            self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems))
 
     def test_simple_circuits(self):
         """Automatically compare the behavior on simple circuits"""
@@ -141,8 +142,6 @@ class CompareWithDefaultQubitTest(BaseTest):
         for (key,val) in outputs.items():
             if len(val) >= 2:
                 self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs "+str(list(val.values()))+" of devices "+str(list(val.keys()))+" do not agree for a circuit consisting of a "+str(key[0])+" Operation followed by a "+str(key[0])+" Expectation." )
-                #print(str(list(val.keys()))+" "+str(key))
-                #print(str(list(val.values())))
 
 
 if __name__ == '__main__':

@@ -17,12 +17,12 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import openqml_pq
 
 # defaults
-BACKEND = "simulator"
+DEVICE = os.environ['DEVICE'] if 'DEVICE' in os.environ and os.environ['DEVICE'] is not None else "all"
 OPTIMIZER = "GradientDescentOptimizer"
-TOLERANCE = 2e-2
-BATCH_SIZE = 2
-BATCHED = False
-MIXED = False
+if DEVICE == "all" or DEVICE == "ibm":
+    TOLERANCE = 3e-2
+else:
+    TOLERANCE = 1e-3
 
 
 # set up logging
@@ -44,22 +44,11 @@ def get_commandline_args():
       argparse.Namespace: parsed arguments in a namespace container
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--backend',   type=str,   default=BACKEND,   help='Backend to use for tests.', choices=['simulator', 'ibm'])
+    parser.add_argument('-d', '--device',   type=str,   default=DEVICE,   help='Device(s) to use for tests.', choices=['simulator', 'ibm', 'classical', 'all'])
     parser.add_argument('-t', '--tolerance', type=float, default=TOLERANCE, help='Numerical tolerance for equality tests.')
-    parser.add_argument('--batch_size',      type=int,   default=BATCH_SIZE,         help='Batch size.')
     parser.add_argument("--user", help="IBM Quantum Experience user name")
     parser.add_argument("--password", help="IBM Quantum Experience password")
     parser.add_argument("--optimizer", default=OPTIMIZER, choices=openqml.optimize.__all__, help="optimizer to use")
-
-    batch_parser = parser.add_mutually_exclusive_group(required=False)
-    batch_parser.add_argument('--batched', dest='batched', action='store_true')
-    batch_parser.add_argument('--no-batched', dest='batched', action='store_false')
-    parser.set_defaults(batched=BATCHED)
-
-    mixed_parser = parser.add_mutually_exclusive_group(required=False)
-    mixed_parser.add_argument('--mixed', dest='mixed', action='store_true')
-    mixed_parser.add_argument('--pure', dest='mixed', action='store_false')
-    parser.set_defaults(mixed=MIXED)
 
     # HACK: We only parse known args to enable unittest test discovery without parsing errors.
     args, _ = parser.parse_known_args()
@@ -72,21 +61,11 @@ class BaseTest(unittest.TestCase):
     """ABC for tests.
     Encapsulates the user-given commandline parameters for the test run as class attributes.
     """
-    num_subsystems = None  #: int: number of wires for the backend, must be overridden by child classes
+    num_subsystems = None  #: int: number of wires for the device, must be overridden by child classes
 
     def setUp(self):
         self.args = args
-        self.backend = args.backend
         self.tol = args.tolerance
-        self.batched = args.batched
-
-        # keyword arguments for the backend
-        self.kwargs = dict(pure=not args.mixed)
-        if args.batched:
-            self.kwargs["batch_size"] = args.batch_size
-            self.bsize = args.batch_size
-        else:
-            self.bsize = 1
 
     def logTestName(self):
         logging.info('{}'.format(self.id()))
