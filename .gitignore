@@ -2,5 +2,10 @@ doc/_build/
 OpenQML_PQ.egg-info/
 build/
 dist/
+openqml_pq/__pycache__/
+tests/__pycache__/
+.idea
+*.ipynp
+*.ipynb_checkpoints
 __pycache__
 OpenQML_ProjectQ_Plugin.egg-info
