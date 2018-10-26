@@ -26,8 +26,8 @@ This plugin offers access to the following ProjectQ backends by providing corres
    ProjectQIBMBackend
    ProjectQClassicalSimulator
 
-.. todo::
-   Is there a nice way to link to the documentation of the OpenQML native Operations/Expectations? I would like to do this in the description of the supported operations below. Probably http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html is a good solution, but for that the documentation of core OpenQML must be online first.
+.. todo:: Is there a nice way to link to the documentation of the OpenQML native Operations/Expectations? I would like to do this in the description of the supported operations below. Probably http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html is a good solution, but for that the documentation of core OpenQML must be online first.
+
 
 See below for a description of the devices and the supported Operations and Expectations.
 
@@ -214,17 +214,19 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`openqml.PauliY`,
       :class:`openqml.PauliZ`
 
-    .. todo:: The extra operations are accessible (and should be accessed) through the top level openqml_pq namespace, i.e., as openqml_pq.S(). How can I make them appear under this namespace, but still link to the correct page in the documentation?
-
     Extra Operations:
-      :class:`openqml_pq.ops.S`,
-      :class:`openqml_pq.ops.T`,
-      :class:`openqml_pq.ops.SqrtX`,
-      :class:`openqml_pq.ops.SqrtSwap`,
-      :class:`openqml_pq.ops.AllPauliZ`
+      :class:`openqml_pq.S <openqml_pq.ops.S>`,
+      :class:`openqml_pq.S <openqml_pq.ops.S>`,
+      :class:`openqml_pq.T <openqml_pq.ops.T>`,
+      :class:`openqml_pq.SqrtX <openqml_pq.ops.SqrtX>`,
+      :class:`openqml_pq.SqrtSwap <openqml_pq.ops.SqrtSwap>`
 
-    Extra Expectations:
-      :class:`openqml_pq.expval.AllPauliZ`
+    ..
+       :class:`openqml_pq.AllPauliZ <openqml_pq.ops.AllPauliZ>`
+
+       Extra Expectations:
+         :class:`openqml_pq.expval.AllPauliZ`
+
     """
 
     short_name = 'projectq.simulator'
@@ -308,17 +310,17 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`openqml.PauliY`,
       :class:`openqml.PauliZ`
 
-    .. todo:: The extra operations are accessible (and should be accessed) through the top level openqml_pq namespace, i.e., as openqml_pq.S(). How can I make them appear under this namespace, but still link to the correct page in the documentation?
-
     Extra Operations:
-      :class:`openqml_pq.ops.S`,
-      :class:`openqml_pq.ops.T`,
-      :class:`openqml_pq.ops.SqrtX`,
-      :class:`openqml_pq.ops.SqrtSwap`,
-      :class:`openqml_pq.ops.AllPauliZ`
+      :class:`openqml_pq.S <openqml_pq.ops.S>`,
+      :class:`openqml_pq.T <openqml_pq.ops.T>`,
+      :class:`openqml_pq.SqrtX <openqml_pq.ops.SqrtX>`,
+      :class:`openqml_pq.SqrtSwap <openqml_pq.ops.SqrtSwap>`,
 
-    Extra Expectations:
-      :class:`openqml_pq.expval.AllPauliZ`
+    ..
+       :class:`openqml_pq.AllPauliZ <openqml_pq.ops.AllPauliZ>`
+
+       Extra Expectations:
+         :class:`openqml_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.ibmbackend'
@@ -381,16 +383,18 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         dev = qm.device('projectq.classical', wires=XXX)
 
     Supported OpenQML Operations:
-      :class:`openqml.PauliX`
+      :class:`openqml.PauliX`,
+      :class:`openqml.CNOT`
 
     Supported OpenQML Expectations:
       :class:`openqml.PauliZ`
 
-    Extra Operations:
-      :class:`openqml_pq.ops.AllPauliZ`
+    ..
+       Extra Operations:
+         :class:`openqml_pq.AllPauliZ <openqml_pq.ops.AllPauliZ>`
 
-    Extra Expectations:
-      :class:`openqml_pq.expval.AllPauliZ`
+       Extra Expectations:
+         :class:`openqml_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.classicalsimulator'
