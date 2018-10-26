@@ -142,8 +142,6 @@ class CompareWithDefaultQubitTest(BaseTest):
         for (key,val) in outputs.items():
             if len(val) >= 2:
                 self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs "+str(list(val.values()))+" of devices "+str(list(val.keys()))+" do not agree for a circuit consisting of a "+str(key[0])+" Operation followed by a "+str(key[0])+" Expectation." )
-                #print(str(list(val.keys()))+" "+str(key))
-                #print(str(list(val.values())))
 
 
 if __name__ == '__main__':

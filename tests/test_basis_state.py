@@ -57,7 +57,6 @@ class BasisStateTest(BaseTest):
         self.logTestName()
 
         for bits_to_flip in [np.array([0,0,0,0]), np.array([0,1,1,0]), np.array([1,1,1,0]), np.array([1,1,1,1])]:
-            print(bits_to_flip)
             @qm.qnode(self.device)
             def circuit():
                 qm.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
@@ -71,7 +70,6 @@ class BasisStateTest(BaseTest):
         self.logTestName()
 
         for bits_to_flip in [np.array([0,0,0]), np.array([0,1,1]), np.array([1,1,0]), np.array([1,1,1])]:
-            print(bits_to_flip)
             @qm.qnode(self.device)
             def circuit():
                 qm.BasisState(bits_to_flip, wires=list(range(self.num_subsystems-1)))

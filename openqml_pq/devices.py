@@ -325,7 +325,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
          :class:`openqml_pq.expval.AllPauliZ`
     """
 
-    short_name = 'projectq.ibmbackend'
+    short_name = 'projectq.ibm'
     _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT, CZ, BasisState]}
     _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate, AllZGate]}
     _circuits = {}
@@ -399,7 +399,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
          :class:`openqml_pq.expval.AllPauliZ`
     """
 
-    short_name = 'projectq.classicalsimulator'
+    short_name = 'projectq.classical'
     _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [XGate, CNOT]}
     _expectation_map = {key:val for key, val in projectq_operation_map.items() if val in [ZGate, AllZGate]}
     _circuits = {}
