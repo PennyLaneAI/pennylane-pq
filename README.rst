@@ -101,9 +101,6 @@ If you are having issues, please let us know by posting the issue on our Github 
 
 .. todo:: adjust this link
 
-We also have an `PennyLane Slack channel <https://u.pennylane.ai/slack>`_ -
-come join the discussion and chat with our PennyLane team.
-
 
 License
 =======
