@@ -177,7 +177,7 @@ class _ProjectQDevice(Device):
 
 
 class ProjectQSimulator(_ProjectQDevice):
-    """A PennyLane device for the `ProjectQ Simulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_ backend.
+    """A PennyLane :code:`projectq.simulator` device for the `ProjectQ Simulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_ backend.
 
     Args:
        wires (int): The number of qubits of the device
@@ -266,7 +266,7 @@ class ProjectQSimulator(_ProjectQDevice):
         return ev
 
 class ProjectQIBMBackend(_ProjectQDevice):
-    """A PennyLane device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
+    """A PennyLane :code:`projectq.ibm` device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
 
     .. note:: This device computes expectation values by averaging over a finite number of runs of the quantum circuit. Irrespective of whether this is done on real quantum hardware, or on the IBM simulator, this means that expectation values (and therefore also gradients) will have a finite accuracy and fluctuate from run to run.
 
@@ -372,7 +372,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         return ev
 
 class ProjectQClassicalSimulator(_ProjectQDevice):
-    """A PennyLane device for the `ProjectQ ClassicalSimulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.ClassicalSimulator>`_ backend.
+    """A PennyLane :code:`projectq.classical` device for the `ProjectQ ClassicalSimulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.ClassicalSimulator>`_ backend.
 
     Args:
        wires (int): The number of qubits of the device
