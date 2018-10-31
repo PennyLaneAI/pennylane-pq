@@ -10,7 +10,7 @@ from openqml import numpy as onp
 import numpy as np
 from openqml.optimize import AdagradOptimizer
 
-dev = qm.device('default.qubit', wires=4)
+dev = qm.device('projectq.simulator', wires=4)
 
 
 def layer(W):
@@ -116,7 +116,7 @@ batch_size = 5
 
 # train the variational classifier
 vars = vars_init
-for it in range(5):
+for it in range(10):
 
     # Update the weights by one optimizer step
     batch_index = np.random.randint(0, len(X), (batch_size, ))
@@ -130,4 +130,3 @@ for it in range(5):
 
     print("Iter: {:5d} | Cost: {:0.7f} | Accuracy: {:0.7f} "
           "".format(it+1, cost(vars, X, Y), acc))
-
