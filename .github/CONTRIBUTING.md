@@ -15,7 +15,7 @@ If you want to contribute but don't know where to start, start by checking out t
 and having a look at the PennyLane API and code documentation to see how things work under the hood.
 
 Finally, check out the contributing guidelines in the main
-[PennyLane repository](https://github.com/XanaduAI/openqml/blob/master/.github/CONTRIBUTING.md).
+[PennyLane repository](https://github.com/XanaduAI/pennylane/blob/master/.github/CONTRIBUTING.md).
 
 If you are interested in contributing to the PennyLane-PQ plugin directly, continue reading below.
 
