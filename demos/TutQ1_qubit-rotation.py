@@ -4,9 +4,9 @@ This "hello world" example for PennyLane optimizes a beam splitter
 to redirect a photon from the first to the second mode.
 """
 
-import openqml as qm
-from openqml import numpy as np
-from openqml.optimize import GradientDescentOptimizer
+import pennylane as qm
+from pennylane import numpy as np
+from pennylane.optimize import GradientDescentOptimizer
 
 dev = qm.device('projectq.simulator', wires=1)
 

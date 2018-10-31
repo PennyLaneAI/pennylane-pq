@@ -1,3 +1,3 @@
 .. automodule::
-   openqml_pq.ops
+   pennylane_pq.ops
    :members:

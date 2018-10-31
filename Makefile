@@ -22,7 +22,7 @@ help:
 .PHONY: install
 install:
 ifndef PYTHON3
-	@echo "To install the OpenQML ProjectQ plugin you need to have Python 3 installed"
+	@echo "To install the PennyLane ProjectQ plugin you need to have Python 3 installed"
 endif
 	$(PYTHON) setup.py install
 
@@ -36,7 +36,7 @@ dist:
 
 .PHONY : clean
 clean:
-	rm -rf openqml_pq/__pycache__
+	rm -rf pennylane_pq/__pycache__
 	rm -rf tests/__pycache__
 	rm -rf dist
 	rm -rf build

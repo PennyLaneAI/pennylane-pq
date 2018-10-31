@@ -15,7 +15,7 @@ r"""
 Wrapper classes for ProjectQ Operations
 ===================
 
-.. currentmodule:: openqml_pq.ops
+.. currentmodule:: pennylane_pq.ops
 
 This module provides wrapper classes for `Operations` that are missing a class in ProjectQ.
 

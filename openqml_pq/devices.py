@@ -15,9 +15,9 @@ r"""
 Devices
 =======
 
-.. currentmodule:: openqml_pq.devices
+.. currentmodule:: pennylane_pq.devices
 
-This plugin offers access to the following ProjectQ backends by providing corresponding OpenQML devices:
+This plugin offers access to the following ProjectQ backends by providing corresponding PennyLane devices:
 
 .. autosummary::
    :nosignatures:
@@ -26,7 +26,7 @@ This plugin offers access to the following ProjectQ backends by providing corres
    ProjectQIBMBackend
    ProjectQClassicalSimulator
 
-.. todo:: Is there a nice way to link to the documentation of the OpenQML native Operations/Expectations? I would like to do this in the description of the supported operations below. Probably http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html is a good solution, but for that the documentation of core OpenQML must be online first.
+.. todo:: Is there a nice way to link to the documentation of the PennyLane native Operations/Expectations? I would like to do this in the description of the supported operations below. Probably http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html is a good solution, but for that the documentation of core PennyLane must be online first.
 
 
 See below for a description of the devices and the supported Operations and Expectations.
@@ -50,7 +50,7 @@ ProjectQClassicalSimulator
 """
 import logging as log
 import numpy as np
-from openqml import Device, DeviceError
+from pennylane import Device, DeviceError
 
 import projectq as pq
 
@@ -61,7 +61,7 @@ from ._version import __version__
 
 
 projectq_operation_map = {
-    #native OpenQML operations also native to ProjectQ
+    #native PennyLane operations also native to ProjectQ
     'PauliX': XGate,
     'PauliY': YGate,
     'PauliZ': ZGate,
@@ -77,19 +77,19 @@ projectq_operation_map = {
     'Rot': Rot,
     'QubitUnitary': QubitUnitary,
     'BasisState': BasisState,
-    #additional operations not native to OpenQML but present in ProjectQ
+    #additional operations not native to PennyLane but present in ProjectQ
     'S': SGate,
     'T': TGate,
     'SqrtX': SqrtXGate,
     'SqrtSwap': SqrtSwapGate,
-    #operations/expectations of ProjectQ that do not work with OpenQML
-#    'AllPauliZ': AllZGate, #todo: enable once https://github.com/XanaduAI/openqml/issues/61 is resolved
-    #operations/expectations of OpenQML that do not work with ProjectQ
+    #operations/expectations of ProjectQ that do not work with PennyLane
+#    'AllPauliZ': AllZGate, #todo: enable once https://github.com/XanaduAI/pennylane/issues/61 is resolved
+    #operations/expectations of PennyLane that do not work with ProjectQ
 #    'QubitStateVector': StatePreparation,
 }
 
 class _ProjectQDevice(Device):
-    """ProjectQ device for OpenQML.
+    """ProjectQ device for PennyLane.
 
     Args:
        wires (int): The number of qubits of the device.
@@ -107,7 +107,7 @@ class _ProjectQDevice(Device):
       device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
       retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
     """
-    name = 'ProjectQ OpenQML plugin'
+    name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
     api_version = '0.1.0'
     plugin_version = __version__
@@ -177,7 +177,7 @@ class _ProjectQDevice(Device):
 
 
 class ProjectQSimulator(_ProjectQDevice):
-    """An OpenQML device for the `ProjectQ Simulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_ backend.
+    """A PennyLane device for the `ProjectQ Simulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_ backend.
 
     Args:
        wires (int): The number of qubits of the device
@@ -186,47 +186,47 @@ class ProjectQSimulator(_ProjectQDevice):
       gate_fusion (bool): If True, operations are cached and only executed once a certain number of operations has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
 
-    This device can, for example, be instantiated from OpenQML as follows:
+    This device can, for example, be instantiated from PennyLane as follows:
 
     .. code-block:: python
 
-        import openqml as qm
+        import pennylane as qm
         dev = qm.device('projectq.simulator', wires=XXX)
 
-    Supported OpenQML Operations:
-      :class:`openqml.PauliX`,
-      :class:`openqml.PauliY`,
-      :class:`openqml.PauliZ`,
-      :class:`openqml.CNOT`,
-      :class:`openqml.CZ`,
-      :class:`openqml.SWAP`,
-      :class:`openqml.RX`,
-      :class:`openqml.RY`,
-      :class:`openqml.RZ`,
-      :class:`openqml.PhaseShift`,
-      :class:`openqml.QubitStateVector`,
-      :class:`openqml.Hadamard`,
-      :class:`openqml.Rot`,
-      :class:`openqml.QubitUnitary`,
-      :class:`openqml.BasisState`
+    Supported PennyLane Operations:
+      :class:`pennylane.PauliX`,
+      :class:`pennylane.PauliY`,
+      :class:`pennylane.PauliZ`,
+      :class:`pennylane.CNOT`,
+      :class:`pennylane.CZ`,
+      :class:`pennylane.SWAP`,
+      :class:`pennylane.RX`,
+      :class:`pennylane.RY`,
+      :class:`pennylane.RZ`,
+      :class:`pennylane.PhaseShift`,
+      :class:`pennylane.QubitStateVector`,
+      :class:`pennylane.Hadamard`,
+      :class:`pennylane.Rot`,
+      :class:`pennylane.QubitUnitary`,
+      :class:`pennylane.BasisState`
 
-    Supported OpenQML Expectations:
-      :class:`openqml.PauliX`,
-      :class:`openqml.PauliY`,
-      :class:`openqml.PauliZ`
+    Supported PennyLane Expectations:
+      :class:`pennylane.PauliX`,
+      :class:`pennylane.PauliY`,
+      :class:`pennylane.PauliZ`
 
     Extra Operations:
-      :class:`openqml_pq.S <openqml_pq.ops.S>`,
-      :class:`openqml_pq.S <openqml_pq.ops.S>`,
-      :class:`openqml_pq.T <openqml_pq.ops.T>`,
-      :class:`openqml_pq.SqrtX <openqml_pq.ops.SqrtX>`,
-      :class:`openqml_pq.SqrtSwap <openqml_pq.ops.SqrtSwap>`
+      :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
+      :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
+      :class:`pennylane_pq.T <pennylane_pq.ops.T>`,
+      :class:`pennylane_pq.SqrtX <pennylane_pq.ops.SqrtX>`,
+      :class:`pennylane_pq.SqrtSwap <pennylane_pq.ops.SqrtSwap>`
 
     ..
-       :class:`openqml_pq.AllPauliZ <openqml_pq.ops.AllPauliZ>`
+       :class:`pennylane_pq.AllPauliZ <pennylane_pq.ops.AllPauliZ>`
 
        Extra Expectations:
-         :class:`openqml_pq.expval.AllPauliZ`
+         :class:`pennylane_pq.expval.AllPauliZ`
 
     """
 
@@ -266,7 +266,7 @@ class ProjectQSimulator(_ProjectQDevice):
         return ev
 
 class ProjectQIBMBackend(_ProjectQDevice):
-    """An OpenQML device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
+    """A PennyLane device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
 
     .. note:: This device computes expectation values by averaging over a finite number of runs of the quantum circuit. Irrespective of whether this is done on real quantum hardware, or on the IBM simulator, this means that expectation values (and therefore also gradients) will have a finite accuracy and fluctuate from run to run.
 
@@ -281,48 +281,48 @@ class ProjectQIBMBackend(_ProjectQDevice):
       password (string): IBM Quantum Experience password
       device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if :code:`use_hardware` is set to True. Default is 'ibmqx4'.
       retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out)
-    This device can, for example, be instantiated from OpenQML as follows:
+    This device can, for example, be instantiated from PennyLane as follows:
 
     .. code-block:: python
 
-        import openqml as qm
+        import pennylane as qm
         dev = qm.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
 
-    .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your OpenQML configuration file.
+    .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your PennyLane configuration file.
 
-    Supported OpenQML Operations:
-      :class:`openqml.PauliX`,
-      :class:`openqml.PauliY`,
-      :class:`openqml.PauliZ`,
-      :class:`openqml.CNOT`,
-      :class:`openqml.CZ`,
-      :class:`openqml.SWAP`,
-      :class:`openqml.RX`,
-      :class:`openqml.RY`,
-      :class:`openqml.RZ`,
-      :class:`openqml.PhaseShift`,
-      :class:`openqml.QubitStateVector`,
-      :class:`openqml.Hadamard`,
-      :class:`openqml.Rot`,
-      :class:`openqml.QubitUnitary`,
-      :class:`openqml.BasisState`
+    Supported PennyLane Operations:
+      :class:`pennylane.PauliX`,
+      :class:`pennylane.PauliY`,
+      :class:`pennylane.PauliZ`,
+      :class:`pennylane.CNOT`,
+      :class:`pennylane.CZ`,
+      :class:`pennylane.SWAP`,
+      :class:`pennylane.RX`,
+      :class:`pennylane.RY`,
+      :class:`pennylane.RZ`,
+      :class:`pennylane.PhaseShift`,
+      :class:`pennylane.QubitStateVector`,
+      :class:`pennylane.Hadamard`,
+      :class:`pennylane.Rot`,
+      :class:`pennylane.QubitUnitary`,
+      :class:`pennylane.BasisState`
 
-    Supported OpenQML Expectations:
-      :class:`openqml.PauliX`,
-      :class:`openqml.PauliY`,
-      :class:`openqml.PauliZ`
+    Supported PennyLane Expectations:
+      :class:`pennylane.PauliX`,
+      :class:`pennylane.PauliY`,
+      :class:`pennylane.PauliZ`
 
     Extra Operations:
-      :class:`openqml_pq.S <openqml_pq.ops.S>`,
-      :class:`openqml_pq.T <openqml_pq.ops.T>`,
-      :class:`openqml_pq.SqrtX <openqml_pq.ops.SqrtX>`,
-      :class:`openqml_pq.SqrtSwap <openqml_pq.ops.SqrtSwap>`,
+      :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
+      :class:`pennylane_pq.T <pennylane_pq.ops.T>`,
+      :class:`pennylane_pq.SqrtX <pennylane_pq.ops.SqrtX>`,
+      :class:`pennylane_pq.SqrtSwap <pennylane_pq.ops.SqrtSwap>`,
 
     ..
-       :class:`openqml_pq.AllPauliZ <openqml_pq.ops.AllPauliZ>`
+       :class:`pennylane_pq.AllPauliZ <pennylane_pq.ops.AllPauliZ>`
 
        Extra Expectations:
-         :class:`openqml_pq.expval.AllPauliZ`
+         :class:`pennylane_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.ibm'
@@ -372,31 +372,31 @@ class ProjectQIBMBackend(_ProjectQDevice):
         return ev
 
 class ProjectQClassicalSimulator(_ProjectQDevice):
-    """An OpenQML device for the `ProjectQ ClassicalSimulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.ClassicalSimulator>`_ backend.
+    """A PennyLane device for the `ProjectQ ClassicalSimulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.ClassicalSimulator>`_ backend.
 
     Args:
        wires (int): The number of qubits of the device
 
-    This device can, for example, be instantiated from OpenQML as follows:
+    This device can, for example, be instantiated from PennyLane as follows:
 
     .. code-block:: python
 
-        import openqml as qm
+        import pennylane as qm
         dev = qm.device('projectq.classical', wires=XXX)
 
-    Supported OpenQML Operations:
-      :class:`openqml.PauliX`,
-      :class:`openqml.CNOT`
+    Supported PennyLane Operations:
+      :class:`pennylane.PauliX`,
+      :class:`pennylane.CNOT`
 
-    Supported OpenQML Expectations:
-      :class:`openqml.PauliZ`
+    Supported PennyLane Expectations:
+      :class:`pennylane.PauliZ`
 
     ..
        Extra Operations:
-         :class:`openqml_pq.AllPauliZ <openqml_pq.ops.AllPauliZ>`
+         :class:`pennylane_pq.AllPauliZ <pennylane_pq.ops.AllPauliZ>`
 
        Extra Expectations:
-         :class:`openqml_pq.expval.AllPauliZ`
+         :class:`pennylane_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.classical'

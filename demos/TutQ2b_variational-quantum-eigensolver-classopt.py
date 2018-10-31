@@ -6,8 +6,8 @@ the energy expectation of a user-defined Hamiltonian.
 We express the Hamiltonian as a sum of two Pauli operators.
 """
 
-import openqml as qm
-from openqml.optimize import GradientDescentOptimizer
+import pennylane as qm
+from pennylane.optimize import GradientDescentOptimizer
 import numpy as np
 
 dev = qm.device('projectq.simulator', wires=2)
@@ -55,5 +55,3 @@ for it in range(20):
 
     print('Cost after step {:5d}: {: .7f} | Variables: [{: .5f},{: .5f}]'
           .format(it+1, cost(vars), vars[0], vars[1]))
-
-

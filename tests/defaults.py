@@ -7,14 +7,14 @@ import sys
 import logging
 import argparse
 
-import openqml
-from openqml import numpy as np
+import pennylane
+from pennylane import numpy as np
 
-# Make sure openqml_pq is always imported from the same source distribution where the tests reside, not e.g. from site-packages.
+# Make sure pennylane_pq is always imported from the same source distribution where the tests reside, not e.g. from site-packages.
 # See https://docs.python-guide.org/en/latest/writing/structure/#test-suite
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import openqml_pq
+import pennylane_pq
 
 # defaults
 DEVICE = os.environ['DEVICE'] if 'DEVICE' in os.environ and os.environ['DEVICE'] is not None else "all"
@@ -48,7 +48,7 @@ def get_commandline_args():
     parser.add_argument('-t', '--tolerance', type=float, default=TOLERANCE, help='Numerical tolerance for equality tests.')
     parser.add_argument("--user", help="IBM Quantum Experience user name")
     parser.add_argument("--password", help="IBM Quantum Experience password")
-    parser.add_argument("--optimizer", default=OPTIMIZER, choices=openqml.optimize.__all__, help="optimizer to use")
+    parser.add_argument("--optimizer", default=OPTIMIZER, choices=pennylane.optimize.__all__, help="optimizer to use")
 
     # HACK: We only parse known args to enable unittest test discovery without parsing errors.
     args, _ = parser.parse_known_args()

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Unit tests for the :mod:`openqml_pq` devices.
+Unit tests for the :mod:`pennylane_pq` devices.
 """
 
 import unittest
@@ -20,14 +20,14 @@ import logging as log
 #import inspect
 #from unittest_data_provider import data_provider
 from pkg_resources import iter_entry_points
-from defaults import openqml as qm, BaseTest
-from openqml import Device
-from openqml import numpy as np
-from openqml.plugins.default_qubit import DefaultQubit
-import openqml
-import openqml_pq
-import openqml_pq.expval
-from openqml_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
+from defaults import pennylane as qm, BaseTest
+from pennylane import Device
+from pennylane import numpy as np
+from pennylane.plugins.default_qubit import DefaultQubit
+import pennylane
+import pennylane_pq
+import pennylane_pq.expval
+from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 
 #import traceback #todo: remove once we no longer capture the exception further down
 
@@ -46,11 +46,11 @@ class CompareWithDefaultQubitTest(BaseTest):
         if self.args.device == 'simulator' or self.args.device == 'all':
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems))
         if self.args.device == 'ibm' or self.args.device == 'all':
-            ibm_options = openqml.default_config['projectq.ibm']
+            ibm_options = pennylane.default_config['projectq.ibm']
             if "user" in ibm_options and "password" in ibm_options:
                 self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
             else:
-                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the openqml configuration file.")
+                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
         if self.args.device == 'classical' or self.args.device == 'all':
             self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems))
 
@@ -81,11 +81,11 @@ class CompareWithDefaultQubitTest(BaseTest):
                         if hasattr(qm, operation):
                             operation_class = getattr(qm, operation)
                         else:
-                            operation_class = getattr(openqml_pq, operation)
+                            operation_class = getattr(pennylane_pq, operation)
                         if hasattr(qm.expval, observable):
                             observable_class = getattr(qm.expval, observable)
                         else:
-                            observable_class = getattr(openqml_pq.expval, observable)
+                            observable_class = getattr(pennylane_pq.expval, observable)
 
                         if operation_class.num_wires > self.num_subsystems:
                             raise IgnoreOperationException('Skipping in automatic test because the operation '+operation+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
@@ -145,7 +145,7 @@ class CompareWithDefaultQubitTest(BaseTest):
 
 
 if __name__ == '__main__':
-    log.info('Testing OpenQML ProjectQ Plugin version ' + qm.version() + ', Device class.')
+    log.info('Testing PennyLane ProjectQ Plugin version ' + qm.version() + ', Device class.')
     # run the tests in this file
     suite = unittest.TestSuite()
     for t in (CompareWithDefaultQubitTest, ):

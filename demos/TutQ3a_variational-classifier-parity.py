@@ -5,10 +5,10 @@ can be optimized to reproduce the parity function.
 
 """
 
-import openqml as qm
-from openqml import numpy as onp
+import pennylane as qm
+from pennylane import numpy as onp
 import numpy as np
-from openqml.optimize import AdagradOptimizer
+from pennylane.optimize import AdagradOptimizer
 
 dev = qm.device('projectq.simulator', wires=4)
 

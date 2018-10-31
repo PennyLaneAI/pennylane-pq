@@ -1,3 +1,3 @@
 .. automodule::
-   openqml_pq.expval
+   pennylane_pq.expval
    :members:

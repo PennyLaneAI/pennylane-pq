@@ -4,10 +4,10 @@ In this demo we implement a variational classifier inspired by
 Schuld et al. 2018 (arXiv:1804.00633).
 """
 
-import openqml as qm
-from openqml import numpy as onp
+import pennylane as qm
+from pennylane import numpy as onp
 import numpy as np
-from openqml.optimize import AdagradOptimizer
+from pennylane.optimize import AdagradOptimizer
 
 dev = qm.device('default.qubit', wires=2)
 

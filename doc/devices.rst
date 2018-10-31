@@ -1,2 +1,2 @@
 .. automodule::
-   openqml_pq.devices
+   pennylane_pq.devices

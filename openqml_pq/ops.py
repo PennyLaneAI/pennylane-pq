@@ -15,12 +15,12 @@ r"""
 Operations
 ##########
 
-.. currentmodule:: openqml_pq.ops
+.. currentmodule:: pennylane_pq.ops
 
 .. todo::
     The way to present the following depends on the whether the `extra_operations` machinery makes it into the initial release.
 
-In addition to the suitable default operations native to OpenQML, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native OpenQML operations when defining quantum functions:
+In addition to the suitable default operations native to PennyLane, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native PennyLane operations when defining quantum functions:
 
 .. todo:: these gates are not rendering correctly in the compiled docs. Check with Josh on how to fix
 
@@ -32,11 +32,11 @@ In addition to the suitable default operations native to OpenQML, the devices of
    AllPauliZ
 
 .. note::
-   For convenience, and to mirror the behavior of the operations built into OpenQML, the operations defined here are also accessible directly under the top-level :code:`openqml_pq` context, i.e., you can use :code:`openqml_pq.S([0])` instead of :code:`openqml_pq.ops.S([0])` when defining a :code:`QNode` using the :code:`qnode` decorator.
+   For convenience, and to mirror the behavior of the operations built into PennyLane, the operations defined here are also accessible directly under the top-level :code:`pennylane_pq` context, i.e., you can use :code:`pennylane_pq.S([0])` instead of :code:`pennylane_pq.ops.S([0])` when defining a :code:`QNode` using the :code:`qnode` decorator.
 
 """
 
-from openqml.operation import Operation
+from pennylane.operation import Operation
 
 class S(Operation):
     r"""S gate.
@@ -92,7 +92,7 @@ class AllPauliZ(Operation):
 
     .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
 
-    .. todo:: Potentially remove this gate depending on how https://github.com/XanaduAI/openqml/issues/61 is resolved.
+    .. todo:: Potentially remove this gate depending on how https://github.com/XanaduAI/pennylane/issues/61 is resolved.
 
     """
     num_params = 0
