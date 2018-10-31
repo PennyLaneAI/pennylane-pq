@@ -190,8 +190,8 @@ class ProjectQSimulator(_ProjectQDevice):
 
     .. code-block:: python
 
-        import pennylane as qm
-        dev = qm.device('projectq.simulator', wires=XXX)
+        import pennylane as qml
+        dev = qml.device('projectq.simulator', wires=XXX)
 
     Supported PennyLane Operations:
       :class:`pennylane.PauliX`,
@@ -285,8 +285,8 @@ class ProjectQIBMBackend(_ProjectQDevice):
 
     .. code-block:: python
 
-        import pennylane as qm
-        dev = qm.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
+        import pennylane as qml
+        dev = qml.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
 
     .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your PennyLane configuration file.
 
@@ -381,8 +381,8 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     .. code-block:: python
 
-        import pennylane as qm
-        dev = qm.device('projectq.classical', wires=XXX)
+        import pennylane as qml
+        dev = qml.device('projectq.classical', wires=XXX)
 
     Supported PennyLane Operations:
       :class:`pennylane.PauliX`,

@@ -20,7 +20,7 @@ import logging as log
 #import inspect
 #from unittest_data_provider import data_provider
 from pkg_resources import iter_entry_points
-from defaults import pennylane as qm, BaseTest
+from defaults import pennylane as qml, BaseTest
 import pennylane
 from pennylane import Device
 from pennylane import numpy as np
@@ -57,10 +57,10 @@ class BasisStateTest(BaseTest):
         self.logTestName()
 
         for bits_to_flip in [np.array([0,0,0,0]), np.array([0,1,1,0]), np.array([1,1,1,0]), np.array([1,1,1,1])]:
-            @qm.qnode(self.device)
+            @qml.qnode(self.device)
             def circuit():
-                qm.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
-                return qm.expval.PauliZ(0), qm.expval.PauliZ(1), qm.expval.PauliZ(2), qm.expval.PauliZ(3)
+                qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
+                return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
 
             self.assertAllAlmostEqual([1]*self.num_subsystems-2*bits_to_flip, np.array(circuit()), delta=self.tol)
 
@@ -70,15 +70,15 @@ class BasisStateTest(BaseTest):
         self.logTestName()
 
         for bits_to_flip in [np.array([0,0,0]), np.array([0,1,1]), np.array([1,1,0]), np.array([1,1,1])]:
-            @qm.qnode(self.device)
+            @qml.qnode(self.device)
             def circuit():
-                qm.BasisState(bits_to_flip, wires=list(range(self.num_subsystems-1)))
-                return qm.expval.PauliZ(0), qm.expval.PauliZ(1), qm.expval.PauliZ(2), qm.expval.PauliZ(3)
+                qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems-1)))
+                return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
 
             self.assertAllAlmostEqual([1]*(self.num_subsystems-1)-2*bits_to_flip, np.array(circuit()[:-1]), delta=self.tol)
 
 if __name__ == '__main__':
-    print('Testing PennyLane ProjectQ Plugin version ' + qm.version() + ', BasisState operation.')
+    print('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', BasisState operation.')
     # run the tests in this file
     suite = unittest.TestSuite()
     for t in (BasisStateTest, ):

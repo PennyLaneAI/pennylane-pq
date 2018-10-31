@@ -20,7 +20,7 @@ import logging as log
 #import inspect
 #from unittest_data_provider import data_provider
 from pkg_resources import iter_entry_points
-from defaults import pennylane as qm, BaseTest
+from defaults import pennylane as qml, BaseTest
 from pennylane import Device
 from pennylane import numpy as np
 from pennylane.plugins.default_qubit import DefaultQubit
@@ -76,14 +76,14 @@ class CompareWithDefaultQubitTest(BaseTest):
                 for observable in dev.expectations:
                     log.info("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by a "+observable+" Expectation")
 
-                    @qm.qnode(dev)
+                    @qml.qnode(dev)
                     def circuit():
-                        if hasattr(qm, operation):
-                            operation_class = getattr(qm, operation)
+                        if hasattr(qml, operation):
+                            operation_class = getattr(qml, operation)
                         else:
                             operation_class = getattr(pennylane_pq, operation)
-                        if hasattr(qm.expval, observable):
-                            observable_class = getattr(qm.expval, observable)
+                        if hasattr(qml.expval, observable):
+                            observable_class = getattr(qml.expval, observable)
                         else:
                             observable_class = getattr(pennylane_pq.expval, observable)
 
@@ -145,7 +145,7 @@ class CompareWithDefaultQubitTest(BaseTest):
 
 
 if __name__ == '__main__':
-    log.info('Testing PennyLane ProjectQ Plugin version ' + qm.version() + ', Device class.')
+    log.info('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', Device class.')
     # run the tests in this file
     suite = unittest.TestSuite()
     for t in (CompareWithDefaultQubitTest, ):

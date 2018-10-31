@@ -31,20 +31,20 @@ You can instantiate a :code:`'projectq.simulator'` device for PennyLane with:
 
 .. code-block:: python
 
-    import pennylane as qm
-    dev = qm.device('projectq.simulator', wires=2)
+    import pennylane as qml
+    dev = qml.device('projectq.simulator', wires=2)
 
 This device can then be used just like other devices for the definition and evaluation of QNodes within PennyLane. A simple quantum function that returns the expectation value of a measurement and depends on three classical input parameters would look like:
 
 .. code-block:: python
 
-    @qm.qnode(dev)
+    @qml.qnode(dev)
     def circuit(x, y, z):
-        qm.RZ(z, wires=[0])
-        qm.RY(y, wires=[0])
-        qm.RX(x, wires=[0])
-        qm.CNOT(wires=[0, 1])
-        return qm.expval.PauliZ(wires=1)
+        qml.RZ(z, wires=[0])
+        qml.RY(y, wires=[0])
+        qml.RX(x, wires=[0])
+        qml.CNOT(wires=[0, 1])
+        return qml.expval.PauliZ(wires=1)
 
 You can then execute the circuit like any other function to get the quantum mechanical expectation value.
 
@@ -56,8 +56,8 @@ Running your code on an IBM Quantum Experience simulator or even a real hardware
 
 .. code-block:: python
 
-    import pennylane as qm
-    dev = qm.device('projectq.ibm', wires=2, user="XXX", password="XXX")
+    import pennylane as qml
+    dev = qml.device('projectq.ibm', wires=2, user="XXX", password="XXX")
 
 
 How to cite

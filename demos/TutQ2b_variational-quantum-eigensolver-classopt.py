@@ -6,34 +6,34 @@ the energy expectation of a user-defined Hamiltonian.
 We express the Hamiltonian as a sum of two Pauli operators.
 """
 
-import pennylane as qm
+import pennylane as qml
 from pennylane.optimize import GradientDescentOptimizer
 import numpy as np
 
-dev = qm.device('projectq.simulator', wires=2)
+dev = qml.device('projectq.simulator', wires=2)
 
 
 def ansatz():
     """ Ansatz of the variational circuit."""
 
-    qm.Rot(0.3, 1.8, 5.4, [1])
-    qm.RX(0.5, [0])
-    qm.RY(0.9, [1])
-    qm.CNOT([0, 1])
+    qml.Rot(0.3, 1.8, 5.4, [1])
+    qml.RX(0.5, [0])
+    qml.RY(0.9, [1])
+    qml.CNOT([0, 1])
 
 
-@qm.qnode(dev)
+@qml.qnode(dev)
 def circuit_X():
     """Circuit measuring the X operator for the second qubit"""
     ansatz()
-    return qm.expval.PauliX(1)
+    return qml.expval.PauliX(1)
 
 
-@qm.qnode(dev)
+@qml.qnode(dev)
 def circuit_Y():
     """Circuit measuring the Y operator for the second qubit"""
     ansatz()
-    return qm.expval.PauliY(1)
+    return qml.expval.PauliY(1)
 
 
 def cost(vars):
