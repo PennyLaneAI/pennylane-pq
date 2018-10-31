@@ -18,7 +18,7 @@ Expectations
 .. currentmodule:: pennylane_pq.expval
 
 .. todo::
-    They way to present the following depends on the whether the `extra_operations` machinery makes it into the initial release.
+    The way to present the following depends on the whether the `extra_operations` machinery makes it into the initial release.
 
 In addition to the suitable default operations native to PennyLane, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native PennyLane operations when defining quantum functions:
 
