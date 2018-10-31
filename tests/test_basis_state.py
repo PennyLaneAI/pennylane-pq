@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Unit tests for the :mod:`openqml_pq` BasisState operation.
+Unit tests for the :mod:`pennylane_pq` BasisState operation.
 """
 
 import unittest
@@ -20,13 +20,13 @@ import logging as log
 #import inspect
 #from unittest_data_provider import data_provider
 from pkg_resources import iter_entry_points
-from defaults import openqml as qm, BaseTest
-import openqml
-from openqml import Device
-from openqml import numpy as np
-import openqml_pq
-import openqml_pq.expval
-from openqml_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
+from defaults import pennylane as qml, BaseTest
+import pennylane
+from pennylane import Device
+from pennylane import numpy as np
+import pennylane_pq
+import pennylane_pq.expval
+from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 
 log.getLogger('defaults')
 
@@ -43,11 +43,11 @@ class BasisStateTest(BaseTest):
         if self.args.device == 'simulator' or self.args.device == 'all':
             self.device = ProjectQSimulator(wires=self.num_subsystems)
         if self.args.device == 'ibm':
-            ibm_options = openqml.default_config['projectq.ibm']
+            ibm_options = pennylane.default_config['projectq.ibm']
             if "user" in ibm_options and "password" in ibm_options:
                 self.device = ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password'])
             else:
-                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the openqml configuration file.")
+                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
         if self.args.device == 'classical':
             self.device = None
 
@@ -57,10 +57,10 @@ class BasisStateTest(BaseTest):
         self.logTestName()
 
         for bits_to_flip in [np.array([0,0,0,0]), np.array([0,1,1,0]), np.array([1,1,1,0]), np.array([1,1,1,1])]:
-            @qm.qnode(self.device)
+            @qml.qnode(self.device)
             def circuit():
-                qm.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
-                return qm.expval.PauliZ(0), qm.expval.PauliZ(1), qm.expval.PauliZ(2), qm.expval.PauliZ(3)
+                qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
+                return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
 
             self.assertAllAlmostEqual([1]*self.num_subsystems-2*bits_to_flip, np.array(circuit()), delta=self.tol)
 
@@ -70,15 +70,15 @@ class BasisStateTest(BaseTest):
         self.logTestName()
 
         for bits_to_flip in [np.array([0,0,0]), np.array([0,1,1]), np.array([1,1,0]), np.array([1,1,1])]:
-            @qm.qnode(self.device)
+            @qml.qnode(self.device)
             def circuit():
-                qm.BasisState(bits_to_flip, wires=list(range(self.num_subsystems-1)))
-                return qm.expval.PauliZ(0), qm.expval.PauliZ(1), qm.expval.PauliZ(2), qm.expval.PauliZ(3)
+                qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems-1)))
+                return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
 
             self.assertAllAlmostEqual([1]*(self.num_subsystems-1)-2*bits_to_flip, np.array(circuit()[:-1]), delta=self.tol)
 
 if __name__ == '__main__':
-    print('Testing OpenQML ProjectQ Plugin version ' + qm.version() + ', BasisState operation.')
+    print('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', BasisState operation.')
     # run the tests in this file
     suite = unittest.TestSuite()
     for t in (BasisStateTest, ):

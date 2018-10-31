@@ -17,36 +17,36 @@ import sys
 import os
 from setuptools import setup
 
-with open("openqml_pq/_version.py") as f:
+with open("pennylane_pq/_version.py") as f:
 	version = f.readlines()[-1].split()[-1].strip("\"'")
 
 
 with open("requirements.txt") as f:
     requirements = [
         'projectq>=0.4.1',
-        'openqml'
+        'pennylane'
     ]
 
 info = {
-    'name': 'OpenQML ProjectQ Plugin',
+    'name': 'PennyLane ProjectQ Plugin',
     'version': version,
     'maintainer': 'Xanadu Inc.',
     'maintainer_email': 'christiangogolin@xanadu.ai',
     'url': 'http://xanadu.ai',
     'license': 'Apache License 2.0',
     'packages': [
-                    'openqml_pq'
+                    'pennylane_pq'
                 ],
     'entry_points': {
-        'openqml.plugins': [
-            'projectq.simulator = openqml_pq:ProjectQSimulator',
-            'projectq.classical = openqml_pq:ProjectQClassicalSimulator',
-            'projectq.ibm = openqml_pq:ProjectQIBMBackend',
+        'pennylane.plugins': [
+            'projectq.simulator = pennylane_pq:ProjectQSimulator',
+            'projectq.classical = pennylane_pq:ProjectQClassicalSimulator',
+            'projectq.ibm = pennylane_pq:ProjectQIBMBackend',
             ],
         },
-    'description': 'OpenQML plugin for ProjectQ',
+    'description': 'PennyLane plugin for ProjectQ',
     'long_description': open('README.rst').read(),
-    'provides': ["openqml_pq"],
+    'provides': ["pennylane_pq"],
     'install_requires': requirements,
     # 'extras_require': extra_requirements,
     'command_options': {

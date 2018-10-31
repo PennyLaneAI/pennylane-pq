@@ -4,22 +4,22 @@ In this demo we implement a variational classifier inspired by
 Schuld et al. 2018 (arXiv:1804.00633).
 """
 
-import openqml as qm
-from openqml import numpy as onp
+import pennylane as qml
+from pennylane import numpy as onp
 import numpy as np
-from openqml.optimize import AdagradOptimizer
+from pennylane.optimize import AdagradOptimizer
 
-dev = qm.device('default.qubit', wires=2)
+dev = qml.device('default.qubit', wires=2)
 
 
 def layer(W):
     """ Single layer of the quantum neural net
     with CNOT range 1."""
 
-    qm.Rot(W[0, 0], W[0, 1], W[0, 2], [0])
-    qm.Rot(W[1, 0], W[1, 1], W[1, 2], [1])
+    qml.Rot(W[0, 0], W[0, 1], W[0, 2], [0])
+    qml.Rot(W[1, 0], W[1, 1], W[1, 2], [1])
 
-    qm.CNOT([0, 1])
+    qml.CNOT([0, 1])
 
 
 def get_beta(x):
@@ -36,31 +36,31 @@ def get_beta(x):
 def statepreparation(beta):
     """ """
 
-    qm.RY(beta[0], [1])
-    qm.CNOT([0, 1])
-    qm.RY(-beta[0], [1])
-    qm.CNOT([0, 1])
-    qm.RY(beta[1], [1])
-    qm.PauliX([0])
-    qm.CNOT([0, 1])
-    qm.RY(-beta[1], [1])
-    qm.CNOT([0, 1])
-    qm.PauliX([0])
-    qm.RY(beta[2], [0])
+    qml.RY(beta[0], [1])
+    qml.CNOT([0, 1])
+    qml.RY(-beta[0], [1])
+    qml.CNOT([0, 1])
+    qml.RY(beta[1], [1])
+    qml.PauliX([0])
+    qml.CNOT([0, 1])
+    qml.RY(-beta[1], [1])
+    qml.CNOT([0, 1])
+    qml.PauliX([0])
+    qml.RY(beta[2], [0])
 
 
-@qm.qnode(dev)
+@qml.qnode(dev)
 def circuit(weights, x=None):
     """The circuit of the variational classifier."""
 
     #statepreparation(data)
 
-    qm.QubitStateVector(x, [0, 1])
+    qml.QubitStateVector(x, [0, 1])
 
     for W in weights:
         layer(W)
 
-    return qm.expval.PauliZ(0)
+    return qml.expval.PauliZ(0)
 
 
 def variational_classifier(vars, x=None, shape=None):

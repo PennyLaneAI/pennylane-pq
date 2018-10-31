@@ -5,35 +5,35 @@ can be optimized to reproduce the parity function.
 
 """
 
-import openqml as qm
-from openqml import numpy as onp
+import pennylane as qml
+from pennylane import numpy as onp
 import numpy as np
-from openqml.optimize import AdagradOptimizer
+from pennylane.optimize import AdagradOptimizer
 
-dev = qm.device('projectq.simulator', wires=4)
+dev = qml.device('projectq.simulator', wires=4)
 
 
 def layer(W):
     """ Single layer of the quantum neural net."""
 
-    qm.Rot(W[0, 0], W[0, 1], W[0, 2], [0])
-    qm.Rot(W[1, 0], W[1, 1], W[1, 2], [1])
-    qm.Rot(W[2, 0], W[2, 1], W[2, 2], [2])
-    qm.Rot(W[3, 0], W[3, 1], W[3, 2], [3])
+    qml.Rot(W[0, 0], W[0, 1], W[0, 2], [0])
+    qml.Rot(W[1, 0], W[1, 1], W[1, 2], [1])
+    qml.Rot(W[2, 0], W[2, 1], W[2, 2], [2])
+    qml.Rot(W[3, 0], W[3, 1], W[3, 2], [3])
 
-    qm.CNOT([0, 1])
-    qm.CNOT([1, 2])
-    qm.CNOT([2, 3])
-    qm.CNOT([3, 0])
+    qml.CNOT([0, 1])
+    qml.CNOT([1, 2])
+    qml.CNOT([2, 3])
+    qml.CNOT([3, 0])
 
 
 def statepreparation(x):
     """ Encodes data input x into quantum state."""
 
-    qm.BasisState(x, wires=[0, 1, 2, 3])
+    qml.BasisState(x, wires=[0, 1, 2, 3])
 
 
-@qm.qnode(dev)
+@qml.qnode(dev)
 def circuit(weights, x=None):
     """The circuit of the variational classifier."""
 
@@ -42,7 +42,7 @@ def circuit(weights, x=None):
     for W in weights:
         layer(W)
 
-    return qm.expval.PauliZ(0)
+    return qml.expval.PauliZ(0)
 
 
 def variational_classifier(vars, x=None, shape=None):
