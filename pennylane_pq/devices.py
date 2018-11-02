@@ -26,9 +26,6 @@ This plugin offers access to the following ProjectQ backends by providing corres
    ProjectQIBMBackend
    ProjectQClassicalSimulator
 
-.. todo:: Is there a nice way to link to the documentation of the PennyLane native Operations/Expectations? I would like to do this in the description of the supported operations below. Probably http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html is a good solution, but for that the documentation of core PennyLane must be online first.
-
-
 See below for a description of the devices and the supported Operations and Expectations.
 
 ProjectQSimulator
@@ -83,7 +80,7 @@ projectq_operation_map = {
     'SqrtX': SqrtXGate,
     'SqrtSwap': SqrtSwapGate,
     #operations/expectations of ProjectQ that do not work with PennyLane
-#    'AllPauliZ': AllZGate, #todo: enable once https://github.com/XanaduAI/pennylane/issues/61 is resolved
+#    'AllPauliZ': AllZGate, #todo: enable in case multiple return values per expectation are supported in the future
     #operations/expectations of PennyLane that do not work with ProjectQ
 #    'QubitStateVector': StatePreparation,
 }
@@ -104,7 +101,7 @@ class _ProjectQDevice(Device):
       verbose (bool): If True, statistics are printed, in addition to the measurement result being registered (at the end of the circuit).
       user (string): IBM Quantum Experience user name
       password (string): IBM Quantum Experience password
-      device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
+      device (string): Device to use (e.g., ‘ibmqx4’ or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
       retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
     """
     name = 'ProjectQ PennyLane plugin'
@@ -288,7 +285,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         import pennylane as qml
         dev = qml.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
 
-    .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your PennyLane configuration file.
+    .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_.
 
     Supported PennyLane Operations:
       :class:`pennylane.PauliX`,

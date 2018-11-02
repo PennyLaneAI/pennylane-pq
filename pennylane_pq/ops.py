@@ -17,19 +17,14 @@ Operations
 
 .. currentmodule:: pennylane_pq.ops
 
-.. todo::
-    The way to present the following depends on the whether the `extra_operations` machinery makes it into the initial release.
-
 In addition to the suitable default operations native to PennyLane, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native PennyLane operations when defining quantum functions:
-
-.. todo:: these gates are not rendering correctly in the compiled docs. Check with Josh on how to fix
 
 .. autosummary::
    S
    T
    SqrtX
    SqrtSwap
-   AllPauliZ
+   .. AllPauliZ
 
 .. note::
    For convenience, and to mirror the behavior of the operations built into PennyLane, the operations defined here are also accessible directly under the top-level :code:`pennylane_pq` context, i.e., you can use :code:`pennylane_pq.S([0])` instead of :code:`pennylane_pq.ops.S([0])` when defining a :code:`QNode` using the :code:`qnode` decorator.
@@ -87,14 +82,14 @@ class SqrtSwap(Operation):
     num_wires = 2
     par_domain = None
 
-class AllPauliZ(Operation):
-    r"""Apply Pauli Z to all wires.
+# class AllPauliZ(Operation):
+#     r"""Apply Pauli Z to all wires.
 
-    .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
+#     .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
 
-    .. todo:: Potentially remove this gate depending on how https://github.com/XanaduAI/pennylane/issues/61 is resolved.
+#     .. todo:: Potentially remove this gate depending on how https://github.com/XanaduAI/pennylane/issues/61 is resolved.
 
-    """
-    num_params = 0
-    num_wires = 0
-    par_domain = None
+#     """
+#     num_params = 0
+#     num_wires = 0
+#     par_domain = None

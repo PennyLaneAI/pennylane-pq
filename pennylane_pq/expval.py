@@ -17,27 +17,20 @@ Expectations
 
 .. currentmodule:: pennylane_pq.expval
 
-.. todo::
-    The way to present the following depends on the whether the `extra_operations` machinery makes it into the initial release.
-
 In addition to the suitable default operations native to PennyLane, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native PennyLane operations when defining quantum functions:
 
-.. todo: class signature does not render properly in compiled docs. Check with Josh how to fix
-
 .. autosummary::
-   AllPauliZ
+   .. AllPauliZ
 """
 
 from pennylane.operation import Expectation
 
-class AllPauliZ(Expectation):
-    r"""Measure Pauli Z on all qubits.
+# class AllPauliZ(Expectation):
+#     r"""Measure Pauli Z on all qubits.
 
-    .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
+#     .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
 
-    .. todo:: Potentially remove this Operation depending on how https://github.com/XanaduAI/pennylane/issues/61 is resolved.
-
-    """
-    num_params = 0
-    num_wires = 0
-    par_domain = None
+#     """
+#     num_params = 0
+#     num_wires = 0
+#     par_domain = None

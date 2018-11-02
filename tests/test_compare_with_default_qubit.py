@@ -29,8 +29,6 @@ import pennylane_pq
 import pennylane_pq.expval
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 
-#import traceback #todo: remove once we no longer capture the exception further down
-
 log.getLogger('defaults')
 
 class CompareWithDefaultQubitTest(BaseTest):

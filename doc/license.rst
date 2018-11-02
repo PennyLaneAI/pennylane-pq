@@ -1,4 +1,3 @@
-License
-=======
-
-The PennyLane ProjectQ plugin is **free** and **open source**, released under the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
+.. include:: ../README.rst
+  :start-after:	license-start-inclusion-marker-do-not-remove
+  :end-before: license-end-inclusion-marker-do-not-remove

@@ -1,13 +1,54 @@
 PennyLane ProjectQ Plugin
-#######################
+#########################
 
-PennyLane is a Python quantum machine learning library by Xanadu Inc. This plugin opens up both the software and hardware backends of ProjectQ to be used as devices for quantum machine learning with PennyLane.
+.. image:: https://img.shields.io/travis/XanaduAI/pennylane-pq/master.svg?style=for-the-badge
+    :alt: Travis
+    :target: https://travis-ci.org/XanaduAI/pennylane-pq
 
+.. image:: https://img.shields.io/codecov/c/github/xanaduai/pennylane-pq/master.svg?style=for-the-badge
+    :alt: Codecov coverage
+    :target: https://codecov.io/gh/XanaduAI/pennylane-pq
+
+.. image:: https://img.shields.io/codacy/grade/bd14437d17494f16ada064d8026498dd.svg?style=for-the-badge
+    :alt: Codacy grade
+    :target: https://app.codacy.com/app/XanaduAI/pennylane-pq?utm_source=github.com&utm_medium=referral&utm_content=XanaduAI/pennylane-pq&utm_campaign=badger
+
+.. image:: https://img.shields.io/readthedocs/pennylane-pq.svg?style=for-the-badge
+    :alt: Read the Docs
+    :target: https://pennylane-pq.readthedocs.io
+
+.. image:: https://img.shields.io/pypi/v/PennyLaneProjectQ.svg?style=for-the-badge
+    :alt: PyPI
+    :target: https://pypi.org/project/PennyLaneProjectQ
+
+.. image:: https://img.shields.io/pypi/pyversions/PennyLaneProjectQ.svg?style=for-the-badge
+    :alt: PyPI - Python Version
+    :target: https://pypi.org/project/PennyLaneProjectQ
+
+.. header-start-inclusion-marker-do-not-remove
+
+`PennyLane <https://pennylane.readthedocs.io>`_ is a full-stack Python library for quantum machine
+learning and automatic differentiation of hybrid quantum-classical computations.
+
+`ProjectQ <https://github.com/ProjectQ-Framework/ProjectQ>`_ is ProjectQ is an open-source compilation framework capable of targeting various types of hardware and a high-performance quantum computer simulator with emulation capabilities, and various compiler plug-ins.
+
+This PennyLane plugin allows to use both the software and hardware backends of ProjectQ as devices for PennyLane.
+
+
+Features
+========
+
+* Provides three devices to be used with PennyLane: ``projectq.simulator``, ``projectq.ibm``, and ``projectq.classical``. These provide access to the respective ProjecQ backends.
+
+* Supports a wide range of PennyLane operations and expectation values across the devices.
+
+* Combine ProjectQ high performance simulator and hardware backend support with PennyLane's automatic differentiation and optimization.
+
+.. header-end-inclusion-marker-do-not-remove
+.. installation-start-inclusion-marker-do-not-remove
 
 Installation
 ============
-
-.. [//]: # (.. include:: doc/installation.rst)
 
 This plugin requires Python version 3.5 and above, as well as PennyLane and ProjectQ. Installation of this plugin, as well as all dependencies, can be done using pip:
 
@@ -21,8 +62,12 @@ To test that the PennyLane ProjectQ plugin is working correctly you can run
 
     $ make test
 
-in the source folder.
+in the source folder. Tests restricted to a specific device can be run by executing :code:`make test-simulator`, :code:`make test-ibm`, or :code:`make test-classical`.
 
+.. note:: Tests on the `ibm device <https://pennylane-pq.readthedocs.io/devices.html#pennylane_pq.devices.ProjectQIBMBackend>`_ can only be run if a :code:`user` and :code:`password` for the IBM quantum experience are configured in the `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_. If this is the case, running :code:`make test` also executes tests on the :code:`ibm` device. By default tests on the :code:`ibm` device run with :code:`hardware=False`. At the time of writing this means that the test are "free". Please verify that this is also the case for your account.
+
+.. installation-end-inclusion-marker-do-not-remove
+.. gettingstarted-start-inclusion-marker-do-not-remove
 
 Getting started
 ===============
@@ -59,11 +104,13 @@ Running your code on an IBM Quantum Experience simulator or even a real hardware
     import pennylane as qml
     dev = qml.device('projectq.ibm', wires=2, user="XXX", password="XXX")
 
+Please refer to the `documentation of the PennyLane ProjectQ Plugin plugin <https://pennylane-pq.readthedocs.io/>`_ as well as well as to the `documentation of PennyLane <https://pennylane.readthedocs.io/>`_ for further reference.
+
+.. gettingstarted-end-inclusion-marker-do-not-remove
+.. howtocite-start-inclusion-marker-do-not-remove
 
 How to cite
 ===========
-
-.. [//]: # (.. include:: doc/howtocite.rst)
 
 .. todo:: change reference and link
 
@@ -71,6 +118,7 @@ If you are doing research using PennyLane, please cite `our whitepaper <https://
 
   Authors. PennyLane. *arXiv*, 2018. arXiv:XXXX.XXXXX
 
+.. howtocite-end-inclusion-marker-do-not-remove
 
 Contributing
 ============
@@ -84,27 +132,24 @@ We also encourage bug reports, suggestions for new features and enhancements, an
 Authors
 =======
 
-.. todo:: confirm author list
+Christian Gogolin, Maria Schuld, Josh Izaac, Nathan Killoran, and Ville Bergholm
 
-Christian Gogolin, Ville Bergholm, Maria Schuld, and Nathan Killoran.
-
+.. support-start-inclusion-marker-do-not-remove
 
 Support
 =======
-
-.. [//]: # (.. include:: doc/support.rst)
 
 - **Source Code:** https://github.com/XanaduAI/pennylane-pq
 - **Issue Tracker:** https://github.com/XanaduAI/pennylane-pq/issues
 
 If you are having issues, please let us know by posting the issue on our Github issue tracker.
 
-.. todo:: adjust this link
-
+.. support-end-inclusion-marker-do-not-remove
+.. license-start-inclusion-marker-do-not-remove
 
 License
 =======
 
-.. [//]: # (.. include:: doc/license.rst)
-
 The PennyLane ProjectQ plugin is **free** and **open source**, released under the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
+
+.. license-end-inclusion-marker-do-not-remove

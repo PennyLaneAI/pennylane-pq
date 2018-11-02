@@ -1,4 +1,12 @@
+PennyLane ProjectQ Plugin
+#########################
+
 .. include:: ../README.rst
+  :start-after:	header-start-inclusion-marker-do-not-remove
+  :end-before: header-end-inclusion-marker-do-not-remove
+
+Table of Content
+================
 
 .. toctree::
    :maxdepth: 2
@@ -6,22 +14,17 @@
    :titlesonly:
 
    installation
+   gettingstarted
    support
    howtocite
    license
 
 .. toctree::
    :maxdepth: 2
-   :caption: Supported devices
+   :caption: Code documentation
 
    devices
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Supported operations
-
    operations
-   expectations
 
 
 Indices and tables
