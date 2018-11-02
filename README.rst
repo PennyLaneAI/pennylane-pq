@@ -37,8 +37,6 @@ This plugin allows to use both the software and hardware backends of `ProjectQ <
 Installation
 ============
 
-.. [//]: # (.. include:: doc/installation.rst)
-
 This plugin requires Python version 3.5 and above, as well as PennyLane and ProjectQ. Installation of this plugin, as well as all dependencies, can be done using pip:
 
 .. code-block:: bash
@@ -101,8 +99,6 @@ Please refer to the `documentation of the PennyLane ProjectQ Plugin plugin <http
 How to cite
 ===========
 
-.. [//]: # (.. include:: doc/howtocite.rst)
-
 .. todo:: change reference and link
 
 If you are doing research using PennyLane, please cite `our whitepaper <https://arxiv.org/abs/XXXX.XXXXX>`_:
@@ -132,22 +128,16 @@ Christian Gogolin, Ville Bergholm, Maria Schuld, and Nathan Killoran.
 Support
 =======
 
-.. [//]: # (.. include:: doc/support.rst)
-
 - **Source Code:** https://github.com/XanaduAI/pennylane-pq
 - **Issue Tracker:** https://github.com/XanaduAI/pennylane-pq/issues
 
 If you are having issues, please let us know by posting the issue on our Github issue tracker.
-
-.. todo:: adjust this link
 
 .. support-end-inclusion-marker-do-not-remove
 .. license-start-inclusion-marker-do-not-remove
 
 License
 =======
-
-.. [//]: # (.. include:: doc/license.rst)
 
 The PennyLane ProjectQ plugin is **free** and **open source**, released under the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
 
