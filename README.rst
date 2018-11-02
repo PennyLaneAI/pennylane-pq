@@ -25,10 +25,14 @@ PennyLane ProjectQ Plugin
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/PennyLaneProjectQ
 
+.. header-start-inclusion-marker-do-not-remove
+
 `PennyLane <https://pennylane.readthedocs.io>`_ is a full-stack Python library for quantum machine
 learning and automatic differentiation of hybrid quantum-classical computations.
 This plugin allows to use both the software and hardware backends of `ProjectQ <https://github.com/ProjectQ-Framework/ProjectQ>`_ as devices for PennyLane.
 
+.. header-end-inclusion-marker-do-not-remove
+.. installation-start-inclusion-marker-do-not-remove
 
 Installation
 ============
@@ -49,8 +53,10 @@ To test that the PennyLane ProjectQ plugin is working correctly you can run
 
 in the source folder. Tests restricted to a specific device can be run by executing :code:`make test-simulator`, :code:`make test-ibm`, or :code:`make test-classical`.
 
-.. note:: Tests on the :code:`ibm` device can only be run if a :code:`user` and :code:`password` for the IBM quantum experience are configured in the `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_. If this is the case, running :code:`make test` also executes tests on the :code:`ibm` device. By default tests on the :code:`ibm` device run with :code:`hardware=False`. At the time of writing this means that the test are "free". Please verify that this is also the case for your account.
+.. note:: Tests on the `ibm device <https://pennylane-pq.readthedocs.io/devices.html#pennylane_pq.devices.ProjectQIBMBackend>`_ can only be run if a :code:`user` and :code:`password` for the IBM quantum experience are configured in the `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_. If this is the case, running :code:`make test` also executes tests on the :code:`ibm` device. By default tests on the :code:`ibm` device run with :code:`hardware=False`. At the time of writing this means that the test are "free". Please verify that this is also the case for your account.
 
+.. installation-end-inclusion-marker-do-not-remove
+.. gettingstarted-start-inclusion-marker-do-not-remove
 
 Getting started
 ===============
@@ -89,6 +95,8 @@ Running your code on an IBM Quantum Experience simulator or even a real hardware
 
 Please refer to the `documentation of the PennyLane ProjectQ Plugin plugin <https://pennylane-pq.readthedocs.io/>`_ as well as well as to the `documentation of PennyLane <https://pennylane.readthedocs.io/>`_ for further reference.
 
+.. gettingstarted-end-inclusion-marker-do-not-remove
+.. howtocite-start-inclusion-marker-do-not-remove
 
 How to cite
 ===========
@@ -101,6 +109,7 @@ If you are doing research using PennyLane, please cite `our whitepaper <https://
 
   Authors. PennyLane. *arXiv*, 2018. arXiv:XXXX.XXXXX
 
+.. howtocite-end-inclusion-marker-do-not-remove
 
 Contributing
 ============
@@ -118,6 +127,7 @@ Authors
 
 Christian Gogolin, Ville Bergholm, Maria Schuld, and Nathan Killoran.
 
+.. support-start-inclusion-marker-do-not-remove
 
 Support
 =======
@@ -131,6 +141,8 @@ If you are having issues, please let us know by posting the issue on our Github 
 
 .. todo:: adjust this link
 
+.. support-end-inclusion-marker-do-not-remove
+.. license-start-inclusion-marker-do-not-remove
 
 License
 =======
@@ -138,3 +150,5 @@ License
 .. [//]: # (.. include:: doc/license.rst)
 
 The PennyLane ProjectQ plugin is **free** and **open source**, released under the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
+
+.. license-end-inclusion-marker-do-not-remove
