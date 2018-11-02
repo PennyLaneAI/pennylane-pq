@@ -32,7 +32,7 @@ learning and automatic differentiation of hybrid quantum-classical computations.
 
 `ProjectQ <https://github.com/ProjectQ-Framework/ProjectQ>`_ is ProjectQ is an open-source compilation framework capable of targeting various types of hardware and a high-performance quantum computer simulator with emulation capabilities, and various compiler plug-ins.
 
-This plugin allows to use both the software and hardware backends of ProjectQ as devices for PennyLane.
+This PennyLane plugin allows to use both the software and hardware backends of ProjectQ as devices for PennyLane.
 
 
 Features
@@ -132,9 +132,7 @@ We also encourage bug reports, suggestions for new features and enhancements, an
 Authors
 =======
 
-.. todo:: confirm author list
-
-Christian Gogolin, Ville Bergholm, Maria Schuld, and Nathan Killoran.
+Christian Gogolin, Maria Schuld, Josh Izaac, Nathan Killoran, and Ville Bergholm
 
 .. support-start-inclusion-marker-do-not-remove
 
