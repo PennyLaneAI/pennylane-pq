@@ -104,7 +104,7 @@ class _ProjectQDevice(Device):
       verbose (bool): If True, statistics are printed, in addition to the measurement result being registered (at the end of the circuit).
       user (string): IBM Quantum Experience user name
       password (string): IBM Quantum Experience password
-      device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
+      device (string): Device to use (e.g., ‘ibmqx4’ or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
       retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
     """
     name = 'ProjectQ PennyLane plugin'
