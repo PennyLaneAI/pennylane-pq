@@ -29,7 +29,20 @@ PennyLane ProjectQ Plugin
 
 `PennyLane <https://pennylane.readthedocs.io>`_ is a full-stack Python library for quantum machine
 learning and automatic differentiation of hybrid quantum-classical computations.
-This plugin allows to use both the software and hardware backends of `ProjectQ <https://github.com/ProjectQ-Framework/ProjectQ>`_ as devices for PennyLane.
+
+`ProjectQ <https://github.com/ProjectQ-Framework/ProjectQ>`_ is ProjectQ is an open-source compilation framework capable of targeting various types of hardware and a high-performance quantum computer simulator with emulation capabilities, and various compiler plug-ins.
+
+This plugin allows to use both the software and hardware backends of ProjectQ as devices for PennyLane.
+
+
+Features
+========
+
+* Provides three devices to be used with PennyLane: ``projectq.simulator``, ``projectq.ibm``, and ``projectq.classical``. These provide access to the respective ProjecQ backends.
+
+* Supports a wide range of PennyLane operations and expectation values across the devices.
+
+* Combine ProjectQ high performance simulator and hardware backend support with PennyLane's automatic differentiation and optimization.
 
 .. header-end-inclusion-marker-do-not-remove
 .. installation-start-inclusion-marker-do-not-remove
