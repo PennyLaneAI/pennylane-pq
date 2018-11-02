@@ -82,13 +82,15 @@ class Rot(BasicProjectQGate):
 
     ProjectQ does not currently have an arbitrary single qubit rotation gate, so we provide a class that return a suitable combination of rotation gates assembled into a single gate from the constructor of this class.
     """
-    def __new__(*par):
-        operation1 = pq.ops.Rz(par[1])
-        operation2 = pq.ops.Ry(par[2])
-        operation3 = pq.ops.Rz(par[3])
-        rot_gate = BasicProjectQGate(par[0].__name__)
-        rot_gate.matrix = np.dot(operation3.matrix, operation2.matrix, operation1.matrix)
-        return rot_gate
+    def __init__(self, *par):
+        BasicProjectQGate.__init__(self, name=self.__class__.__name__)
+        self.angles = par
+
+    def __or__(self, qubits):
+        pq.ops.Rz(self.angles[0]) | qubits
+        pq.ops.Ry(self.angles[1]) | qubits
+        pq.ops.Rz(self.angles[2]) | qubits
+
 
 class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
     """Class for the QubitUnitary gate.
