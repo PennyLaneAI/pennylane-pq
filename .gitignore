@@ -8,4 +8,4 @@ tests/__pycache__/
 *.ipynp
 *.ipynb_checkpoints
 __pycache__
-OpenQML_ProjectQ_Plugin.egg-info
+PennyLane_ProjectQ_Plugin.egg-info/
