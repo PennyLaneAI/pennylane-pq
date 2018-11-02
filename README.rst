@@ -1,7 +1,33 @@
 PennyLane ProjectQ Plugin
 #########################
 
-PennyLane is a Python quantum machine learning library by Xanadu Inc. This plugin opens up both the software and hardware backends of ProjectQ to be used as devices for quantum machine learning with PennyLane.
+.. image:: https://img.shields.io/travis/XanaduAI/pennylane-pq/master.svg?style=for-the-badge
+    :alt: Travis
+    :target: https://travis-ci.org/XanaduAI/pennylane-pq
+
+.. image:: https://img.shields.io/codecov/c/github/xanaduai/pennylane-pq/master.svg?style=for-the-badge
+    :alt: Codecov coverage
+    :target: https://codecov.io/gh/XanaduAI/pennylane-pq
+
+.. image:: https://img.shields.io/codacy/grade/bd14437d17494f16ada064d8026498dd.svg?style=for-the-badge
+    :alt: Codacy grade
+    :target: https://app.codacy.com/app/XanaduAI/pennylane-pq?utm_source=github.com&utm_medium=referral&utm_content=XanaduAI/pennylane-pq&utm_campaign=badger
+
+.. image:: https://img.shields.io/readthedocs/pennylane-pq.svg?style=for-the-badge
+    :alt: Read the Docs
+    :target: https://pennylane-pq.readthedocs.io
+
+.. image:: https://img.shields.io/pypi/v/PennyLaneProjectQ.svg?style=for-the-badge
+    :alt: PyPI
+    :target: https://pypi.org/project/PennyLaneProjectQ
+
+.. image:: https://img.shields.io/pypi/pyversions/PennyLaneProjectQ.svg?style=for-the-badge
+    :alt: PyPI - Python Version
+    :target: https://pypi.org/project/PennyLaneProjectQ
+
+`PennyLane <https://pennylane.readthedocs.io>`_ is a full-stack Python library for quantum machine
+learning and automatic differentiation of hybrid quantum-classical computations.
+This plugin allows to use both the software and hardware backends of `ProjectQ <https://github.com/ProjectQ-Framework/ProjectQ>`_ as devices for PennyLane.
 
 
 Installation
@@ -23,7 +49,7 @@ To test that the PennyLane ProjectQ plugin is working correctly you can run
 
 in the source folder. Tests restricted to a specific device can be run by executing :code:`make test-simulator`, :code:`make test-ibm`, or :code:`make test-classical`.
 
-.. note:: Tests on the :class:`ibm <pennylane_pq.devices.ProjectQIBMBackend>` device can only be run if a :code:`user` and :code:`password` for the IBM quantum experience are configured in the `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_. If this is the case, running :code:`make test` also executes tests on the :code:`ibm` device. By default tests on the :code:`ibm` device run with :code:`hardware=False`. At the time of writing this means that the test are "free". Please verify that this is also the case for your account.
+.. note:: Tests on the :code:`ibm` device can only be run if a :code:`user` and :code:`password` for the IBM quantum experience are configured in the `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_. If this is the case, running :code:`make test` also executes tests on the :code:`ibm` device. By default tests on the :code:`ibm` device run with :code:`hardware=False`. At the time of writing this means that the test are "free". Please verify that this is also the case for your account.
 
 
 Getting started
@@ -60,6 +86,8 @@ Running your code on an IBM Quantum Experience simulator or even a real hardware
 
     import pennylane as qml
     dev = qml.device('projectq.ibm', wires=2, user="XXX", password="XXX")
+
+Please refer to the `documentation of the PennyLane ProjectQ Plugin plugin <https://pennylane-pq.readthedocs.io/>`_ as well as well as to the `documentation of PennyLane <https://pennylane.readthedocs.io/>`_ for further reference.
 
 
 How to cite
