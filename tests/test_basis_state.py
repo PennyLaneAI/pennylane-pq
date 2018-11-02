@@ -35,47 +35,64 @@ class BasisStateTest(BaseTest):
     """
 
     num_subsystems = 4
-    device = None
+    devices = None
 
     def setUp(self):
         super().setUp()
 
+        self.devices = []
         if self.args.device == 'simulator' or self.args.device == 'all':
-            self.device = ProjectQSimulator(wires=self.num_subsystems)
-        if self.args.device == 'ibm':
+            self.devices.append(ProjectQSimulator(wires=self.num_subsystems))
+        if self.args.device == 'ibm' or self.args.device == 'all':
             ibm_options = pennylane.default_config['projectq.ibm']
             if "user" in ibm_options and "password" in ibm_options:
-                self.device = ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password'])
+                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
             else:
                 log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
         if self.args.device == 'classical':
-            self.device = None
+            pass
 
     def test_basis_state(self):
-        if self.device is None:
+        if self.devices is None:
             return
         self.logTestName()
 
-        for bits_to_flip in [np.array([0,0,0,0]), np.array([0,1,1,0]), np.array([1,1,1,0]), np.array([1,1,1,1])]:
-            @qml.qnode(self.device)
-            def circuit():
-                qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
-                return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
+        for device in self.devices:
+            for bits_to_flip in [np.array([0,0,0,0]), np.array([0,1,1,0]), np.array([1,1,1,0]), np.array([1,1,1,1])]:
+                @qml.qnode(device)
+                def circuit():
+                    qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
+                    return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
 
-            self.assertAllAlmostEqual([1]*self.num_subsystems-2*bits_to_flip, np.array(circuit()), delta=self.tol)
+                self.assertAllAlmostEqual([1]*self.num_subsystems-2*bits_to_flip, np.array(circuit()), delta=self.tol)
 
     def test_basis_state_on_subsystem(self):
-        if self.device is None:
+        if self.devices is None:
             return
         self.logTestName()
 
-        for bits_to_flip in [np.array([0,0,0]), np.array([0,1,1]), np.array([1,1,0]), np.array([1,1,1])]:
-            @qml.qnode(self.device)
-            def circuit():
-                qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems-1)))
-                return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
+        for device in self.devices:
+            for bits_to_flip in [np.array([0,0,0]), np.array([1,0,0]), np.array([0,1,1]), np.array([1,1,0]), np.array([1,1,1])]:
+                @qml.qnode(device)
+                def circuit():
+                    qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems-1)))
+                    return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
 
-            self.assertAllAlmostEqual([1]*(self.num_subsystems-1)-2*bits_to_flip, np.array(circuit()[:-1]), delta=self.tol)
+                self.assertAllAlmostEqual([1]*(self.num_subsystems-1)-2*bits_to_flip, np.array(circuit()[:-1]), delta=self.tol)
+
+    def test_disallow_basis_state_after_other_operation(self):
+        if self.devices is None:
+            return
+        self.logTestName()
+
+        for device in self.devices:
+            @qml.qnode(device)
+            def circuit():
+                qml.PauliX(wires=[0])
+                qml.BasisState(np.array([0,1,0,1]), wires=list(range(self.num_subsystems)))
+                return qml.expval.PauliZ(0)
+
+            self.assertRaises(pennylane._device.DeviceError, circuit)
 
 if __name__ == '__main__':
     print('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', BasisState operation.')

@@ -153,14 +153,14 @@ class _ProjectQDevice(Device):
 
     def apply(self, operation_name, wires, par):
         operation = self._operation_map[operation_name](*par)
-        if isinstance(operation, pq.ops._state_prep.StatePreparation) and not self.first_operation:
+        if isinstance(operation, BasisState) and not self.first_operation:
             raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation_name, self.short_name))
         self.first_operation = False
 
-        list = [self.reg[i] for i in wires]
+        qureg = [self.reg[i] for i in wires]
         if isinstance(operation, (pq.ops._metagates.ControlledGate, pq.ops._gates.SqrtSwapGate, pq.ops._gates.SwapGate)):
-            list = tuple(list)
-        operation | list #pylint: disable=pointless-statement
+            qureg = tuple(qureg)
+        operation | qureg #pylint: disable=pointless-statement
 
     def _deallocate(self):
         """Deallocate all qubits to make ProjectQ happy

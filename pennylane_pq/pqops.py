@@ -21,9 +21,10 @@ This module provides wrapper classes for `Operations` that are missing a class i
 
 """
 import projectq as pq
+from projectq.ops import BasicGate, SelfInverseGate
 import numpy as np
 
-class BasicProjectQGate(pq.ops.BasicGate): # pylint: disable=too-few-public-methods
+class BasicProjectQGate(BasicGate): # pylint: disable=too-few-public-methods
     def __init__(self, name="unnamed"):
         super().__init__()
         self.name = name
@@ -40,8 +41,7 @@ class CNOT(BasicProjectQGate): # pylint: disable=too-few-public-methods
     a gate with the correct properties by overwriting __new__().
     """
     def __new__(*par): # pylint: disable=no-method-argument
-        #return pq.ops.C(pq.ops.XGate())
-        return pq.ops.C(pq.ops.NOT)
+        return pq.ops.C(pq.ops.XGate())
 
 
 class CZ(BasicProjectQGate): # pylint: disable=too-few-public-methods
@@ -100,15 +100,17 @@ class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
         unitary_gate.matrix = np.matrix(par[1])
         return unitary_gate
 
-class BasisState(BasicProjectQGate): # pylint: disable=too-few-public-methods
+class BasisState(BasicProjectQGate, SelfInverseGate): # pylint: disable=too-few-public-methods
     """Class for the BasisState preparation.
 
     ProjectQ does not currently have a dedicated gate for this, so we implement it here.
     """
-    def __new__(*par):
-        qubits_for_flip = list(par[1])
-        number_of_state = sum([a*2**idx for idx, a in enumerate(qubits_for_flip)])
-        state_ket = [ 1 if i==number_of_state else 0 for i in range(2**len(qubits_for_flip))]
-        prep = pq.ops.StatePreparation(state_ket)
-        prep.name = par[0].__name__
-        return prep
+    def __init__(self, basis_state_to_prep):
+        BasicProjectQGate.__init__(self, name=self.__class__.__name__)
+        SelfInverseGate.__init__(self)
+        self.basis_state_to_prep = basis_state_to_prep
+
+    def __or__(self, qubits):
+        for i,qureg in enumerate(qubits):
+            if self.basis_state_to_prep[i] == 1:
+                pq.ops.XGate() | qureg
