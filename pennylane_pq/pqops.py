@@ -43,7 +43,6 @@ class CNOT(BasicProjectQGate): # pylint: disable=too-few-public-methods
     def __new__(*par): # pylint: disable=no-method-argument
         return pq.ops.C(pq.ops.XGate())
 
-
 class CZ(BasicProjectQGate): # pylint: disable=too-few-public-methods
     """Class for the CNOT gate.
 
@@ -91,6 +90,11 @@ class Rot(BasicProjectQGate):
         pq.ops.Ry(self.angles[1]) | qubits
         pq.ops.Rz(self.angles[2]) | qubits
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.angles == other.angles
+        else:
+            return False
 
 class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
     """Class for the QubitUnitary gate.
@@ -116,3 +120,9 @@ class BasisState(BasicProjectQGate, SelfInverseGate): # pylint: disable=too-few-
         for i,qureg in enumerate(qubits):
             if self.basis_state_to_prep[i] == 1:
                 pq.ops.XGate() | qureg
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.basis_state_to_prep == other.basis_state_to_prep
+        else:
+            return False
