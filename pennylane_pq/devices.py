@@ -301,7 +301,6 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`pennylane.QubitStateVector`,
       :class:`pennylane.Hadamard`,
       :class:`pennylane.Rot`,
-      :class:`pennylane.QubitUnitary`,
       :class:`pennylane.BasisState`
 
     Supported PennyLane Expectations:
@@ -323,7 +322,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
     """
 
     short_name = 'projectq.ibm'
-    _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT, CZ, BasisState]}
+    _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT, CZ, Rot, BasisState]}
     _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate, AllZGate]}
     _circuits = {}
     _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device', 'retrieve_execution']
