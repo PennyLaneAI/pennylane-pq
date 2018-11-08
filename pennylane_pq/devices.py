@@ -97,7 +97,7 @@ class _ProjectQDevice(Device):
 
     Keyword Args for IBMBackend backend:
       use_hardware (bool): If True, the code is run on the IBM quantum chip (instead of using the IBM simulator)
-      num_runs (int): Number of runs to collect statistics. (default is 1024)
+      num_runs (int): Number of runs to collect statistics (default is 1024). Is equivalent to but takes preference over the shots parameter.
       verbose (bool): If True, statistics are printed, in addition to the measurement result being registered (at the end of the circuit).
       user (string): IBM Quantum Experience user name
       password (string): IBM Quantum Experience password
@@ -122,10 +122,10 @@ class _ProjectQDevice(Device):
         # clean some arguments
         if 'num_runs' in kwargs:
             if isinstance(kwargs['num_runs'], int) and kwargs['num_runs']>0:
-                self.n_eval = kwargs['num_runs']
+                self.shots = kwargs['num_runs']
             else:
-                self.n_eval = 0
                 del(kwargs['num_runs'])
+                kwargs['num_runs'] = self.shots
 
         self.backend = kwargs['backend']
         del(kwargs['backend'])
@@ -272,7 +272,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
 
     Keyword Args:
       use_hardware (bool): If True, the code is run on the IBM quantum chip (instead of using the IBM simulator)
-      num_runs (int): Number of runs to collect statistics (default is 1024)
+      num_runs (int): Number of runs to collect statistics (default is 1024). Is equivalent to but takes preference over the shots parameter.
       verbose (bool): If True, statistics are printed, in addition to the measurement result being registered (at the end of the circuit)
       user (string): IBM Quantum Experience user name
       password (string): IBM Quantum Experience password
