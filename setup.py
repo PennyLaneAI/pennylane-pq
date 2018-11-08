@@ -28,7 +28,7 @@ with open("requirements.txt") as f:
     ]
 
 info = {
-    'name': 'PennyLane ProjectQ Plugin',
+    'name': 'PennyLane-PQ',
     'version': version,
     'maintainer': 'Xanadu Inc.',
     'maintainer_email': 'christiangogolin@xanadu.ai',
