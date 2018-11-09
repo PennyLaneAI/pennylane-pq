@@ -148,10 +148,10 @@ class _ProjectQDevice(Device):
     def post_expval(self):
         self._deallocate()
 
-    def apply(self, operation_name, wires, par):
-        operation = self._operation_map[operation_name](*par)
+    def apply(self, operation, wires, par):
+        operation = self._operation_map[operation](*par)
         if isinstance(operation, BasisState) and not self.first_operation:
-            raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation_name, self.short_name))
+            raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation, self.short_name))
         self.first_operation = False
 
         qureg = [self.reg[i] for i in wires]
