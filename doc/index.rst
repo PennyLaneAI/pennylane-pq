@@ -1,12 +1,17 @@
 PennyLane ProjectQ Plugin
 #########################
 
+:Release: |release|
+:Date: |today|
+
 .. include:: ../README.rst
   :start-after:	header-start-inclusion-marker-do-not-remove
   :end-before: header-end-inclusion-marker-do-not-remove
 
-Table of Content
-================
+Contents
+========
+
+.. rst-class:: contents local topic
 
 .. toctree::
    :maxdepth: 2
@@ -18,18 +23,12 @@ Table of Content
    support
    howtocite
    license
+   
+.. rst-class:: contents local topic
 
 .. toctree::
    :maxdepth: 2
-   :caption: Code documentation
+   :caption: Code details
 
    devices
    operations
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

@@ -104,9 +104,10 @@ Running your code on an IBM Quantum Experience simulator or even a real hardware
     import pennylane as qml
     dev = qml.device('projectq.ibm', wires=2, user="XXX", password="XXX")
 
-Please refer to the `documentation of the PennyLane ProjectQ Plugin plugin <https://pennylane-pq.readthedocs.io/>`_ as well as well as to the `documentation of PennyLane <https://pennylane.readthedocs.io/>`_ for further reference.
-
 .. gettingstarted-end-inclusion-marker-do-not-remove
+
+Please refer to the `documentation of the PennyLane ProjectQ Plugin <https://pennylane-pq.readthedocs.io/>`_ as well as well as to the `documentation of PennyLane <https://pennylane.readthedocs.io/>`_ for further reference.
+
 .. howtocite-start-inclusion-marker-do-not-remove
 
 How to cite
@@ -116,7 +117,7 @@ How to cite
 
 If you are doing research using PennyLane, please cite `our whitepaper <https://arxiv.org/abs/XXXX.XXXXX>`_:
 
-  Authors. PennyLane. *arXiv*, 2018. arXiv:XXXX.XXXXX
+  Ville Bergholm, Josh Izaac, Maria Schuld, Christian Gogolin, and Nathan Killoran. PennyLane. *arXiv*, 2018. arXiv:XXXX.XXXXX
 
 .. howtocite-end-inclusion-marker-do-not-remove
 
