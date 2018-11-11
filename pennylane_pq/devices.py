@@ -107,12 +107,13 @@ class _ProjectQDevice(Device):
     name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
     api_version = '0.1.0'
+    version = '0.1.0'
     plugin_version = __version__
     author = 'Christian Gogolin'
     _capabilities = {'backend': list(["Simulator", "ClassicalSimulator", "IBMBackend"])}
 
     def __init__(self, wires, *, shots=0, **kwargs):
-        super().__init__(self.short_name, wires=wires, shots=shots)
+        super().__init__(wires=wires, shots=shots)
 
         # translate some aguments
         for k,v in {'log':'verbose'}.items():

@@ -1,11 +1,14 @@
 doc/_build/
-OpenQML_PQ.egg-info/
+pennylane_pq.egg-info/
 build/
 dist/
-openqml_pq/__pycache__/
+pennylane_pq/__pycache__/
 tests/__pycache__/
 .idea
 *.ipynp
 *.ipynb_checkpoints
 __pycache__
 PennyLane_ProjectQ_Plugin.egg-info/
+.pytest_cache/
+coverage_html_report/
+.coverage
