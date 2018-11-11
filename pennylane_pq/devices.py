@@ -172,6 +172,25 @@ class _ProjectQDevice(Device):
     def filter_kwargs_for_backend(self, kwargs):
         return { key:value for key,value in kwargs.items() if key in self._backend_kwargs }
 
+    @property
+    def operations(self):
+        """Get the supported set of operations.
+
+        Returns:
+            set[str]: the set of PennyLane operation names the device supports
+        """
+        return set(self._operation_map.keys())
+
+    @property
+    def expectations(self):
+        """Get the supported set of expectations.
+
+        Returns:
+            set[str]: the set of PennyLane expectation names the device supports
+        """
+        return set(self._expectation_map.keys())
+
+
 
 class ProjectQSimulator(_ProjectQDevice):
     """A PennyLane :code:`projectq.simulator` device for the `ProjectQ Simulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_ backend.
