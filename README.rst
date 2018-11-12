@@ -3,7 +3,7 @@ PennyLane ProjectQ Plugin
 
 .. image:: https://img.shields.io/travis/com/XanaduAI/pennylane-pq/master.svg?style=for-the-badge
     :alt: Travis
-    :target: https://travis-ci.org/XanaduAI/pennylane-pq
+    :target: https://travis-ci.com/XanaduAI/pennylane-pq
 
 .. image:: https://img.shields.io/codecov/c/github/xanaduai/pennylane-pq/master.svg?style=for-the-badge
     :alt: Codecov coverage
