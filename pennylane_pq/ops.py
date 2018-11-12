@@ -82,6 +82,13 @@ class SqrtSwap(Operation):
     num_wires = 2
     par_domain = None
 
+# class Toffoli(Operation):
+#     r"""Apply the Tofoli gate.
+#     """
+#     num_params = 0
+#     num_wires = 3
+#     par_domain = None
+
 # class AllPauliZ(Operation):
 #     r"""Apply Pauli Z to all wires.
 

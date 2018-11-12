@@ -52,7 +52,7 @@ from pennylane import Device, DeviceError
 import projectq as pq
 
 from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, Ph, StatePreparation, SGate, TGate, SqrtXGate, SqrtSwapGate)
-from .pqops import (CNOT, CZ, Toffoli, AllZGate, Rot, QubitUnitary, BasisState)
+from .pqops import (CNOT, CZ, Rot, QubitUnitary, BasisState)
 
 from ._version import __version__
 
@@ -118,15 +118,13 @@ class _ProjectQDevice(Device):
         # translate some aguments
         for k,v in {'log':'verbose'}.items():
             if k in kwargs:
-                kwargs.setdefault(v, kwargs[k])
+                kwargs[v] = kwargs[k]
 
         # clean some arguments
-        if 'num_runs' in kwargs:
-            if isinstance(kwargs['num_runs'], int) and kwargs['num_runs']>0:
-                self.shots = kwargs['num_runs']
-            else:
-                del(kwargs['num_runs'])
-                kwargs['num_runs'] = self.shots
+        if 'num_runs' in kwargs and isinstance(kwargs['num_runs'], int) and kwargs['num_runs']>0:
+            self.shots = kwargs['num_runs']
+        else:
+            kwargs['num_runs'] = self.shots
 
         self.backend = kwargs['backend']
         del(kwargs['backend'])
@@ -249,7 +247,7 @@ class ProjectQSimulator(_ProjectQDevice):
 
     short_name = 'projectq.simulator'
     _operation_map = projectq_operation_map
-    _expectation_map = {key:val for key, val in _operation_map.items() if val in [XGate, YGate, ZGate, AllZGate]}
+    _expectation_map = {key:val for key, val in _operation_map.items() if val in [XGate, YGate, ZGate]}
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
@@ -274,11 +272,9 @@ class ProjectQSimulator(_ProjectQDevice):
 
             ev = self.eng.backend.get_expectation_value(pq.ops.QubitOperator(str(expectation)[-1]+'0'), [self.reg[wire]])
             #variance = 1 - ev**2
-        elif expectation == 'AllPauliZ':
-             ev = [ self.eng.backend.get_expectation_value(pq.ops.QubitOperator("Z"+'0'), [qubit]) for qubit in self.reg]
-             #variance = [1 - e**2 for e in ev]
-        else:
-            raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
+        # elif expectation == 'AllPauliZ':
+        #      ev = [ self.eng.backend.get_expectation_value(pq.ops.QubitOperator("Z"+'0'), [qubit]) for qubit in self.reg]
+        #      #variance = [1 - e**2 for e in ev]
 
         return ev
 
@@ -343,7 +339,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
 
     short_name = 'projectq.ibm'
     _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT, CZ, Rot, BasisState]}
-    _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate, AllZGate]}
+    _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate]}
     _circuits = {}
     _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device', 'retrieve_execution']
 
@@ -379,11 +375,9 @@ class ProjectQIBMBackend(_ProjectQDevice):
 
             ev = (1-(2*sum(p for (state,p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[wire] == '0')))/2
             #variance = 1 - ev**2
-        elif expectation == 'AllPauliZ':
-            ev = [ ((1-2*sum(p for (state,p) in probabilities.items() if state[i] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[i] == '0')))/2 for i in range(len(self.reg)) ]
-            #variance = [1 - e**2 for e in ev]
-        else:
-            raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
+        # elif expectation == 'AllPauliZ':
+        #     ev = [ ((1-2*sum(p for (state,p) in probabilities.items() if state[i] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[i] == '0')))/2 for i in range(len(self.reg)) ]
+        #     #variance = [1 - e**2 for e in ev]
 
         return ev
 
@@ -417,7 +411,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     short_name = 'projectq.classical'
     _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [XGate, CNOT]}
-    _expectation_map = {key:val for key, val in projectq_operation_map.items() if val in [ZGate, AllZGate]}
+    _expectation_map = {key:val for key, val in projectq_operation_map.items() if val in [ZGate]}
     _circuits = {}
     _backend_kwargs = []
 
@@ -443,10 +437,8 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
             ev = 1 - 2*int(self.reg[wire])
             #variance = 1 - ev**2
-        elif expectation == 'AllPauliZ':
-            ev = [ 1 - 2*int(self.reg[wire]) for wire in self.reg]
-            #variance = [1 - e**2 for e in ev]
-        else:
-            raise DeviceError("Expectation {} not supported by {}".format(observable, self.name))
+        # elif expectation == 'AllPauliZ':
+        #     ev = [ 1 - 2*int(self.reg[wire]) for wire in self.reg]
+        #     #variance = [1 - e**2 for e in ev]
 
         return ev
