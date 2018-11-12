@@ -106,7 +106,7 @@ class _ProjectQDevice(Device):
     """
     name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
-    api_version = '0.1.0'
+    pennylane_requires = '0.1.0'
     version = '0.1.0'
     plugin_version = __version__
     author = 'Christian Gogolin'
