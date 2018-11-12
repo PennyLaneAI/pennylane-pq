@@ -19,10 +19,10 @@ import unittest
 import logging as log
 #import inspect
 #from unittest_data_provider import data_provider
-from pkg_resources import iter_entry_points
+#from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
 import pennylane
-from pennylane import Device
+#from pennylane import Device
 from pennylane import numpy as np
 import pennylane_pq
 import pennylane_pq.expval
@@ -49,16 +49,20 @@ class BasisStateTest(BaseTest):
                 self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
             else:
                 log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
-        if self.args.device == 'classical':
-            pass
+        if self.args.device == 'classical' or self.args.device == 'all':
+            self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems))
 
     def test_basis_state(self):
+        """Test BasisState with preparations on the whole system."""
         if self.devices is None:
             return
         self.logTestName()
 
         for device in self.devices:
-            for bits_to_flip in [np.array([0,0,0,0]), np.array([0,1,1,0]), np.array([1,1,1,0]), np.array([1,1,1,1])]:
+            for bits_to_flip in [np.array([0, 0, 0, 0]),
+                                 np.array([0, 1, 1, 0]),
+                                 np.array([1, 1, 1, 0]),
+                                 np.array([1, 1, 1, 1])]:
                 @qml.qnode(device)
                 def circuit():
                     qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
@@ -67,12 +71,17 @@ class BasisStateTest(BaseTest):
                 self.assertAllAlmostEqual([1]*self.num_subsystems-2*bits_to_flip, np.array(circuit()), delta=self.tol)
 
     def test_basis_state_on_subsystem(self):
+        """Test BasisState with preparations on subsystems."""
         if self.devices is None:
             return
         self.logTestName()
 
         for device in self.devices:
-            for bits_to_flip in [np.array([0,0,0]), np.array([1,0,0]), np.array([0,1,1]), np.array([1,1,0]), np.array([1,1,1])]:
+            for bits_to_flip in [np.array([0, 0, 0]),
+                                 np.array([1, 0, 0]),
+                                 np.array([0, 1, 1]),
+                                 np.array([1, 1, 0]),
+                                 np.array([1, 1, 1])]:
                 @qml.qnode(device)
                 def circuit():
                     qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems-1)))

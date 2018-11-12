@@ -457,7 +457,8 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     Supported PennyLane Operations:
       :class:`pennylane.PauliX`,
-      :class:`pennylane.CNOT`
+      :class:`pennylane.CNOT`,
+      :class:`pennylane.BasisState`
 
     Supported PennyLane Expectations:
       :class:`pennylane.PauliZ`
@@ -472,7 +473,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     short_name = 'projectq.classical'
     _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
-                      if val in [XGate, CNOT]}
+                      if val in [XGate, CNOT, BasisState]}
     _expectation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
                         if val in [ZGate]}
     _circuits = {}

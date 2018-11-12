@@ -10,14 +10,17 @@ import argparse
 import pennylane
 from pennylane import numpy as np
 
-# Make sure pennylane_pq is always imported from the same source distribution where the tests reside, not e.g. from site-packages.
+# Make sure pennylane_pq is always imported from the same source distribution
+# where the tests reside, not e.g. from site-packages.
 # See https://docs.python-guide.org/en/latest/writing/structure/#test-suite
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-import pennylane_pq
+import pennylane_pq #pylint: disable=wrong-import-position,unused-import
 
 # defaults
-DEVICE = os.environ['DEVICE'] if 'DEVICE' in os.environ and os.environ['DEVICE'] is not None else "all"
+if 'DEVICE' in os.environ and os.environ['DEVICE'] is not None:
+    DEVICE = os.environ['DEVICE']
+else:
+    DEVICE = "all"
 OPTIMIZER = "GradientDescentOptimizer"
 if DEVICE == "all" or DEVICE == "ibm":
     TOLERANCE = 3e-2
@@ -27,35 +30,41 @@ else:
 
 # set up logging
 if "LOGGING" in os.environ:
-    logLevel = os.environ["LOGGING"]
+    logLevel = os.environ["LOGGING"] #pylint: disable=invalid-name
     print('Logging:', logLevel)
-    numeric_level = getattr(logging, logLevel.upper(), 10)
+    numeric_level = getattr(logging, logLevel.upper(), 10) #pylint: disable=invalid-name
 else:
-    numeric_level = 100
+    numeric_level = 100 #pylint: disable=invalid-name
 
 logging.getLogger().setLevel(numeric_level)
 logging.captureWarnings(True)
 
 def get_commandline_args():
     """Parse the commandline arguments for the unit tests.
-    If none are given (e.g. when the test is run as a module instead of a script), the defaults are used.
+    If none are given (e.g. when the test is run as a module instead of a script),
+    the defaults are used.
 
     Returns:
       argparse.Namespace: parsed arguments in a namespace container
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--device',   type=str,   default=DEVICE,   help='Device(s) to use for tests.', choices=['simulator', 'ibm', 'classical', 'all'])
-    parser.add_argument('-t', '--tolerance', type=float, default=TOLERANCE, help='Numerical tolerance for equality tests.')
-    parser.add_argument("--user", help="IBM Quantum Experience user name")
-    parser.add_argument("--password", help="IBM Quantum Experience password")
-    parser.add_argument("--optimizer", default=OPTIMIZER, choices=pennylane.optimize.__all__, help="optimizer to use")
+    parser.add_argument('-d', '--device', type=str, default=DEVICE,
+                        help='Device(s) to use for tests.', choices=['simulator', 'ibm', 'classical', 'all'])
+    parser.add_argument('-t', '--tolerance', type=float, default=TOLERANCE,
+                        help='Numerical tolerance for equality tests.')
+    parser.add_argument("--user",
+                        help="IBM Quantum Experience user name")
+    parser.add_argument("--password",
+                        help="IBM Quantum Experience password")
+    parser.add_argument("--optimizer", default=OPTIMIZER, choices=pennylane.optimize.__all__,
+                        help="optimizer to use")
 
     # HACK: We only parse known args to enable unittest test discovery without parsing errors.
     args, _ = parser.parse_known_args()
     return args
 
 # parse any possible commandline arguments
-args = get_commandline_args()
+ARGS = get_commandline_args()
 
 class BaseTest(unittest.TestCase):
     """ABC for tests.
@@ -64,8 +73,8 @@ class BaseTest(unittest.TestCase):
     num_subsystems = None  #: int: number of wires for the device, must be overridden by child classes
 
     def setUp(self):
-        self.args = args
-        self.tol = args.tolerance
+        self.args = ARGS
+        self.tol = self.args.tolerance
 
     def logTestName(self):
         logging.info('{}'.format(self.id()))
