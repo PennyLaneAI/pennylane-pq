@@ -17,7 +17,10 @@ Operations
 
 .. currentmodule:: pennylane_pq.ops
 
-In addition to the suitable default operations native to PennyLane, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native PennyLane operations when defining quantum functions:
+In addition to the suitable default operations native to PennyLane,
+the devices of the ProjectQ plugin support a number of additional operations
+that can be used alongside the native PennyLane operations when defining
+quantum functions:
 
 .. autosummary::
    S
@@ -27,13 +30,17 @@ In addition to the suitable default operations native to PennyLane, the devices 
    .. AllPauliZ
 
 .. note::
-   For convenience, and to mirror the behavior of the operations built into PennyLane, the operations defined here are also accessible directly under the top-level :code:`pennylane_pq` context, i.e., you can use :code:`pennylane_pq.S([0])` instead of :code:`pennylane_pq.ops.S([0])` when defining a :code:`QNode` using the :code:`qnode` decorator.
+    For convenience, and to mirror the behavior of the operations built into
+    PennyLane, the operations defined here are also accessible directly under
+    the top-level :code:`pennylane_pq` context, i.e., you can use
+    :code:`pennylane_pq.S([0])` instead of :code:`pennylane_pq.ops.S([0])`
+    when defining a :code:`QNode` using the :code:`qnode` decorator.
 
 """
 
 from pennylane.operation import Operation
 
-class S(Operation):
+class S(Operation): #pylint: disable=invalid-name
     r"""S gate.
 
     .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
@@ -46,7 +53,7 @@ class S(Operation):
     par_domain = None
 
 
-class T(Operation):
+class T(Operation): #pylint: disable=invalid-name
     r"""T gate.
 
     .. math:: T = \begin{bmatrix}1&0\\0&\exp(i \pi / 4)\end{bmatrix}
@@ -73,7 +80,8 @@ class SqrtX(Operation):
 class SqrtSwap(Operation):
     r"""Square root SWAP gate.
 
-    .. math:: SqrtSwap = \begin{bmatrix}1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\0&(1-i)/2 &(1+i)/2&0\\0&0&0&1\end{bmatrix}
+    .. math:: SqrtSwap = \begin{bmatrix}1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\
+                                        0&(1-i)/2 &(1+i)/2&0\\0&0&0&1\end{bmatrix}
 
     Args:
         wires (seq[int]): the subsystems the gate acts on
@@ -94,7 +102,8 @@ class SqrtSwap(Operation):
 
 #     .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
 
-#     .. todo:: Potentially remove this gate depending on how https://github.com/XanaduAI/pennylane/issues/61 is resolved.
+#     .. todo:: Potentially remove this gate depending on how
+#               https://github.com/XanaduAI/pennylane/issues/61 is resolved.
 
 #     """
 #     num_params = 0

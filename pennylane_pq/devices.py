@@ -17,7 +17,8 @@ Devices
 
 .. currentmodule:: pennylane_pq.devices
 
-This plugin offers access to the following ProjectQ backends by providing corresponding PennyLane devices:
+This plugin offers access to the following ProjectQ backends by providing
+corresponding PennyLane devices:
 
 .. autosummary::
    :nosignatures:
@@ -45,19 +46,20 @@ ProjectQClassicalSimulator
 
 
 """
-import logging as log
-import numpy as np
+import abc
+import projectq as pq
+from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, #pylint: disable=reimported
+                          SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, SGate, TGate,
+                          SqrtXGate, SqrtSwapGate)
+
 from pennylane import Device, DeviceError
 
-import projectq as pq
-
-from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, Ph, StatePreparation, SGate, TGate, SqrtXGate, SqrtSwapGate)
 from .pqops import (CNOT, CZ, Rot, QubitUnitary, BasisState)
 
 from ._version import __version__
 
 
-projectq_operation_map = {
+PROJECTQ_OPERATION_MAP = {
     #native PennyLane operations also native to ProjectQ
     'PauliX': XGate,
     'PauliY': YGate,
@@ -80,29 +82,35 @@ projectq_operation_map = {
     'SqrtX': SqrtXGate,
     'SqrtSwap': SqrtSwapGate,
     #operations/expectations of ProjectQ that do not work with PennyLane
-#    'AllPauliZ': AllZGate, #todo: enable in case multiple return values per expectation are supported in the future
+    #'AllPauliZ': AllZGate, #todo: enable when multiple return values are supported
     #operations/expectations of PennyLane that do not work with ProjectQ
-#    'QubitStateVector': StatePreparation,
+    #'QubitStateVector': StatePreparation,
 }
 
-class _ProjectQDevice(Device):
+class _ProjectQDevice(Device): #pylint: disable=abstract-method
     """ProjectQ device for PennyLane.
 
     Args:
        wires (int): The number of qubits of the device.
 
     Keyword Args for Simulator backend:
-      gate_fusion (bool): If True, operations are cached and only executed once a certain number of operations has been reached (only has an effect for the c++ simulator).
+      gate_fusion (bool): If True, operations are cached and only executed once a
+      certain number of operations has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
 
     Keyword Args for IBMBackend backend:
-      use_hardware (bool): If True, the code is run on the IBM quantum chip (instead of using the IBM simulator)
-      num_runs (int): Number of runs to collect statistics (default is 1024). Is equivalent to but takes preference over the shots parameter.
-      verbose (bool): If True, statistics are printed, in addition to the measurement result being registered (at the end of the circuit).
+      use_hardware (bool): If True, the code is run on the IBM quantum chip (instead of using
+      the IBM simulator)
+      num_runs (int): Number of runs to collect statistics (default is 1024). Is equivalent
+      to but takes preference over the shots parameter.
+      verbose (bool): If True, statistics are printed, in addition to the measurement result
+      being registered (at the end of the circuit).
       user (string): IBM Quantum Experience user name
       password (string): IBM Quantum Experience password
-      device (string): Device to use (e.g., ‘ibmqx4’ or ‘ibmqx5’) if use_hardware is set to True. Default is ibmqx4.
-      retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out).
+      device (string): Device to use (e.g., ‘ibmqx4’ or ‘ibmqx5’) if use_hardware is set to
+      True. Default is ibmqx4.
+      retrieve_execution (int): Job ID to retrieve instead of re-running the circuit
+      (e.g., if previous run timed out).
     """
     name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
@@ -112,22 +120,34 @@ class _ProjectQDevice(Device):
     author = 'Christian Gogolin'
     _capabilities = {'backend': list(["Simulator", "ClassicalSimulator", "IBMBackend"])}
 
+    @abc.abstractproperty
+    def _operation_map(self):
+        raise NotImplementedError
+
+    @abc.abstractproperty
+    def _expectation_map(self):
+        raise NotImplementedError
+
+    @abc.abstractproperty
+    def _backend_kwargs(self):
+        raise NotImplementedError
+
     def __init__(self, wires, *, shots=0, **kwargs):
         super().__init__(wires=wires, shots=shots)
 
         # translate some aguments
-        for k,v in {'log':'verbose'}.items():
-            if k in kwargs:
-                kwargs[v] = kwargs[k]
+        for key, val in {'log':'verbose'}.items():
+            if key in kwargs:
+                kwargs[val] = kwargs[key]
 
         # clean some arguments
-        if 'num_runs' in kwargs and isinstance(kwargs['num_runs'], int) and kwargs['num_runs']>0:
+        if 'num_runs' in kwargs and isinstance(kwargs['num_runs'], int) and kwargs['num_runs'] > 0:
             self.shots = kwargs['num_runs']
         else:
             kwargs['num_runs'] = self.shots
 
         self.backend = kwargs['backend']
-        del(kwargs['backend'])
+        del kwargs['backend']
         self.kwargs = kwargs
         self.eng = None
         self.reg = None
@@ -150,11 +170,13 @@ class _ProjectQDevice(Device):
     def apply(self, operation, wires, par):
         operation = self._operation_map[operation](*par)
         if isinstance(operation, BasisState) and not self.first_operation:
-            raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation, self.short_name))
+            raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation, self.short_name)) #pylint: disable=line-too-long
         self.first_operation = False
 
         qureg = [self.reg[i] for i in wires]
-        if isinstance(operation, (pq.ops._metagates.ControlledGate, pq.ops._gates.SqrtSwapGate, pq.ops._gates.SwapGate)):
+        if isinstance(operation, (pq.ops._metagates.ControlledGate, #pylint: disable=protected-access
+                                  pq.ops._gates.SqrtSwapGate, #pylint: disable=protected-access
+                                  pq.ops._gates.SwapGate)): #pylint: disable=protected-access
             qureg = tuple(qureg)
         operation | qureg #pylint: disable=pointless-statement
 
@@ -166,10 +188,13 @@ class _ProjectQDevice(Device):
         Drawback: This is probably rather resource intensive.
         """
         if self.eng is not None and self.backend == 'Simulator':
-            pq.ops.All(pq.ops.Measure) | self.reg #avoid an unfriendly error message: https://github.com/ProjectQ-Framework/ProjectQ/issues/2
+            #avoid an "unfriendly error message":
+            #https://github.com/ProjectQ-Framework/ProjectQ/issues/2
+            pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
 
     def filter_kwargs_for_backend(self, kwargs):
-        return { key:value for key,value in kwargs.items() if key in self._backend_kwargs }
+        """Filter the given kwargs for those relevant for the respective device/backend."""
+        return {key:value for key, value in kwargs.items() if key in self._backend_kwargs}
 
     @property
     def operations(self):
@@ -192,13 +217,16 @@ class _ProjectQDevice(Device):
 
 
 class ProjectQSimulator(_ProjectQDevice):
-    """A PennyLane :code:`projectq.simulator` device for the `ProjectQ Simulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_ backend.
+    """A PennyLane :code:`projectq.simulator` device for the `ProjectQ Simulator
+    <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_
+    backend.
 
     Args:
        wires (int): The number of qubits of the device
 
     Keyword Args:
-      gate_fusion (bool): If True, operations are cached and only executed once a certain number of operations has been reached (only has an effect for the c++ simulator).
+      gate_fusion (bool): If True, operations are cached and only executed once a
+        certain number of operations has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
 
     This device can, for example, be instantiated from PennyLane as follows:
@@ -246,8 +274,9 @@ class ProjectQSimulator(_ProjectQDevice):
     """
 
     short_name = 'projectq.simulator'
-    _operation_map = projectq_operation_map
-    _expectation_map = {key:val for key, val in _operation_map.items() if val in [XGate, YGate, ZGate]}
+    _operation_map = PROJECTQ_OPERATION_MAP
+    _expectation_map = {key:val for key, val in _operation_map.items()
+                        if val in [XGate, YGate, ZGate]}
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
@@ -270,30 +299,47 @@ class ProjectQSimulator(_ProjectQDevice):
             else:
                 wire = wires[0]
 
-            ev = self.eng.backend.get_expectation_value(pq.ops.QubitOperator(str(expectation)[-1]+'0'), [self.reg[wire]])
-            #variance = 1 - ev**2
+            expval = self.eng.backend.get_expectation_value(
+                pq.ops.QubitOperator(str(expectation)[-1]+'0'),
+                [self.reg[wire]])
+            # variance = 1 - expval**2
         # elif expectation == 'AllPauliZ':
-        #      ev = [ self.eng.backend.get_expectation_value(pq.ops.QubitOperator("Z"+'0'), [qubit]) for qubit in self.reg]
-        #      #variance = [1 - e**2 for e in ev]
+        #     expval = [self.eng.backend.get_expectation_value(
+        #         pq.ops.QubitOperator("Z"+'0'), [qubit])
+        #                for qubit in self.reg]
+        #     variance = [1 - e**2 for e in expval]
 
-        return ev
+        return expval
 
 class ProjectQIBMBackend(_ProjectQDevice):
-    """A PennyLane :code:`projectq.ibm` device for the `ProjectQ IBMBackend <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_ backend.
+    """A PennyLane :code:`projectq.ibm` device for the `ProjectQ IBMBackend
+    <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_
+    backend.
 
-    .. note:: This device computes expectation values by averaging over a finite number of runs of the quantum circuit. Irrespective of whether this is done on real quantum hardware, or on the IBM simulator, this means that expectation values (and therefore also gradients) will have a finite accuracy and fluctuate from run to run.
+    .. note::
+        This device computes expectation values by averaging over a
+        finite number of runs of the quantum circuit. Irrespective of whether
+        this is done on real quantum hardware, or on the IBM simulator, this
+        means that expectation values (and therefore also gradients) will have
+        a finite accuracy and fluctuate from run to run.
 
     Args:
        wires (int): The number of qubits of the device
 
     Keyword Args:
-      use_hardware (bool): If True, the code is run on the IBM quantum chip (instead of using the IBM simulator)
-      num_runs (int): Number of runs to collect statistics (default is 1024). Is equivalent to but takes preference over the shots parameter.
-      verbose (bool): If True, statistics are printed, in addition to the measurement result being registered (at the end of the circuit)
+      use_hardware (bool): If True, the code is run on the IBM quantum chip
+        (instead of using the IBM simulator)
+      num_runs (int): Number of runs to collect statistics (default is 1024).
+        Is equivalent to but takes preference over the shots parameter.
+      verbose (bool): If True, statistics are printed, in addition to the
+        measurement result being registered (at the end of the circuit)
       user (string): IBM Quantum Experience user name
       password (string): IBM Quantum Experience password
-      device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if :code:`use_hardware` is set to True. Default is 'ibmqx4'.
-      retrieve_execution (int): Job ID to retrieve instead of re-running the circuit (e.g., if previous run timed out)
+      device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if
+        :code:`use_hardware` is set to True. Default is 'ibmqx4'.
+      retrieve_execution (int): Job ID to retrieve instead of re-running
+        a circuit (e.g., if previous run timed out).
+
     This device can, for example, be instantiated from PennyLane as follows:
 
     .. code-block:: python
@@ -301,7 +347,10 @@ class ProjectQIBMBackend(_ProjectQDevice):
         import pennylane as qml
         dev = qml.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
 
-    .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_.
+    .. note::
+        To avoid leaking your user name and password when sharing code,
+        it is better to specify the user name and password in your
+        `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_.
 
     Supported PennyLane Operations:
       :class:`pennylane.PauliX`,
@@ -338,19 +387,23 @@ class ProjectQIBMBackend(_ProjectQDevice):
     """
 
     short_name = 'projectq.ibm'
-    _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT, CZ, Rot, BasisState]}
+    _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
+                      if val in [HGate, XGate, YGate, ZGate, SGate, TGate,
+                                 SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT,
+                                 CZ, Rot, BasisState]}
     _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate]}
     _circuits = {}
-    _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device', 'retrieve_execution']
+    _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device',
+                       'retrieve_execution']
 
     def __init__(self, wires, **kwargs):
         # check that necessary arguments are given
         if 'user' not in kwargs:
-            raise ValueError('An IBM Quantum Experience user name specified via the "user" keyword argument is required')
+            raise ValueError('An IBM Quantum Experience user name specified via the "user" keyword argument is required') #pylint: disable=line-too-long
         if 'password' not in kwargs:
-            raise ValueError('An IBM Quantum Experience password specified via the "password" keyword argument is required')
+            raise ValueError('An IBM Quantum Experience password specified via the "password" keyword argument is required') #pylint: disable=line-too-long
 
-        import projectq.setups.ibm
+        import projectq.setups.ibm #pylint: disable=unused-variable
 
         kwargs['backend'] = 'IBMBackend'
         super().__init__(wires, **kwargs)
@@ -361,7 +414,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         super().reset()
 
     def pre_expval(self):
-        pq.ops.All(pq.ops.Measure) | self.reg
+        pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
         self.eng.flush()
 
     def expval(self, expectation, wires, par):
@@ -373,16 +426,24 @@ class ProjectQIBMBackend(_ProjectQDevice):
             else:
                 wire = wires[0]
 
-            ev = (1-(2*sum(p for (state,p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[wire] == '0')))/2
-            #variance = 1 - ev**2
+            expval = (1-(2*sum(p for (state, p) in probabilities.items()
+                               if state[wire] == '1'))
+                      -(1-2*sum(p for (state, p) in probabilities.items()
+                                if state[wire] == '0')))/2
+            # variance = 1 - expval**2
         # elif expectation == 'AllPauliZ':
-        #     ev = [ ((1-2*sum(p for (state,p) in probabilities.items() if state[i] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[i] == '0')))/2 for i in range(len(self.reg)) ]
-        #     #variance = [1 - e**2 for e in ev]
+        #     expval = [((1-2*sum(p for (state, p) in probabilities.items()
+        #                         if state[i] == '1'))
+        #                -(1-2*sum(p for (state, p) in probabilities.items()
+        #                          if state[i] == '0')))/2 for i in range(len(self.reg))]
+        #     variance = [1 - e**2 for e in expval]
 
-        return ev
+        return expval
 
 class ProjectQClassicalSimulator(_ProjectQDevice):
-    """A PennyLane :code:`projectq.classical` device for the `ProjectQ ClassicalSimulator <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.ClassicalSimulator>`_ backend.
+    """A PennyLane :code:`projectq.classical` device for the `ProjectQ ClassicalSimulator
+    <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.ClassicalSimulator>`_
+    backend.
 
     Args:
        wires (int): The number of qubits of the device
@@ -410,8 +471,10 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     """
 
     short_name = 'projectq.classical'
-    _operation_map = {key:val for key, val in projectq_operation_map.items() if val in [XGate, CNOT]}
-    _expectation_map = {key:val for key, val in projectq_operation_map.items() if val in [ZGate]}
+    _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
+                      if val in [XGate, CNOT]}
+    _expectation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
+                        if val in [ZGate]}
     _circuits = {}
     _backend_kwargs = []
 
@@ -425,7 +488,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         super().reset()
 
     def pre_expval(self):
-        pq.ops.All(pq.ops.Measure) | self.reg
+        pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
         self.eng.flush()
 
     def expval(self, expectation, wires, par):
@@ -435,10 +498,10 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
             else:
                 wire = wires[0]
 
-            ev = 1 - 2*int(self.reg[wire])
-            #variance = 1 - ev**2
+            expval = 1 - 2*int(self.reg[wire])
+            # variance = 1 - expval**2
         # elif expectation == 'AllPauliZ':
-        #     ev = [ 1 - 2*int(self.reg[wire]) for wire in self.reg]
-        #     #variance = [1 - e**2 for e in ev]
+        #     expval = [ 1 - 2*int(self.reg[wire]) for wire in self.reg]
+        #     #variance = [1 - e**2 for e in expval]
 
-        return ev
+        return expval

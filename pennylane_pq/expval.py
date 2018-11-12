@@ -17,13 +17,16 @@ Expectations
 
 .. currentmodule:: pennylane_pq.expval
 
-In addition to the suitable default operations native to PennyLane, the devices of the ProjectQ plugin support a number of additional operations that can be used alongside the native PennyLane operations when defining quantum functions:
+In addition to the suitable default operations native to PennyLane,
+the devices of the ProjectQ plugin support a number of additional expectations
+that can be used alongside the native PennyLane expectations when defining
+quantum functions:
 
 .. autosummary::
    .. AllPauliZ
 """
 
-from pennylane.operation import Expectation
+# from pennylane.operation import Expectation
 
 # class AllPauliZ(Expectation):
 #     r"""Measure Pauli Z on all qubits.

@@ -14,8 +14,8 @@
 """Top level PennyLane-ProjectQ module"""
 from ._version import __version__
 
-from .devices import ProjectQSimulator
-from .devices import ProjectQIBMBackend
-from .devices import ProjectQClassicalSimulator
+from .devices import ProjectQSimulator #pylint: disable=unused-import
+from .devices import ProjectQIBMBackend #pylint: disable=unused-import
+from .devices import ProjectQClassicalSimulator #pylint: disable=unused-import
 
-from .ops import *
+from .ops import * #pylint: disable=wildcard-import,unused-wildcard-import
