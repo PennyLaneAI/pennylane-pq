@@ -30,7 +30,7 @@ PennyLane ProjectQ Plugin
 `PennyLane <https://pennylane.readthedocs.io>`_ is a full-stack Python library for quantum machine
 learning and automatic differentiation of hybrid quantum-classical computations.
 
-`ProjectQ <https://github.com/ProjectQ-Framework/ProjectQ>`_ is ProjectQ is an open-source compilation framework capable of targeting various types of hardware and a high-performance quantum computer simulator with emulation capabilities, and various compiler plug-ins.
+`ProjectQ <https://projectq.readthedocs.io>`_ is an open-source compilation framework capable of targeting various types of hardware and a high-performance quantum computer simulator with emulation capabilities, and various compiler plug-ins.
 
 This PennyLane plugin allows to use both the software and hardware backends of ProjectQ as devices for PennyLane.
 
@@ -38,7 +38,7 @@ This PennyLane plugin allows to use both the software and hardware backends of P
 Features
 ========
 
-* Provides three devices to be used with PennyLane: ``projectq.simulator``, ``projectq.ibm``, and ``projectq.classical``. These provide access to the respective ProjecQ backends.
+* Provides three devices to be used with PennyLane: ``projectq.simulator``, ``projectq.ibm``, and ``projectq.classical``. These provide access to the respective ProjectQ backends.
 
 * Supports a wide range of PennyLane operations and expectation values across the devices.
 
@@ -64,7 +64,7 @@ To test that the PennyLane ProjectQ plugin is working correctly you can run
 
 in the source folder. Tests restricted to a specific device can be run by executing :code:`make test-simulator`, :code:`make test-ibm`, or :code:`make test-classical`.
 
-.. note:: Tests on the `ibm device <https://pennylane-pq.readthedocs.io/devices.html#pennylane_pq.devices.ProjectQIBMBackend>`_ can only be run if a :code:`user` and :code:`password` for the IBM quantum experience are configured in the `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_. If this is the case, running :code:`make test` also executes tests on the :code:`ibm` device. By default tests on the :code:`ibm` device run with :code:`hardware=False`. At the time of writing this means that the test are "free". Please verify that this is also the case for your account.
+.. note:: Tests on the `ibm device <https://pennylane-pq.readthedocs.io/en/latest/devices.html#projectqibmbackend>`_ can only be run if a :code:`user` and :code:`password` for the `IBM Q experience <https://quantumexperience.ng.bluemix.net/qx/experience>`_ are configured in the `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_. If this is the case, running :code:`make test` also executes tests on the :code:`ibm` device. By default tests on the :code:`ibm` device run with :code:`hardware=False`. At the time of writing this means that the test are "free". Please verify that this is also the case for your account.
 
 .. installation-end-inclusion-marker-do-not-remove
 .. gettingstarted-start-inclusion-marker-do-not-remove
