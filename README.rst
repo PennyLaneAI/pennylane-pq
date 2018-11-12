@@ -1,7 +1,7 @@
 PennyLane ProjectQ Plugin
 #########################
 
-.. image:: https://img.shields.io/travis/XanaduAI/pennylane-pq/master.svg?style=for-the-badge
+.. image:: https://img.shields.io/travis/com/XanaduAI/pennylane-pq/master.svg?style=for-the-badge
     :alt: Travis
     :target: https://travis-ci.org/XanaduAI/pennylane-pq
 
@@ -9,7 +9,7 @@ PennyLane ProjectQ Plugin
     :alt: Codecov coverage
     :target: https://codecov.io/gh/XanaduAI/pennylane-pq
 
-.. image:: https://img.shields.io/codacy/grade/bd14437d17494f16ada064d8026498dd.svg?style=for-the-badge
+.. image:: https://img.shields.io/codacy/grade/6ed6d8397b814fbaa754757fed3ea536.svg?style=for-the-badge
     :alt: Codacy grade
     :target: https://app.codacy.com/app/XanaduAI/pennylane-pq?utm_source=github.com&utm_medium=referral&utm_content=XanaduAI/pennylane-pq&utm_campaign=badger
 
@@ -17,13 +17,13 @@ PennyLane ProjectQ Plugin
     :alt: Read the Docs
     :target: https://pennylane-pq.readthedocs.io
 
-.. image:: https://img.shields.io/pypi/v/PennyLaneProjectQ.svg?style=for-the-badge
+.. image:: https://img.shields.io/pypi/v/PennyLane-PQ.svg?style=for-the-badge
     :alt: PyPI
-    :target: https://pypi.org/project/PennyLaneProjectQ
+    :target: https://pypi.org/project/PennyLane-PQ
 
-.. image:: https://img.shields.io/pypi/pyversions/PennyLaneProjectQ.svg?style=for-the-badge
+.. image:: https://img.shields.io/pypi/pyversions/PennyLane-PQ.svg?style=for-the-badge
     :alt: PyPI - Python Version
-    :target: https://pypi.org/project/PennyLaneProjectQ
+    :target: https://pypi.org/project/PennyLane-PQ
 
 .. header-start-inclusion-marker-do-not-remove
 
