@@ -49,8 +49,8 @@ class UnsupportedOperationTest(BaseTest):
                 self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
             else:
                 log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
-        if self.args.device == 'classical':
-            pass
+        if self.args.device == 'classical' or self.args.device == 'all':
+            self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems))
 
     def test_unsupported_operation(self):
         if self.devices is None:

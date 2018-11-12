@@ -275,8 +275,6 @@ class ProjectQSimulator(_ProjectQDevice):
         # elif expectation == 'AllPauliZ':
         #      ev = [ self.eng.backend.get_expectation_value(pq.ops.QubitOperator("Z"+'0'), [qubit]) for qubit in self.reg]
         #      #variance = [1 - e**2 for e in ev]
-        else:
-            raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
 
         return ev
 
@@ -380,8 +378,6 @@ class ProjectQIBMBackend(_ProjectQDevice):
         # elif expectation == 'AllPauliZ':
         #     ev = [ ((1-2*sum(p for (state,p) in probabilities.items() if state[i] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[i] == '0')))/2 for i in range(len(self.reg)) ]
         #     #variance = [1 - e**2 for e in ev]
-        else:
-            raise DeviceError("Expectation {} not supported by {}".format(expectation, self.name))
 
         return ev
 
@@ -444,7 +440,5 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         # elif expectation == 'AllPauliZ':
         #     ev = [ 1 - 2*int(self.reg[wire]) for wire in self.reg]
         #     #variance = [1 - e**2 for e in ev]
-        else:
-            raise DeviceError("Expectation {} not supported by {}".format(observable, self.name))
 
         return ev
