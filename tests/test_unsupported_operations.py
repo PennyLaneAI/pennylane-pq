@@ -82,7 +82,7 @@ if __name__ == '__main__':
     print('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', unsupported operations.')
     # run the tests in this file
     suite = unittest.TestSuite()
-    for t in (BasisStateTest, ):
+    for t in (UnsupportedOperationTest, ):
         ttt = unittest.TestLoader().loadTestsFromTestCase(t)
         suite.addTests(ttt)
 
