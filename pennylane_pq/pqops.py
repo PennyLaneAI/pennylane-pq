@@ -54,27 +54,27 @@ class CZ(BasicProjectQGate): # pylint: disable=too-few-public-methods
     def __new__(*par): # pylint: disable=no-method-argument
         return pq.ops.C(pq.ops.ZGate())
 
-class Toffoli(BasicProjectQGate): # pylint: disable=too-few-public-methods
-    """Class for the Toffoli gate.
+# class Toffoli(BasicProjectQGate): # pylint: disable=too-few-public-methods
+#     """Class for the Toffoli gate.
 
-    Contrary to other gates, ProjectQ does not have a class for the Toffoli gate,
-    as it is implemented as a meta-gate.
-    For consistency we define this class, whose constructor is made to retun
-    a gate with the correct properties by overwriting __new__().
-    """
-    def __new__(*par): # pylint: disable=no-method-argument
-        return pq.ops.C(pq.ops.ZGate(), 2)
+#     Contrary to other gates, ProjectQ does not have a class for the Toffoli gate,
+#     as it is implemented as a meta-gate.
+#     For consistency we define this class, whose constructor is made to retun
+#     a gate with the correct properties by overwriting __new__().
+#     """
+#     def __new__(*par): # pylint: disable=no-method-argument
+#         return pq.ops.C(pq.ops.ZGate(), 2)
 
-class AllZGate(BasicProjectQGate): # pylint: disable=too-few-public-methods
-    """Class for the AllZ gate.
+# class AllZGate(BasicProjectQGate): # pylint: disable=too-few-public-methods
+#     """Class for the AllZ gate.
 
-    Contrary to other gates, ProjectQ does not have a class for the AllZ gate,
-    as it is implemented as a meta-gate.
-    For consistency we define this class, whose constructor is made to retun
-    a gate with the correct properties by overwriting __new__().
-    """
-    def __new__(*par): # pylint: disable=no-method-argument
-        return pq.ops.Tensor(pq.ops.ZGate())
+#     Contrary to other gates, ProjectQ does not have a class for the AllZ gate,
+#     as it is implemented as a meta-gate.
+#     For consistency we define this class, whose constructor is made to retun
+#     a gate with the correct properties by overwriting __new__().
+#     """
+#     def __new__(*par): # pylint: disable=no-method-argument
+#         return pq.ops.Tensor(pq.ops.ZGate())
 
 class Rot(BasicProjectQGate):
     """Class for the arbitrary single qubit rotation gate.
