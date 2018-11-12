@@ -118,14 +118,13 @@ class _ProjectQDevice(Device):
         # translate some aguments
         for k,v in {'log':'verbose'}.items():
             if k in kwargs:
-                kwargs.setdefault(v, kwargs[k])
+                kwargs[v] = kwargs[k]
 
         # clean some arguments
-        if 'num_runs' in kwargs:
-            if isinstance(kwargs['num_runs'], int) and kwargs['num_runs']>0:
-                self.shots = kwargs['num_runs']
-            else:
-                kwargs['num_runs'] = self.shots
+        if 'num_runs' in kwargs and isinstance(kwargs['num_runs'], int) and kwargs['num_runs']>0:
+            self.shots = kwargs['num_runs']
+        else:
+            kwargs['num_runs'] = self.shots
 
         self.backend = kwargs['backend']
         del(kwargs['backend'])

@@ -82,17 +82,12 @@ class SqrtSwap(Operation):
     num_wires = 2
     par_domain = None
 
-class Toffoli(Operation):
-    r"""Apply the Tofoli gate.
-
-    .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
-
-    .. todo:: Potentially remove this gate depending on how https://github.com/XanaduAI/pennylane/issues/61 is resolved.
-
-    """
-    num_params = 0
-    num_wires = 3
-    par_domain = None
+# class Toffoli(Operation):
+#     r"""Apply the Tofoli gate.
+#     """
+#     num_params = 0
+#     num_wires = 3
+#     par_domain = None
 
 # class AllPauliZ(Operation):
 #     r"""Apply Pauli Z to all wires.
