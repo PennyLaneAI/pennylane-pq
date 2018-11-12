@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Unit tests for the :mod:`pennylane_pq` BasisState operation.
+Unit tests for the :mod:`pennylane_pq` devices' behavior when applying unsupported operations.
 """
 
 import unittest
