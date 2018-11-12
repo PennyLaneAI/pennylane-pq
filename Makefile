@@ -60,4 +60,4 @@ coverage: coverage-all
 
 coverage-%:
 	@echo "Generating coverage report..."
-	export DEVICE=$(subst test-,,$@) && $(PYTHON) $(TESTRUNNER) $(COVERAGE)
+	export DEVICE=$(subst coverage-,,$@) && $(PYTHON) $(TESTRUNNER) $(COVERAGE)
