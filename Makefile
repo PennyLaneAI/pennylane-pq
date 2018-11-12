@@ -13,8 +13,10 @@ help:
 	@echo "  dist               to package the source distribution"
 	@echo "  clean              to delete all temporary, cache, and build files"
 	@echo "  clean-docs         to delete all built documentation"
-	@echo "  test               to run the test suite"
-	@echo "  coverage           to generate a coverage report"
+	@echo "  test               to run the test suite for all configured devices"
+	@echo "  test-[device]      to run the test suite for the device simulator or ibm"
+	@echo "  coverage           to generate a coverage report for all configured devices"
+	@echo "  coverage-[device]  to generate a coverage report for the device simulator or ibm"
 
 .PHONY: install
 install:
@@ -48,9 +50,14 @@ clean-docs:
 	make -C doc clean
 
 
-test:
-	$(PYTHON) $(TESTRUNNER)
+test: test-all
 
-coverage:
+test-%:
+	@echo "Testing device: $(subst test-,,$@)..."
+	export DEVICE=$(subst test-,,$@) && $(PYTHON) $(TESTRUNNER)
+
+coverage: coverage-all
+
+coverage-%:
 	@echo "Generating coverage report..."
-	$(PYTHON) $(TESTRUNNER) $(COVERAGE)
+	export DEVICE=$(subst test-,,$@) && $(PYTHON) $(TESTRUNNER) $(COVERAGE)
