@@ -27,8 +27,8 @@ PennyLane ProjectQ Plugin
 
 .. header-start-inclusion-marker-do-not-remove
 
-`PennyLane <https://pennylane.readthedocs.io>`_ is a full-stack Python library for quantum machine
-learning and automatic differentiation of hybrid quantum-classical computations.
+`PennyLane <https://pennylane.readthedocs.io>`_ is a cross-platform Python library for quantum machine
+learning, automatic differentiation, and optimization of hybrid quantum-classical computations.
 
 `ProjectQ <https://projectq.readthedocs.io>`_ is an open-source compilation framework capable of targeting various types of hardware and a high-performance quantum computer simulator with emulation capabilities, and various compiler plug-ins.
 
