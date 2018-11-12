@@ -301,7 +301,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         import pennylane as qml
         dev = qml.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
 
-    .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_.
+    .. note:: To avoid leaking your user name and password when sharing code, it is better to specify the user name and password in your `PennyLane configuration file <https://pennylane.readthedocs.io/en/latest/code/configuration.html>`_.
 
     Supported PennyLane Operations:
       :class:`pennylane.PauliX`,
