@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# pylint: disable=expression-not-assigned
 r"""
 Devices
 =======
@@ -425,11 +426,8 @@ class ProjectQIBMBackend(_ProjectQDevice):
             else:
                 wire = wires[0]
 
-            expval = (1-(2*sum(p for (state, p) in probabilities.items()
-                               if state[wire] == '1'))
-                      -(1-2*sum(p for (state, p) in probabilities.items()
-                                if state[wire] == '0')))/2
-            # variance = 1 - expval**2
+            expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wire] == '0')))/2
+            #variance = 1 - ev**2
         # elif expectation == 'AllPauliZ':
         #     expval = [((1-2*sum(p for (state, p) in probabilities.items()
         #                         if state[i] == '1'))
