@@ -155,6 +155,8 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         self.reset() #the actual initialization is done in reset()
 
     def reset(self):
+        """Reset/initialize the device by allocating qubits.
+        """
         self.reg = self.eng.allocate_qureg(self.num_wires)
         self.first_operation = True
 
@@ -165,9 +167,20 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         return super().__str__() +'Backend: ' +self.backend +'\n'
 
     def post_expval(self):
+        """Deallocate the qubits after expectation values have been retrieved.
+        """
         self._deallocate()
 
     def apply(self, operation, wires, par):
+        """Apply a quantum operation.
+
+        For plugin developers: this function should apply the operation on the device.
+
+        Args:
+            operation (str): name of the operation
+            wires (Sequence[int]): subsystems the operation is applied on
+            par (tuple): parameters for the operation
+        """
         operation = self._operation_map[operation](*par)
         if isinstance(operation, BasisState) and not self.first_operation:
             raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation, self.short_name)) #pylint: disable=line-too-long
@@ -193,7 +206,8 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
             pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
 
     def filter_kwargs_for_backend(self, kwargs):
-        """Filter the given kwargs for those relevant for the respective device/backend."""
+        """Filter the given kwargs for those relevant for the respective device/backend.
+        """
         return {key:value for key, value in kwargs.items() if key in self._backend_kwargs}
 
     @property
@@ -285,14 +299,20 @@ class ProjectQSimulator(_ProjectQDevice):
         super().__init__(wires, **kwargs)
 
     def reset(self):
+        """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
+        """
         backend = pq.backends.Simulator(**self.filter_kwargs_for_backend(self.kwargs))
         self.eng = pq.MainEngine(backend)
         super().reset()
 
     def pre_expval(self):
+        """Flush the device before retrieving expectation values.
+        """
         self.eng.flush(deallocate_qubits=False)
 
     def expval(self, expectation, wires, par):
+        """Retrieve the requested expectation value.
+        """
         if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ':
             if isinstance(wires, int):
                 wire = wires
@@ -408,15 +428,21 @@ class ProjectQIBMBackend(_ProjectQDevice):
         super().__init__(wires, **kwargs)
 
     def reset(self):
+        """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
+        """
         backend = pq.backends.IBMBackend(**self.filter_kwargs_for_backend(self.kwargs))
         self.eng = pq.MainEngine(backend, engine_list=pq.setups.ibm.get_engine_list())
         super().reset()
 
     def pre_expval(self):
+        """Apply a measure all operation and flush the device before retrieving expectation values.
+        """
         pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
         self.eng.flush()
 
     def expval(self, expectation, wires, par):
+        """Retrieve the requested expectation value.
+        """
         probabilities = self.eng.backend.get_probabilities(self.reg)
 
         if expectation == 'PauliZ':
@@ -480,15 +506,21 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         super().__init__(wires, **kwargs)
 
     def reset(self):
+        """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
+        """
         backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self.kwargs))
         self.eng = pq.MainEngine(backend)
         super().reset()
 
     def pre_expval(self):
+        """Apply a measure all operation and flush the device before retrieving expectation values.
+        """
         pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
         self.eng.flush()
 
     def expval(self, expectation, wires, par):
+        """Retrieve the requested expectation value.
+        """
         if expectation == 'PauliZ':
             if isinstance(wires, int):
                 wire = wires
