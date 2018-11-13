@@ -48,9 +48,8 @@ ProjectQClassicalSimulator
 """
 import abc
 import projectq as pq
-from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, #pylint: disable=reimported
-                          SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, SGate, TGate,
-                          SqrtXGate, SqrtSwapGate)
+from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate,
+                          SwapGate, Rx, Ry, Rz, R, SqrtSwapGate)
 
 from pennylane import Device, DeviceError
 
