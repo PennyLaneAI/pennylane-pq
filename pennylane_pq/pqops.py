@@ -26,7 +26,7 @@ from projectq.ops import BasicGate, SelfInverseGate
 import numpy as np
 
 class BasicProjectQGate(BasicGate): # pylint: disable=too-few-public-methods
-    """Basic ProjectQ Gate class"""
+    """Base class for ProjectQ gates defined here."""
     def __init__(self, name="unnamed"):
         super().__init__()
         self.name = name
@@ -81,16 +81,18 @@ class CZ(BasicProjectQGate): # pylint: disable=too-few-public-methods
 class Rot(BasicProjectQGate):
     """Class for the arbitrary single qubit rotation gate.
 
-    ProjectQ does not currently have an arbitrary single qubit rotation gate, so we provide a class that return a suitable combination of rotation gates assembled into a single gate from the constructor of this class.
+    ProjectQ does not currently have an arbitrary single qubit rotation gate,
+    so we provide a class that return a suitable combination of rotation gates
+    assembled into a single gate from the constructor of this class.
     """
     def __init__(self, *par):
         BasicProjectQGate.__init__(self, name=self.__class__.__name__)
         self.angles = par
 
     def __or__(self, qubits):
-        pq.ops.Rz(self.angles[0]) | qubits
-        pq.ops.Ry(self.angles[1]) | qubits
-        pq.ops.Rz(self.angles[2]) | qubits
+        pq.ops.Rz(self.angles[0]) | qubits #pylint: disable=expression-not-assigned
+        pq.ops.Ry(self.angles[1]) | qubits #pylint: disable=expression-not-assigned
+        pq.ops.Rz(self.angles[2]) | qubits #pylint: disable=expression-not-assigned
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -100,7 +102,10 @@ class Rot(BasicProjectQGate):
 class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
     """Class for the QubitUnitary gate.
 
-    ProjectQ does not currently have a real arbitrary QubitUnitary gate, but it allows to directly set the matrix of single qubit gates and can then still decompose them into the elementary gates set, so we do this here.
+    ProjectQ does not currently have a real arbitrary QubitUnitary gate,
+    but it allows to directly set the matrix of single qubit gates and
+    can then still decompose them into the elementary gates set, so we
+    do this here.
     """
     def __new__(*par):
         unitary_gate = BasicProjectQGate(par[0].__name__)
@@ -120,7 +125,7 @@ class BasisState(BasicProjectQGate, SelfInverseGate): # pylint: disable=too-few-
     def __or__(self, qubits):
         for i, qureg in enumerate(qubits):
             if self.basis_state_to_prep[i] == 1:
-                pq.ops.XGate() | qureg
+                pq.ops.XGate() | qureg #pylint: disable=expression-not-assigned
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

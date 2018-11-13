@@ -13,21 +13,19 @@
 # limitations under the License.
 
 #!/usr/bin/env python3
-import sys
-import os
 from setuptools import setup
 
 with open("pennylane_pq/_version.py") as f:
-	version = f.readlines()[-1].split()[-1].strip("\"'")
+    version = f.readlines()[-1].split()[-1].strip("\"'") #pylint: disable=invalid-name
 
 
 with open("requirements.txt") as f:
-    requirements = [
+    requirements = [ #pylint: disable=invalid-name
         'projectq>=0.4.1',
         'pennylane'
     ]
 
-info = {
+info = { #pylint: disable=invalid-name
     'name': 'PennyLane-PQ',
     'version': version,
     'maintainer': 'Xanadu Inc.',
@@ -35,8 +33,8 @@ info = {
     'url': 'http://xanadu.ai',
     'license': 'Apache License 2.0',
     'packages': [
-                    'pennylane_pq'
-                ],
+        'pennylane_pq'
+    ],
     'entry_points': {
         'pennylane.plugins': [
             'projectq.simulator = pennylane_pq:ProjectQSimulator',
@@ -55,7 +53,7 @@ info = {
             'release': ('setup.py', version)}}
 }
 
-classifiers = [
+classifiers = [ #pylint: disable=invalid-name
     "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Science/Research",

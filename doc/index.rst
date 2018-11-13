@@ -23,7 +23,8 @@ Contents
    support
    howtocite
    license
-   
+   tutorials
+
 .. rst-class:: contents local topic
 
 .. toctree::
