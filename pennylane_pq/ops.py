@@ -40,7 +40,7 @@ quantum functions:
 
 from pennylane.operation import Operation
 
-class S(Operation): #pylint: disable=invalid-name
+class S(Operation): #pylint: disable=invalid-name,too-few-public-methods
     r"""S gate.
 
     .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
@@ -53,7 +53,7 @@ class S(Operation): #pylint: disable=invalid-name
     par_domain = None
 
 
-class T(Operation): #pylint: disable=invalid-name
+class T(Operation): #pylint: disable=invalid-name,too-few-public-methods
     r"""T gate.
 
     .. math:: T = \begin{bmatrix}1&0\\0&\exp(i \pi / 4)\end{bmatrix}
@@ -77,7 +77,7 @@ class SqrtX(Operation):
     num_wires = 1
     par_domain = None
 
-class SqrtSwap(Operation):
+class SqrtSwap(Operation): #pylint: disable=too-few-public-methods
     r"""Square root SWAP gate.
 
     .. math:: SqrtSwap = \begin{bmatrix}1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\
@@ -90,7 +90,7 @@ class SqrtSwap(Operation):
     num_wires = 2
     par_domain = None
 
-# class Toffoli(Operation):
+# class Toffoli(Operation): #pylint: disable=too-few-public-methods
 #     r"""Apply the Tofoli gate.
 #     """
 #     num_params = 0
