@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# pylint: disable=expression-not-assigned
 r"""
 Wrapper classes for ProjectQ Operations
 ===================
@@ -25,6 +26,7 @@ from projectq.ops import BasicGate, SelfInverseGate
 import numpy as np
 
 class BasicProjectQGate(BasicGate): # pylint: disable=too-few-public-methods
+    """Basic ProjectQ Gate class"""
     def __init__(self, name="unnamed"):
         super().__init__()
         self.name = name
@@ -93,8 +95,7 @@ class Rot(BasicProjectQGate):
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.angles == other.angles
-        else:
-            return False
+        return False
 
 class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
     """Class for the QubitUnitary gate.
@@ -117,12 +118,11 @@ class BasisState(BasicProjectQGate, SelfInverseGate): # pylint: disable=too-few-
         self.basis_state_to_prep = basis_state_to_prep
 
     def __or__(self, qubits):
-        for i,qureg in enumerate(qubits):
+        for i, qureg in enumerate(qubits):
             if self.basis_state_to_prep[i] == 1:
                 pq.ops.XGate() | qureg
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.basis_state_to_prep == other.basis_state_to_prep
-        else:
-            return False
+        return False

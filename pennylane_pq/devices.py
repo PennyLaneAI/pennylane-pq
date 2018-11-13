@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# pylint: disable=expression-not-assigned
 r"""
 Devices
 =======
@@ -46,15 +47,16 @@ ProjectQClassicalSimulator
 
 """
 import logging as log
-import numpy as np
-from pennylane import Device, DeviceError
 
 import projectq as pq
+from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, StatePreparation)
 
-from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, Ph, StatePreparation, SGate, TGate, SqrtXGate, SqrtSwapGate)
+from pennylane import Device, DeviceError
+
 from .pqops import (CNOT, CZ, Rot, QubitUnitary, BasisState)
-
 from ._version import __version__
+
+log.getLogger()
 
 
 projectq_operation_map = {
@@ -80,9 +82,9 @@ projectq_operation_map = {
     'SqrtX': SqrtXGate,
     'SqrtSwap': SqrtSwapGate,
     #operations/expectations of ProjectQ that do not work with PennyLane
-#    'AllPauliZ': AllZGate, #todo: enable in case multiple return values per expectation are supported in the future
+    #'AllPauliZ': AllZGate, #todo: enable in case multiple return values per expectation are supported in the future
     #operations/expectations of PennyLane that do not work with ProjectQ
-#    'QubitStateVector': StatePreparation,
+    #'QubitStateVector': StatePreparation,
 }
 
 class _ProjectQDevice(Device):
@@ -116,18 +118,18 @@ class _ProjectQDevice(Device):
         super().__init__(wires=wires, shots=shots)
 
         # translate some aguments
-        for k,v in {'log':'verbose'}.items():
+        for k, v in {'log':'verbose'}.items():
             if k in kwargs:
                 kwargs[v] = kwargs[k]
 
         # clean some arguments
-        if 'num_runs' in kwargs and isinstance(kwargs['num_runs'], int) and kwargs['num_runs']>0:
+        if 'num_runs' in kwargs and isinstance(kwargs['num_runs'], int) and kwargs['num_runs'] > 0:
             self.shots = kwargs['num_runs']
         else:
             kwargs['num_runs'] = self.shots
 
         self.backend = kwargs['backend']
-        del(kwargs['backend'])
+        del kwargs['backend']
         self.kwargs = kwargs
         self.eng = None
         self.reg = None
@@ -169,7 +171,7 @@ class _ProjectQDevice(Device):
             pq.ops.All(pq.ops.Measure) | self.reg #avoid an unfriendly error message: https://github.com/ProjectQ-Framework/ProjectQ/issues/2
 
     def filter_kwargs_for_backend(self, kwargs):
-        return { key:value for key,value in kwargs.items() if key in self._backend_kwargs }
+        return {key:value for key, value in kwargs.items() if key in self._backend_kwargs}
 
     @property
     def operations(self):
@@ -373,7 +375,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
             else:
                 wire = wires[0]
 
-            ev = (1-(2*sum(p for (state,p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[wire] == '0')))/2
+            ev = (1-(2*sum(p for (state, p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wire] == '0')))/2
             #variance = 1 - ev**2
         # elif expectation == 'AllPauliZ':
         #     ev = [ ((1-2*sum(p for (state,p) in probabilities.items() if state[i] == '1'))-(1-2*sum(p for (state,p) in probabilities.items() if state[i] == '0')))/2 for i in range(len(self.reg)) ]
