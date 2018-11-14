@@ -113,11 +113,9 @@ Please refer to the `documentation of the PennyLane ProjectQ Plugin <https://pen
 How to cite
 ===========
 
-.. todo:: change reference and link
+If you are doing research using PennyLane, please cite `our whitepaper <https://arxiv.org/abs/1811.04968>`_:
 
-If you are doing research using PennyLane, please cite `our whitepaper <https://arxiv.org/abs/XXXX.XXXXX>`_:
-
-  Ville Bergholm, Josh Izaac, Maria Schuld, Christian Gogolin, and Nathan Killoran. PennyLane. *arXiv*, 2018. arXiv:XXXX.XXXXX
+  Ville Bergholm, Josh Izaac, Maria Schuld, Christian Gogolin, and Nathan Killoran. PennyLane. *arXiv*, 2018. arXiv:1811.04968
 
 .. howtocite-end-inclusion-marker-do-not-remove
 
