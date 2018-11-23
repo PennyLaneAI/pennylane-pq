@@ -48,6 +48,7 @@ ProjectQClassicalSimulator
 
 """
 import abc
+import numpy as np
 import projectq as pq
 from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate,
                           SwapGate, Rx, Ry, Rz, R, SqrtSwapGate)
@@ -328,6 +329,11 @@ class ProjectQSimulator(_ProjectQDevice):
         #         pq.ops.QubitOperator("Z"+'0'), [qubit])
         #                for qubit in self.reg]
         #     variance = [1 - e**2 for e in expval]
+
+        if self.shots != 0:
+            p0 = (expval+1)/2
+            n0 = np.random.binomial(self.shots, p0)
+            expval = (n0 - (self.shots-n0)) / self.shots
 
         return expval
 
