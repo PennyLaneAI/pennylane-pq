@@ -29,7 +29,7 @@ class ProjectQImportTest(BaseTest):
     """
 
     def test_projectq_import(self):
-        """Check that from projectq.ops import MatrixGate can raise an exception without problems
+        """Check that from projectq.ops import MatrixGate can raise an exception without problems, this ensures backward compatibility with older versions of ProjectQ
         """
         del sys.modules["pennylane_pq.pqops"]
         import projectq.ops
@@ -37,6 +37,15 @@ class ProjectQImportTest(BaseTest):
             del projectq.ops.__dict__['MatrixGate']
         import pennylane_pq.pqops
 
+        del sys.modules["pennylane_pq.pqops"]
+        import projectq.ops
+        if 'MatrixGate' not in projectq.ops.__dict__:
+            projectq.ops.__dict__['MatrixGate'] = projectq.ops.__dict__['BasicGate']
+        import pennylane_pq.pqops
+
+        # restore
+        del sys.modules["projectq.ops"]
+        import pennylane_pq.pqops
 
 if __name__ == '__main__':
     print('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', import test.')

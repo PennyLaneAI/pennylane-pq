@@ -316,10 +316,7 @@ class ProjectQSimulator(_ProjectQDevice):
         """Retrieve the requested expectation value.
         """
         if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ':
-            if isinstance(wires, int):
-                wire = wires
-            else:
-                wire = wires[0]
+            wire = wires[0]
 
             expval = self.eng.backend.get_expectation_value(
                 pq.ops.QubitOperator(str(expectation)[-1]+'0'),
@@ -452,10 +449,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         probabilities = self.eng.backend.get_probabilities(self.reg)
 
         if expectation == 'PauliZ':
-            if isinstance(wires, int):
-                wire = wires
-            else:
-                wire = wires[0]
+            wire = wires[0]
 
             expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wire] == '0')))/2
             #variance = 1 - ev**2
@@ -532,10 +526,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         """Retrieve the requested expectation value.
         """
         if expectation == 'PauliZ':
-            if isinstance(wires, int):
-                wire = wires
-            else:
-                wire = wires[0]
+            wire = wires[0]
 
             expval = 1 - 2*int(self.reg[wire])
             # variance = 1 - expval**2
