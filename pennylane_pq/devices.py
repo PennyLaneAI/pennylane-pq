@@ -81,11 +81,11 @@ PROJECTQ_OPERATION_MAP = {
     'T': TGate,
     'SqrtX': SqrtXGate,
     'SqrtSwap': SqrtSwapGate,
-    'Identity': Identity,
     #operations/expectations of ProjectQ that do not work with PennyLane
     #'AllPauliZ': AllZGate, #todo: enable when multiple return values are supported
     #operations/expectations of PennyLane that do not work with ProjectQ
     #'QubitStateVector': StatePreparation,
+    #In addition we support the Identity Expectation, but only as an expectation and not as an Operation, which is we we don't put it here.
 }
 
 class _ProjectQDevice(Device): #pylint: disable=abstract-method
@@ -291,8 +291,8 @@ class ProjectQSimulator(_ProjectQDevice):
 
     short_name = 'projectq.simulator'
     _operation_map = PROJECTQ_OPERATION_MAP
-    _expectation_map = {key:val for key, val in _operation_map.items()
-                        if val in [XGate, YGate, ZGate]}
+    _expectation_map = dict({key:val for key, val in _operation_map.items()
+                        if val in [XGate, YGate, ZGate]} , **{'Identity': Identity} )
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
@@ -416,7 +416,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
                       if val in [HGate, XGate, YGate, ZGate, SGate, TGate,
                                  SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT,
                                  CZ, Rot, BasisState]}
-    _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate]}
+    _expectation_map = dict({key:val for key, val in _operation_map.items() if val in [ZGate]}, **{'Identity': Identity})
     _circuits = {}
     _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device',
                        'retrieve_execution']
@@ -460,7 +460,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
             expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wire] == '0')))/2
             #variance = 1 - ev**2
         elif expectation == 'Identity':
-            expval = 1
+            expval = sum(p for (state, p) in probabilities.items())
             # variance = 1 - expval**2
         # elif expectation == 'AllPauliZ':
         #     expval = [((1-2*sum(p for (state, p) in probabilities.items()
@@ -506,8 +506,8 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     short_name = 'projectq.classical'
     _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
                       if val in [XGate, CNOT, BasisState]}
-    _expectation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
-                        if val in [ZGate]}
+    _expectation_map = dict({key:val for key, val in PROJECTQ_OPERATION_MAP.items()
+                             if val in [ZGate]}, **{'Identity': Identity})
     _circuits = {}
     _backend_kwargs = []
 

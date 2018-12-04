@@ -26,7 +26,21 @@ from projectq.ops import BasicGate, SelfInverseGate
 import numpy as np
 
 class BasicProjectQGate(BasicGate): # pylint: disable=too-few-public-methods
-    """Base class for ProjectQ gates defined here."""
+    """Base class for ProjectQ gates."""
+    def __init__(self, name="unnamed"):
+        super().__init__()
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+try:
+    from projectq.ops import MatrixGate
+except:
+    MatrixGate = BasicGate
+
+class BasicProjectQMatrixGate(MatrixGate): # pylint: disable=too-few-public-methods
+    """Base class for ProjectQ gates defined via a matrix."""
     def __init__(self, name="unnamed"):
         super().__init__()
         self.name = name
@@ -98,7 +112,7 @@ class Rot(BasicProjectQGate):
         if isinstance(other, self.__class__):
             return self.angles == other.angles
         return False
-    
+
 class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
     """Class for the QubitUnitary gate.
 
@@ -108,7 +122,7 @@ class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
     do this here.
     """
     def __new__(*par):
-        unitary_gate = BasicProjectQGate(par[0].__name__)
+        unitary_gate = BasicProjectQMatrixGate(par[0].__name__)
         unitary_gate.matrix = np.matrix(par[1])
         return unitary_gate
 
@@ -138,11 +152,11 @@ class Identity(BasicProjectQGate):
     ProjectQ does not currently have a trivial identity gate,
     so we provide a class for that here.
     """
-    def __init__(self):
+    def __init__(self, *par):
         BasicProjectQGate.__init__(self, name=self.__class__.__name__)
 
     def __or__(self, qubits):
         pass
-    
+
     def __eq__(self, other):
         return isinstance(other, self.__class__)
