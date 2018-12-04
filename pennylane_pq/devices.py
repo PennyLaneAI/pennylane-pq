@@ -54,7 +54,7 @@ from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate,
 
 from pennylane import Device, DeviceError
 
-from .pqops import (CNOT, CZ, Rot, QubitUnitary, BasisState, Identity)
+from .pqops import (CNOT, CZ, Rot, QubitUnitary, BasisState)
 
 from ._version import __version__
 
@@ -292,7 +292,7 @@ class ProjectQSimulator(_ProjectQDevice):
     short_name = 'projectq.simulator'
     _operation_map = PROJECTQ_OPERATION_MAP
     _expectation_map = dict({key:val for key, val in _operation_map.items()
-                        if val in [XGate, YGate, ZGate]} , **{'Identity': Identity} )
+                        if val in [XGate, YGate, ZGate]} , **{'Identity': None} )
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
@@ -416,7 +416,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
                       if val in [HGate, XGate, YGate, ZGate, SGate, TGate,
                                  SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT,
                                  CZ, Rot, BasisState]}
-    _expectation_map = dict({key:val for key, val in _operation_map.items() if val in [ZGate]}, **{'Identity': Identity})
+    _expectation_map = dict({key:val for key, val in _operation_map.items() if val in [ZGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device',
                        'retrieve_execution']
@@ -507,7 +507,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
                       if val in [XGate, CNOT, BasisState]}
     _expectation_map = dict({key:val for key, val in PROJECTQ_OPERATION_MAP.items()
-                             if val in [ZGate]}, **{'Identity': Identity})
+                             if val in [ZGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = []
 

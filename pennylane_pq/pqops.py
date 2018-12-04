@@ -145,18 +145,3 @@ class BasisState(BasicProjectQGate, SelfInverseGate): # pylint: disable=too-few-
         if isinstance(other, self.__class__):
             return self.basis_state_to_prep == other.basis_state_to_prep
         return False
-
-class Identity(BasicProjectQGate):
-    """Class for the identity gate.
-
-    ProjectQ does not currently have a trivial identity gate,
-    so we provide a class for that here.
-    """
-    def __init__(self, *par):
-        BasicProjectQGate.__init__(self, name=self.__class__.__name__)
-
-    def __or__(self, qubits):
-        pass
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__)
