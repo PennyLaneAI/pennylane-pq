@@ -86,6 +86,7 @@ PROJECTQ_OPERATION_MAP = {
     #'AllPauliZ': AllZGate, #todo: enable when multiple return values are supported
     #operations/expectations of PennyLane that do not work with ProjectQ
     #'QubitStateVector': StatePreparation,
+    #In addition we support the Identity Expectation, but only as an expectation and not as an Operation, which is we we don't put it here.
 }
 
 class _ProjectQDevice(Device): #pylint: disable=abstract-method
@@ -269,9 +270,10 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`pennylane.BasisState`
 
     Supported PennyLane Expectations:
-      :class:`pennylane.PauliX`,
-      :class:`pennylane.PauliY`,
-      :class:`pennylane.PauliZ`
+      :class:`pennylane.expval.PauliX`,
+      :class:`pennylane.expval.PauliY`,
+      :class:`pennylane.expval.PauliZ`,
+      :class:`pennylane.expval.Identity`
 
     Extra Operations:
       :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
@@ -290,8 +292,8 @@ class ProjectQSimulator(_ProjectQDevice):
 
     short_name = 'projectq.simulator'
     _operation_map = PROJECTQ_OPERATION_MAP
-    _expectation_map = {key:val for key, val in _operation_map.items()
-                        if val in [XGate, YGate, ZGate]}
+    _expectation_map = dict({key:val for key, val in _operation_map.items()
+                        if val in [XGate, YGate, ZGate]} , **{'Identity': None} )
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
@@ -315,14 +317,14 @@ class ProjectQSimulator(_ProjectQDevice):
         """Retrieve the requested expectation value.
         """
         if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ':
-            if isinstance(wires, int):
-                wire = wires
-            else:
-                wire = wires[0]
+            wire = wires[0]
 
             expval = self.eng.backend.get_expectation_value(
                 pq.ops.QubitOperator(str(expectation)[-1]+'0'),
                 [self.reg[wire]])
+            # variance = 1 - expval**2
+        elif expectation == 'Identity':
+            expval = 1
             # variance = 1 - expval**2
         # elif expectation == 'AllPauliZ':
         #     expval = [self.eng.backend.get_expectation_value(
@@ -394,9 +396,10 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`pennylane.BasisState`
 
     Supported PennyLane Expectations:
-      :class:`pennylane.PauliX`,
-      :class:`pennylane.PauliY`,
-      :class:`pennylane.PauliZ`
+      :class:`pennylane.expval.PauliX`,
+      :class:`pennylane.expval.PauliY`,
+      :class:`pennylane.expval.PauliZ`,
+      :class:`pennylane.expval.Identity`
 
     Extra Operations:
       :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
@@ -416,7 +419,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
                       if val in [HGate, XGate, YGate, ZGate, SGate, TGate,
                                  SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT,
                                  CZ, Rot, BasisState]}
-    _expectation_map = {key:val for key, val in _operation_map.items() if val in [ZGate]}
+    _expectation_map = dict({key:val for key, val in _operation_map.items() if val in [ZGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device',
                        'retrieve_execution']
@@ -452,13 +455,13 @@ class ProjectQIBMBackend(_ProjectQDevice):
         probabilities = self.eng.backend.get_probabilities(self.reg)
 
         if expectation == 'PauliZ':
-            if isinstance(wires, int):
-                wire = wires
-            else:
-                wire = wires[0]
+            wire = wires[0]
 
             expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wire] == '0')))/2
             #variance = 1 - ev**2
+        elif expectation == 'Identity':
+            expval = sum(p for (state, p) in probabilities.items())
+            # variance = 1 - expval**2
         # elif expectation == 'AllPauliZ':
         #     expval = [((1-2*sum(p for (state, p) in probabilities.items()
         #                         if state[i] == '1'))
@@ -489,7 +492,8 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
       :class:`pennylane.BasisState`
 
     Supported PennyLane Expectations:
-      :class:`pennylane.PauliZ`
+      :class:`pennylane.expval.PauliZ`,
+      :class:`pennylane.expval.Identity`
 
     ..
        Extra Operations:
@@ -502,8 +506,8 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     short_name = 'projectq.classical'
     _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
                       if val in [XGate, CNOT, BasisState]}
-    _expectation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
-                        if val in [ZGate]}
+    _expectation_map = dict({key:val for key, val in PROJECTQ_OPERATION_MAP.items()
+                             if val in [ZGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = []
 
@@ -528,12 +532,12 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         """Retrieve the requested expectation value.
         """
         if expectation == 'PauliZ':
-            if isinstance(wires, int):
-                wire = wires
-            else:
-                wire = wires[0]
+            wire = wires[0]
 
             expval = 1 - 2*int(self.reg[wire])
+            # variance = 1 - expval**2
+        elif expectation == 'Identity':
+            expval = 1
             # variance = 1 - expval**2
         # elif expectation == 'AllPauliZ':
         #     expval = [ 1 - 2*int(self.reg[wire]) for wire in self.reg]
