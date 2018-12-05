@@ -26,7 +26,21 @@ from projectq.ops import BasicGate, SelfInverseGate
 import numpy as np
 
 class BasicProjectQGate(BasicGate): # pylint: disable=too-few-public-methods
-    """Base class for ProjectQ gates defined here."""
+    """Base class for ProjectQ gates."""
+    def __init__(self, name="unnamed"):
+        super().__init__()
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+try:
+    from projectq.ops import MatrixGate
+except:
+    MatrixGate = BasicGate
+
+class BasicProjectQMatrixGate(MatrixGate): # pylint: disable=too-few-public-methods
+    """Base class for ProjectQ gates defined via a matrix."""
     def __init__(self, name="unnamed"):
         super().__init__()
         self.name = name
@@ -108,7 +122,7 @@ class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
     do this here.
     """
     def __new__(*par):
-        unitary_gate = BasicProjectQGate(par[0].__name__)
+        unitary_gate = BasicProjectQMatrixGate(par[0].__name__)
         unitary_gate.matrix = np.matrix(par[1])
         return unitary_gate
 
