@@ -465,11 +465,13 @@ class ProjectQIBMBackend(_ProjectQDevice):
             if e.name == 'PauliX':
                 self.apply('Hadamard', e.wires, list())
             elif e.name == 'PauliY':
-                pass
+                self.apply('PauliZ', e.wires, list())
+                self.apply('S', e.wires, list())
+                self.apply('Hadamard', e.wires, list())
             elif e.name == 'Hadamard':
-                pass
+                self.apply('RotY', e.wires, list(- np.pi/4))
             elif e.name == 'Hermitian':
-                pass
+                raise NotImplementedError
 
         pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
         self.eng.flush()
@@ -479,19 +481,11 @@ class ProjectQIBMBackend(_ProjectQDevice):
         """
         probabilities = self.eng.backend.get_probabilities(self.reg)
 
-        if expectation == 'PauliZ':
-            wire = wires[0]
-
-            expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wire] == '0')))/2
+        if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ' or expectation == 'Hadamard':
+            expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '0')))/2
             #variance = 1 - ev**2
-        elif expectation == 'PauliX':
-            pass
-        elif expectation == 'PauliY':
-            pass
-        elif expectation == 'Hadamard':
-            pass
         elif expectation == 'Hermitian':
-            pass
+            raise NotImplementedError
         elif expectation == 'Identity':
             expval = sum(p for (state, p) in probabilities.items())
             # variance = 1 - expval**2
