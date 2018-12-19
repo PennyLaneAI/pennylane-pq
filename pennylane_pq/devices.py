@@ -318,11 +318,14 @@ class ProjectQSimulator(_ProjectQDevice):
         """Retrieve the requested expectation value.
         """
         if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ':
-            wire = wires[0]
-
             expval = self.eng.backend.get_expectation_value(
                 pq.ops.QubitOperator(str(expectation)[-1]+'0'),
-                [self.reg[wire]])
+                [self.reg[wires[0]]])
+            # variance = 1 - expval**2
+        elif expectation == 'Hadamard':
+            expval = self.eng.backend.get_expectation_value(
+                1/np.sqrt(2)*pq.ops.QubitOperator('X0')+1/np.sqrt(2)*pq.ops.QubitOperator('Z0'),
+                [self.reg[wires[0]]])
             # variance = 1 - expval**2
         elif expectation == 'Identity':
             expval = 1
