@@ -263,7 +263,6 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`pennylane.RY`,
       :class:`pennylane.RZ`,
       :class:`pennylane.PhaseShift`,
-      :class:`pennylane.QubitStateVector`,
       :class:`pennylane.Hadamard`,
       :class:`pennylane.Rot`,
       :class:`pennylane.QubitUnitary`,
@@ -282,12 +281,6 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`pennylane_pq.T <pennylane_pq.ops.T>`,
       :class:`pennylane_pq.SqrtX <pennylane_pq.ops.SqrtX>`,
       :class:`pennylane_pq.SqrtSwap <pennylane_pq.ops.SqrtSwap>`
-
-    ..
-       :class:`pennylane_pq.AllPauliZ <pennylane_pq.ops.AllPauliZ>`
-
-       Extra Expectations:
-         :class:`pennylane_pq.expval.AllPauliZ`
 
     """
 
@@ -394,7 +387,6 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`pennylane.RY`,
       :class:`pennylane.RZ`,
       :class:`pennylane.PhaseShift`,
-      :class:`pennylane.QubitStateVector`,
       :class:`pennylane.Hadamard`,
       :class:`pennylane.Rot`,
       :class:`pennylane.BasisState`
@@ -421,17 +413,12 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`pennylane_pq.SqrtX <pennylane_pq.ops.SqrtX>`,
       :class:`pennylane_pq.SqrtSwap <pennylane_pq.ops.SqrtSwap>`,
 
-    ..
-       :class:`pennylane_pq.AllPauliZ <pennylane_pq.ops.AllPauliZ>`
-
-       Extra Expectations:
-         :class:`pennylane_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.ibm'
     _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
                       if val in [HGate, XGate, YGate, ZGate, SGate, TGate,
-                                 SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT,
+                                 SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, CNOT,
                                  CZ, Rot, BasisState]}
     _expectation_map = dict({key:val for key, val in _operation_map.items() if val in [HGate, XGate, YGate, ZGate]}, **{'Identity': None})
     _circuits = {}
@@ -522,12 +509,6 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
       :class:`pennylane.expval.PauliZ`,
       :class:`pennylane.expval.Identity`
 
-    ..
-       Extra Operations:
-         :class:`pennylane_pq.AllPauliZ <pennylane_pq.ops.AllPauliZ>`
-
-       Extra Expectations:
-         :class:`pennylane_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.classical'
