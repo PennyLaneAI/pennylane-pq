@@ -469,7 +469,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
                 self.apply('S', e.wires, list())
                 self.apply('Hadamard', e.wires, list())
             elif e.name == 'Hadamard':
-                self.apply('RotY', e.wires, list(- np.pi/4))
+                self.apply('RY', e.wires, [-np.pi/4])
             elif e.name == 'Hermitian':
                 raise NotImplementedError
 
