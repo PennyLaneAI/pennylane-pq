@@ -336,7 +336,7 @@ class ProjectQSimulator(_ProjectQDevice):
         #                for qubit in self.reg]
         #     variance = [1 - e**2 for e in expval]
 
-        if self.shots != 0:
+        if self.shots != 0 and expectation != 'Identity':
             p0 = (expval+1)/2
             n0 = np.random.binomial(self.shots, p0)
             expval = (n0 - (self.shots-n0)) / self.shots
