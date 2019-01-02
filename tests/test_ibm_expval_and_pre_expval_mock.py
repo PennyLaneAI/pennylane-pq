@@ -98,6 +98,8 @@ class Expval(BaseTest):
             ibm_options = pennylane.default_config['projectq.ibm']
             if "user" in ibm_options and "password" in ibm_options:
                 dev = ProjectQIBMBackend(wires=2, shots=1, use_hardware=False, user=ibm_options['user'], password=ibm_options['password'], verbose=True)
+            else:
+                return
         else:
             return
 
