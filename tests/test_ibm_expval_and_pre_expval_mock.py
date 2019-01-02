@@ -95,19 +95,15 @@ class Expval(BaseTest):
     def test_expval_exception_if_no_expval_queue(self):
 
         if self.args.device == 'ibm' or self.args.device == 'all':
-            ibm_options = pennylane.default_config['projectq.ibm']
-            if "user" in ibm_options and "password" in ibm_options:
-                dev = ProjectQIBMBackend(wires=2, shots=1, use_hardware=False, user=ibm_options['user'], password=ibm_options['password'], verbose=True)
-            else:
-                return
+            dev = ProjectQIBMBackend(wires=2, shots=1, use_hardware=False, user='user', password='password', verbose=True)
         else:
             return
 
         del dev.__dict__['_expval_queue']
-        dev.eng = MagicMock()
-        dev.eng.backend = MagicMock()
-        dev.eng.backend.get_probabilities = MagicMock()
-        dev.eng.backend.get_probabilities.return_value = {'00': 1.0}
+        dev._eng = MagicMock()
+        dev._eng.backend = MagicMock()
+        dev._eng.backend.get_probabilities = MagicMock()
+        dev._eng.backend.get_probabilities.return_value = {'00': 1.0}
 
         self.assertRaises(DeviceError, dev.expval, 'PauliX', wires=[0], par=list())
         self.assertRaises(DeviceError, dev.expval, 'PauliY', wires=[0], par=list())
