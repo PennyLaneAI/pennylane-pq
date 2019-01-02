@@ -263,7 +263,6 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`pennylane.RY`,
       :class:`pennylane.RZ`,
       :class:`pennylane.PhaseShift`,
-      :class:`pennylane.QubitStateVector`,
       :class:`pennylane.Hadamard`,
       :class:`pennylane.Rot`,
       :class:`pennylane.QubitUnitary`,
@@ -273,6 +272,7 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`pennylane.expval.PauliX`,
       :class:`pennylane.expval.PauliY`,
       :class:`pennylane.expval.PauliZ`,
+      :class:`pennylane.expval.Hadamard`,
       :class:`pennylane.expval.Identity`
 
     Extra Operations:
@@ -282,18 +282,12 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`pennylane_pq.SqrtX <pennylane_pq.ops.SqrtX>`,
       :class:`pennylane_pq.SqrtSwap <pennylane_pq.ops.SqrtSwap>`
 
-    ..
-       :class:`pennylane_pq.AllPauliZ <pennylane_pq.ops.AllPauliZ>`
-
-       Extra Expectations:
-         :class:`pennylane_pq.expval.AllPauliZ`
-
     """
 
     short_name = 'projectq.simulator'
     _operation_map = PROJECTQ_OPERATION_MAP
     _expectation_map = dict({key:val for key, val in _operation_map.items()
-                        if val in [XGate, YGate, ZGate]} , **{'Identity': None} )
+                        if val in [XGate, YGate, ZGate, HGate]} , **{'Identity': None} )
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
@@ -317,11 +311,14 @@ class ProjectQSimulator(_ProjectQDevice):
         """Retrieve the requested expectation value.
         """
         if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ':
-            wire = wires[0]
-
             expval = self.eng.backend.get_expectation_value(
                 pq.ops.QubitOperator(str(expectation)[-1]+'0'),
-                [self.reg[wire]])
+                [self.reg[wires[0]]])
+            # variance = 1 - expval**2
+        elif expectation == 'Hadamard':
+            expval = self.eng.backend.get_expectation_value(
+                1/np.sqrt(2)*pq.ops.QubitOperator('X0')+1/np.sqrt(2)*pq.ops.QubitOperator('Z0'),
+                [self.reg[wires[0]]])
             # variance = 1 - expval**2
         elif expectation == 'Identity':
             expval = 1
@@ -332,7 +329,7 @@ class ProjectQSimulator(_ProjectQDevice):
         #                for qubit in self.reg]
         #     variance = [1 - e**2 for e in expval]
 
-        if self.shots != 0:
+        if self.shots != 0 and expectation != 'Identity':
             p0 = (expval+1)/2
             n0 = np.random.binomial(self.shots, p0)
             expval = (n0 - (self.shots-n0)) / self.shots
@@ -375,9 +372,9 @@ class ProjectQIBMBackend(_ProjectQDevice):
         import pennylane as qml
         dev = qml.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
 
-        To avoid leaking your user name and password when sharing code,
-        it is better to specify the user name and password in your
-        `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_.
+    To avoid leaking your user name and password when sharing code,
+    it is better to specify the user name and password in your
+    `PennyLane configuration file <https://pennylane.readthedocs.io/configuration.html>`_.
 
     Supported PennyLane Operations:
       :class:`pennylane.PauliX`,
@@ -390,7 +387,6 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`pennylane.RY`,
       :class:`pennylane.RZ`,
       :class:`pennylane.PhaseShift`,
-      :class:`pennylane.QubitStateVector`,
       :class:`pennylane.Hadamard`,
       :class:`pennylane.Rot`,
       :class:`pennylane.BasisState`
@@ -399,7 +395,17 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`pennylane.expval.PauliX`,
       :class:`pennylane.expval.PauliY`,
       :class:`pennylane.expval.PauliZ`,
+      :class:`pennylane.expval.Hadamard`,
       :class:`pennylane.expval.Identity`
+
+    .. note::
+       The Expectations :class:`pennylane.expval.PauliY`, :class:`pennylane.expval.PauliZ`,
+       and :class:`pennylane.expval.Hadamard`, cannot be natively measured on the
+       hardware device. They are implemented by executing a few additional gates on the
+       respective wire before the final measurement, which is always performed in the
+       :class:`pennylane.expval.PauliZ` basis. These measurements may thus be slightly more
+       noisy than native :class:`pennylane.expval.PauliZ` measurement.
+
 
     Extra Operations:
       :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
@@ -407,19 +413,14 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`pennylane_pq.SqrtX <pennylane_pq.ops.SqrtX>`,
       :class:`pennylane_pq.SqrtSwap <pennylane_pq.ops.SqrtSwap>`,
 
-    ..
-       :class:`pennylane_pq.AllPauliZ <pennylane_pq.ops.AllPauliZ>`
-
-       Extra Expectations:
-         :class:`pennylane_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.ibm'
     _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
                       if val in [HGate, XGate, YGate, ZGate, SGate, TGate,
-                                 SqrtXGate, SwapGate, Rx, Ry, Rz, R, CNOT,
+                                 SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, CNOT,
                                  CZ, Rot, BasisState]}
-    _expectation_map = dict({key:val for key, val in _operation_map.items() if val in [ZGate]}, **{'Identity': None})
+    _expectation_map = dict({key:val for key, val in _operation_map.items() if val in [HGate, XGate, YGate, ZGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device',
                        'retrieve_execution']
@@ -444,8 +445,22 @@ class ProjectQIBMBackend(_ProjectQDevice):
         super().reset()
 
     def pre_expval(self):
-        """Apply a measure all operation and flush the device before retrieving expectation values.
+        """Rotate qubits to the right basis before measurement, apply a measure all
+        operation and flush the device before retrieving expectation values.
         """
+        if hasattr(self, 'expval_queue'): #we raise an except below in case there is no expval_queue but we are asked to measure in a basis different from PauliZ
+            for e in self.expval_queue:
+                if e.name == 'PauliX':
+                    self.apply('Hadamard', e.wires, list())
+                elif e.name == 'PauliY':
+                    self.apply('PauliZ', e.wires, list())
+                    self.apply('S', e.wires, list())
+                    self.apply('Hadamard', e.wires, list())
+                elif e.name == 'Hadamard':
+                    self.apply('RY', e.wires, [-np.pi/4])
+                elif e.name == 'Hermitian':
+                    raise NotImplementedError
+
         pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
         self.eng.flush()
 
@@ -454,11 +469,15 @@ class ProjectQIBMBackend(_ProjectQDevice):
         """
         probabilities = self.eng.backend.get_probabilities(self.reg)
 
-        if expectation == 'PauliZ':
-            wire = wires[0]
+        if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ' or expectation == 'Hadamard':
 
-            expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wire] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wire] == '0')))/2
+            if expectation != 'PauliZ' and not hasattr(self, 'expval_queue'):
+                raise DeviceError("Measurements in basis other than PauliZ are only supported when this plugin is used with versions of PennyLane that expose the expval_queue. Please update PennyLane and this plugin.")
+
+            expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '0')))/2
             #variance = 1 - ev**2
+        elif expectation == 'Hermitian':
+            raise NotImplementedError
         elif expectation == 'Identity':
             expval = sum(p for (state, p) in probabilities.items())
             # variance = 1 - expval**2
@@ -495,12 +514,6 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
       :class:`pennylane.expval.PauliZ`,
       :class:`pennylane.expval.Identity`
 
-    ..
-       Extra Operations:
-         :class:`pennylane_pq.AllPauliZ <pennylane_pq.ops.AllPauliZ>`
-
-       Extra Expectations:
-         :class:`pennylane_pq.expval.AllPauliZ`
     """
 
     short_name = 'projectq.classical'
