@@ -35,8 +35,8 @@ class BasicProjectQGate(BasicGate): # pylint: disable=too-few-public-methods
         return self.name
 
 try:
-    from projectq.ops import MatrixGate
-except:
+    from projectq.ops import MatrixGate #pylint: disable=ungrouped-imports
+except ImportError:
     MatrixGate = BasicGate
 
 class BasicProjectQMatrixGate(MatrixGate): # pylint: disable=too-few-public-methods

@@ -294,7 +294,7 @@ class ProjectQSimulator(_ProjectQDevice):
     short_name = 'projectq.simulator'
     _operation_map = PROJECTQ_OPERATION_MAP
     _expectation_map = dict({key:val for key, val in _operation_map.items()
-                        if val in [XGate, YGate, ZGate, HGate]} , **{'Identity': None})
+                             if val in [XGate, YGate, ZGate, HGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
