@@ -49,7 +49,7 @@ class DocumentationTest(BaseTest):
             if "user" in ibm_options and "password" in ibm_options:
                 self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
             else:
-                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
+                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user='user', password='password'))
         if self.args.device == 'classical' or self.args.device == 'all':
             self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems))
 
@@ -76,50 +76,8 @@ class DocumentationTest(BaseTest):
             self.assertFalse(documented_but_not_supported_expectations, msg="For device "+dev.short_name+" the Expectations "+str(documented_but_not_supported_expectations)+" are documented but not actually supported.")
 
 
-
-
-
-    # def test_ibm_no_user(self):
-    #     if self.args.device == 'ibm' or self.args.device == 'all':
-    #         self.assertRaises(ValueError, ProjectQIBMBackend, wires=self.num_subsystems, use_hardware=False, password='password')
-
-    # def test_ibm_no_password(self):
-    #     if self.args.device == 'ibm' or self.args.device == 'all':
-    #         self.assertRaises(ValueError, ProjectQIBMBackend, wires=self.num_subsystems, use_hardware=False, user='user')
-
-    # def test_log_verbose(self):
-    #     dev = ProjectQIBMBackend(wires=self.num_subsystems, log=True, use_hardware=False, user="user", password='password')
-    #     self.assertEqual(dev.kwargs['log'],True)
-    #     self.assertEqual(dev.kwargs['log'],dev.kwargs['verbose'])
-
-    # def test_shots(self):
-    #     if self.args.device == 'ibm' or self.args.device == 'all':
-    #         shots = 5
-    #         dev1 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots, use_hardware=False, user="user", password='password')
-    #         self.assertEqual(shots, dev1.shots)
-    #         self.assertEqual(shots, dev1.kwargs['num_runs'])
-
-    #         dev2 = ProjectQIBMBackend(wires=self.num_subsystems, num_runs=shots, use_hardware=False, user="user", password='password')
-    #         self.assertEqual(shots, dev2.shots)
-    #         self.assertEqual(shots, dev2.kwargs['num_runs'])
-
-    #         dev2 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots+2, num_runs=shots, use_hardware=False, user="user", password='password')
-    #         self.assertEqual(shots, dev2.shots)
-    #         self.assertEqual(shots, dev2.kwargs['num_runs'])
-
-    # def test_initiatlization_via_pennylane(self):
-    #     for short_name in [
-    #             'projectq.simulator',
-    #             'projectq.classical',
-    #             'projectq.ibm'
-    #     ]:
-    #         try:
-    #             dev = dev = qml.device(short_name, wires=2, user='user', password='password')
-    #         except DeviceError:
-    #             raise Exception("This test is expected to fail until pennylane-pq is installed.")
-
 if __name__ == '__main__':
-    print('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', device initialization.')
+    print('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', device documentation.')
     # run the tests in this file
     suite = unittest.TestSuite()
     for t in (DocumentationTest, ):
