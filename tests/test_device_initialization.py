@@ -45,25 +45,17 @@ class DeviceInitialization(BaseTest):
         if self.args.device == 'ibm' or self.args.device == 'all':
             self.assertRaises(ValueError, ProjectQIBMBackend, wires=self.num_subsystems, use_hardware=False, user='user')
 
-    def test_log_verbose(self):
-        dev = ProjectQIBMBackend(wires=self.num_subsystems, log=True, use_hardware=False, user="user", password='password')
-        self.assertEqual(dev.kwargs['log'],True)
-        self.assertEqual(dev.kwargs['log'],dev.kwargs['verbose'])
-
     def test_shots(self):
         if self.args.device == 'ibm' or self.args.device == 'all':
             shots = 5
             dev1 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots, use_hardware=False, user="user", password='password')
             self.assertEqual(shots, dev1.shots)
-            self.assertEqual(shots, dev1.kwargs['num_runs'])
 
             dev2 = ProjectQIBMBackend(wires=self.num_subsystems, num_runs=shots, use_hardware=False, user="user", password='password')
             self.assertEqual(shots, dev2.shots)
-            self.assertEqual(shots, dev2.kwargs['num_runs'])
 
             dev2 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots+2, num_runs=shots, use_hardware=False, user="user", password='password')
             self.assertEqual(shots, dev2.shots)
-            self.assertEqual(shots, dev2.kwargs['num_runs'])
 
     def test_initiatlization_via_pennylane(self):
         for short_name in [
@@ -72,7 +64,7 @@ class DeviceInitialization(BaseTest):
                 'projectq.ibm'
         ]:
             try:
-                dev = dev = qml.device(short_name, wires=2, user='user', password='password')
+                dev = dev = qml.device(short_name, wires=2, user='user', password='password', verbose=True)
             except DeviceError:
                 raise Exception("This test is expected to fail until pennylane-pq is installed.")
 
