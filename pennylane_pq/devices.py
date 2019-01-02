@@ -93,26 +93,33 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     """ProjectQ device for PennyLane.
 
     Args:
-       wires (int): The number of qubits of the device.
+      wires (int): The number of qubits of the device. Default 1 if not specified.
+      shots (int): number of circuit evaluations/random samples used to estimate
+        expectation values of observables. For simulator devices, a value of 0 (default)
+        results in the exact expectation value being returned. For the IBMBackend the
+        default is 1024.
+
+    Keyword Args:
+      backend (string): Name of the backend, i.e., either "Simulator",
+         "ClassicalSimulator", or "IBMBackend".
+      verbose (bool): If True, log messages are printed and exceptions are more verbose.
 
     Keyword Args for Simulator backend:
       gate_fusion (bool): If True, operations are cached and only executed once a
-      certain number of operations has been reached (only has an effect for the c++ simulator).
+        certain number of operations has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
 
     Keyword Args for IBMBackend backend:
       use_hardware (bool): If True, the code is run on the IBM quantum chip (instead of using
-      the IBM simulator)
+        the IBM simulator)
       num_runs (int): Number of runs to collect statistics (default is 1024). Is equivalent
-      to but takes preference over the shots parameter.
-      verbose (bool): If True, statistics are printed, in addition to the measurement result
-      being registered (at the end of the circuit).
+        to but takes preference over the shots parameter.
       user (string): IBM Quantum Experience user name
       password (string): IBM Quantum Experience password
       device (string): Device to use (e.g., ‘ibmqx4’ or ‘ibmqx5’) if use_hardware is set to
-      True. Default is ibmqx4.
-      retrieve_execution (int): Job ID to retrieve instead of re-running the circuit
-      (e.g., if previous run timed out).
+        True. Default is ibmqx4.
+        retrieve_execution (int): Job ID to retrieve instead of re-running the circuit
+        (e.g., if previous run timed out).
     """
     name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
@@ -134,39 +141,35 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     def _backend_kwargs(self):
         raise NotImplementedError
 
-    def __init__(self, wires, *, shots=0, **kwargs):
+    def __init__(self, wires=1, shots=0, *, backend, **kwargs):
+        # overwrite shots with num_runs if given
+        if 'num_runs' in kwargs:
+            shots = kwargs['num_runs']
+            del kwargs['num_runs']
+
         super().__init__(wires=wires, shots=shots)
 
-        # translate some aguments
-        for key, val in {'log':'verbose'}.items():
-            if key in kwargs:
-                kwargs[val] = kwargs[key]
+        if 'verbose' not in kwargs:
+            kwargs['verbose'] = False
 
-        # clean some arguments
-        if 'num_runs' in kwargs and isinstance(kwargs['num_runs'], int) and kwargs['num_runs'] > 0:
-            self.shots = kwargs['num_runs']
-        else:
-            kwargs['num_runs'] = self.shots
-
-        self.backend = kwargs['backend']
-        del kwargs['backend']
-        self.kwargs = kwargs
-        self.eng = None
-        self.reg = None
-        self.first_operation = True
+        self._backend = backend
+        self._kwargs = kwargs
+        self._eng = None
+        self._reg = None
+        self._first_operation = True
         self.reset() #the actual initialization is done in reset()
 
     def reset(self):
         """Reset/initialize the device by allocating qubits.
         """
-        self.reg = self.eng.allocate_qureg(self.num_wires)
-        self.first_operation = True
+        self._reg = self._eng.allocate_qureg(self.num_wires)
+        self._first_operation = True
 
     def __repr__(self):
-        return super().__repr__() +'Backend: ' +self.backend +'\n'
+        return super().__repr__() +'Backend: ' +self._backend +'\n'
 
     def __str__(self):
-        return super().__str__() +'Backend: ' +self.backend +'\n'
+        return super().__str__() +'Backend: ' +self._backend +'\n'
 
     def post_expval(self):
         """Deallocate the qubits after expectation values have been retrieved.
@@ -184,11 +187,11 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
             par (tuple): parameters for the operation
         """
         operation = self._operation_map[operation](*par)
-        if isinstance(operation, BasisState) and not self.first_operation:
+        if isinstance(operation, BasisState) and not self._first_operation:
             raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation, self.short_name)) #pylint: disable=line-too-long
-        self.first_operation = False
+        self._first_operation = False
 
-        qureg = [self.reg[i] for i in wires]
+        qureg = [self._reg[i] for i in wires]
         if isinstance(operation, (pq.ops._metagates.ControlledGate, #pylint: disable=protected-access
                                   pq.ops._gates.SqrtSwapGate, #pylint: disable=protected-access
                                   pq.ops._gates.SwapGate)): #pylint: disable=protected-access
@@ -202,10 +205,10 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
 
         Drawback: This is probably rather resource intensive.
         """
-        if self.eng is not None and self.backend == 'Simulator':
+        if self._eng is not None and self._backend == 'Simulator':
             #avoid an "unfriendly error message":
             #https://github.com/ProjectQ-Framework/ProjectQ/issues/2
-            pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
+            pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
 
     def filter_kwargs_for_backend(self, kwargs):
         """Filter the given kwargs for those relevant for the respective device/backend.
@@ -238,12 +241,16 @@ class ProjectQSimulator(_ProjectQDevice):
     backend.
 
     Args:
-       wires (int): The number of qubits of the device
+       wires (int): The number of qubits of the device. Default 1 if not specified.
+       shots (int): number of random samples used to estimate expectation values of
+         observables. A value of 0 (default) results in the exact expectation value
+         being returned.
 
     Keyword Args:
       gate_fusion (bool): If True, operations are cached and only executed once a
         certain number of operations has been reached (only has an effect for the c++ simulator).
       rnd_seed (int): Random seed (uses random.randint(0, 4294967295) by default).
+      verbose (bool): If True, log messages are printed and exceptions are more verbose.
 
     This device can, for example, be instantiated from PennyLane as follows:
 
@@ -287,46 +294,46 @@ class ProjectQSimulator(_ProjectQDevice):
     short_name = 'projectq.simulator'
     _operation_map = PROJECTQ_OPERATION_MAP
     _expectation_map = dict({key:val for key, val in _operation_map.items()
-                        if val in [XGate, YGate, ZGate, HGate]} , **{'Identity': None} )
+                        if val in [XGate, YGate, ZGate, HGate]} , **{'Identity': None})
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
-    def __init__(self, wires, **kwargs):
+    def __init__(self, wires=1, shots=0, **kwargs):
         kwargs['backend'] = 'Simulator'
-        super().__init__(wires, **kwargs)
+        super().__init__(wires=wires, shots=shots, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
         """
-        backend = pq.backends.Simulator(**self.filter_kwargs_for_backend(self.kwargs))
-        self.eng = pq.MainEngine(backend)
+        backend = pq.backends.Simulator(**self.filter_kwargs_for_backend(self._kwargs))
+        self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'])
         super().reset()
 
     def pre_expval(self):
         """Flush the device before retrieving expectation values.
         """
-        self.eng.flush(deallocate_qubits=False)
+        self._eng.flush(deallocate_qubits=False)
 
     def expval(self, expectation, wires, par):
         """Retrieve the requested expectation value.
         """
         if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ':
-            expval = self.eng.backend.get_expectation_value(
+            expval = self._eng.backend.get_expectation_value(
                 pq.ops.QubitOperator(str(expectation)[-1]+'0'),
-                [self.reg[wires[0]]])
+                [self._reg[wires[0]]])
             # variance = 1 - expval**2
         elif expectation == 'Hadamard':
-            expval = self.eng.backend.get_expectation_value(
+            expval = self._eng.backend.get_expectation_value(
                 1/np.sqrt(2)*pq.ops.QubitOperator('X0')+1/np.sqrt(2)*pq.ops.QubitOperator('Z0'),
-                [self.reg[wires[0]]])
+                [self._reg[wires[0]]])
             # variance = 1 - expval**2
         elif expectation == 'Identity':
             expval = 1
             # variance = 1 - expval**2
         # elif expectation == 'AllPauliZ':
-        #     expval = [self.eng.backend.get_expectation_value(
+        #     expval = [self._eng.backend.get_expectation_value(
         #         pq.ops.QubitOperator("Z"+'0'), [qubit])
-        #                for qubit in self.reg]
+        #                for qubit in self._reg]
         #     variance = [1 - e**2 for e in expval]
 
         if self.shots != 0 and expectation != 'Identity':
@@ -349,21 +356,22 @@ class ProjectQIBMBackend(_ProjectQDevice):
         a finite accuracy and fluctuate from run to run.
 
     Args:
-       wires (int): The number of qubits of the device
+       wires (int): The number of qubits of the device. Default 1 if not specified.
+       shots (int): number of circuit evaluations used to estimate expectation values
+         of observables. Default value is 1024.
 
     Keyword Args:
       use_hardware (bool): If True, the code is run on the IBM quantum chip
         (instead of using the IBM simulator)
       num_runs (int): Number of runs to collect statistics (default is 1024).
         Is equivalent to but takes preference over the shots parameter.
-      verbose (bool): If True, statistics are printed, in addition to the
-        measurement result being registered (at the end of the circuit)
       user (string): IBM Quantum Experience user name
       password (string): IBM Quantum Experience password
       device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if
         :code:`use_hardware` is set to True. Default is 'ibmqx4'.
       retrieve_execution (int): Job ID to retrieve instead of re-running
         a circuit (e.g., if previous run timed out).
+      verbose (bool): If True, log messages are printed and exceptions are more verbose.
 
     This device can, for example, be instantiated from PennyLane as follows:
 
@@ -425,7 +433,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
     _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device',
                        'retrieve_execution']
 
-    def __init__(self, wires, **kwargs):
+    def __init__(self, wires=1, shots=1024, **kwargs):
         # check that necessary arguments are given
         if 'user' not in kwargs:
             raise ValueError('An IBM Quantum Experience user name specified via the "user" keyword argument is required') #pylint: disable=line-too-long
@@ -435,13 +443,13 @@ class ProjectQIBMBackend(_ProjectQDevice):
         import projectq.setups.ibm #pylint: disable=unused-variable
 
         kwargs['backend'] = 'IBMBackend'
-        super().__init__(wires, **kwargs)
+        super().__init__(wires=wires, shots=shots, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
         """
-        backend = pq.backends.IBMBackend(**self.filter_kwargs_for_backend(self.kwargs))
-        self.eng = pq.MainEngine(backend, engine_list=pq.setups.ibm.get_engine_list())
+        backend = pq.backends.IBMBackend(num_runs=self.shots, **self.filter_kwargs_for_backend(self._kwargs))
+        self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'], engine_list=pq.setups.ibm.get_engine_list())
         super().reset()
 
     def pre_expval(self):
@@ -460,13 +468,13 @@ class ProjectQIBMBackend(_ProjectQDevice):
             elif e.name == 'Hermitian':
                 raise NotImplementedError
 
-        pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
-        self.eng.flush()
+        pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
+        self._eng.flush()
 
     def expval(self, expectation, wires, par):
         """Retrieve the requested expectation value.
         """
-        probabilities = self.eng.backend.get_probabilities(self.reg)
+        probabilities = self._eng.backend.get_probabilities(self._reg)
 
         if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ' or expectation == 'Hadamard':
             expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '0')))/2
@@ -480,7 +488,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         #     expval = [((1-2*sum(p for (state, p) in probabilities.items()
         #                         if state[i] == '1'))
         #                -(1-2*sum(p for (state, p) in probabilities.items()
-        #                          if state[i] == '0')))/2 for i in range(len(self.reg))]
+        #                          if state[i] == '0')))/2 for i in range(len(self._reg))]
         #     variance = [1 - e**2 for e in expval]
 
         return expval
@@ -491,7 +499,10 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     backend.
 
     Args:
-       wires (int): The number of qubits of the device
+       wires (int): The number of qubits of the device. Default 1 if not specified.
+
+    Keyword Args:
+      verbose (bool): If True, log messages are printed and exceptions are more verbose.
 
     This device can, for example, be instantiated from PennyLane as follows:
 
@@ -519,22 +530,22 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     _circuits = {}
     _backend_kwargs = []
 
-    def __init__(self, wires, **kwargs):
+    def __init__(self, wires=1, **kwargs):
         kwargs['backend'] = 'ClassicalSimulator'
-        super().__init__(wires, **kwargs)
+        super().__init__(wires=wires, shots=0, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
         """
-        backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self.kwargs))
-        self.eng = pq.MainEngine(backend)
+        backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self._kwargs))
+        self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'])
         super().reset()
 
     def pre_expval(self):
         """Apply a measure all operation and flush the device before retrieving expectation values.
         """
-        pq.ops.All(pq.ops.Measure) | self.reg #pylint: disable=expression-not-assigned
-        self.eng.flush()
+        pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
+        self._eng.flush()
 
     def expval(self, expectation, wires, par):
         """Retrieve the requested expectation value.
@@ -542,13 +553,13 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         if expectation == 'PauliZ':
             wire = wires[0]
 
-            expval = 1 - 2*int(self.reg[wire])
+            expval = 1 - 2*int(self._reg[wire])
             # variance = 1 - expval**2
         elif expectation == 'Identity':
             expval = 1
             # variance = 1 - expval**2
         # elif expectation == 'AllPauliZ':
-        #     expval = [ 1 - 2*int(self.reg[wire]) for wire in self.reg]
+        #     expval = [ 1 - 2*int(self._reg[wire]) for wire in self._reg]
         #     #variance = [1 - e**2 for e in expval]
 
         return expval
