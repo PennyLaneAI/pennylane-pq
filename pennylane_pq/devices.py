@@ -456,17 +456,18 @@ class ProjectQIBMBackend(_ProjectQDevice):
         """Rotate qubits to the right basis before measurement, apply a measure all
         operation and flush the device before retrieving expectation values.
         """
-        for e in self.expval_queue:
-            if e.name == 'PauliX':
-                self.apply('Hadamard', e.wires, list())
-            elif e.name == 'PauliY':
-                self.apply('PauliZ', e.wires, list())
-                self.apply('S', e.wires, list())
-                self.apply('Hadamard', e.wires, list())
-            elif e.name == 'Hadamard':
-                self.apply('RY', e.wires, [-np.pi/4])
-            elif e.name == 'Hermitian':
-                raise NotImplementedError
+        if hasattr(self, 'expval_queue'): #we raise an except below in case there is no expval_queue but we are asked to measure in a basis different from PauliZ
+            for e in self.expval_queue:
+                if e.name == 'PauliX':
+                    self.apply('Hadamard', e.wires, list())
+                elif e.name == 'PauliY':
+                    self.apply('PauliZ', e.wires, list())
+                    self.apply('S', e.wires, list())
+                    self.apply('Hadamard', e.wires, list())
+                elif e.name == 'Hadamard':
+                    self.apply('RY', e.wires, [-np.pi/4])
+                elif e.name == 'Hermitian':
+                    raise NotImplementedError
 
         pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
         self._eng.flush()
@@ -477,6 +478,10 @@ class ProjectQIBMBackend(_ProjectQDevice):
         probabilities = self._eng.backend.get_probabilities(self._reg)
 
         if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ' or expectation == 'Hadamard':
+
+            if expectation != 'PauliZ' and not hasattr(self, 'expval_queue'):
+                raise DeviceError("Measurements in basis other than PauliZ are only supported when this plugin is used with versions of PennyLane that expose the expval_queue. Please update PennyLane and this plugin.")
+
             expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '0')))/2
             #variance = 1 - ev**2
         elif expectation == 'Hermitian':
