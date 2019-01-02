@@ -42,16 +42,16 @@ class CompareWithDefaultQubitTest(BaseTest):
 
         self.devices = [DefaultQubit(wires=self.num_subsystems)]
         if self.args.device == 'simulator' or self.args.device == 'all':
-            self.devices.append(ProjectQSimulator(wires=self.num_subsystems))
-            self.devices.append(ProjectQSimulator(wires=self.num_subsystems, shots=20000000))
+            self.devices.append(ProjectQSimulator(wires=self.num_subsystems, verbose=True))
+            self.devices.append(ProjectQSimulator(wires=self.num_subsystems, shots=20000000, verbose=True))
         if self.args.device == 'ibm' or self.args.device == 'all':
             ibm_options = pennylane.default_config['projectq.ibm']
             if "user" in ibm_options and "password" in ibm_options:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
+                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password'], verbose=True))
             else:
                 log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
         if self.args.device == 'classical' or self.args.device == 'all':
-            self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems))
+            self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems, verbose=True))
 
     def test_simple_circuits(self):
         """Automatically compare the behavior on simple circuits"""
@@ -136,7 +136,7 @@ class CompareWithDefaultQubitTest(BaseTest):
         #if we could run the circuit on more than one device assert that both should have given the same output
         for (key,val) in outputs.items():
             if len(val) >= 2:
-                self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs "+str(list(val.values()))+" of devices "+str(list(val.keys()))+" with corresponding shots="+str(dev.shots for dev in val)+" do not agree for a circuit consisting of a "+str(key[0])+" Operation followed by a "+str(key[1])+" Expectation." )
+                self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs "+str(list(val.values()))+" of devices ["+''.join(list(val.keys()))+"] do not agree for a circuit consisting of a "+str(key[0])+" Operation followed by a "+str(key[1])+" Expectation." )
 
 
 if __name__ == '__main__':

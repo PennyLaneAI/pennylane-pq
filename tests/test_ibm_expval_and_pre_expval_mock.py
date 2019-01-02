@@ -51,14 +51,14 @@ class ExpvalAndPreExpvalMock(BaseTest):
                 mock_PauliY,
                 mock_Hadamard,
             ]
-            dev = ProjectQIBMBackend(wires=2, use_hardware=False, num_runs=8*1024, user='user', password='password')
-            dev.eng = MagicMock()
+            dev = ProjectQIBMBackend(wires=2, use_hardware=False, num_runs=8*1024, user='user', password='password', verbose=True)
+            dev._eng = MagicMock()
             dev.apply = MagicMock()
 
             with patch('projectq.ops.All', new_callable=PropertyMock) as mock_All:
                 dev.pre_expval()
 
-            dev.eng.assert_has_calls([call.flush()])
+            dev._eng.assert_has_calls([call.flush()])
             # The following might have to be changed in case a more elegant/efficient/different
             # implementation of the effective measurements is found
             dev.apply.assert_has_calls([call('Hadamard', [0], []),
@@ -77,11 +77,11 @@ class ExpvalAndPreExpvalMock(BaseTest):
 
     def test_expval(self):
 
-        dev = ProjectQIBMBackend(wires=2, use_hardware=False, num_runs=8*1024, user='user', password='password')
-        dev.eng = MagicMock()
-        dev.eng.backend = MagicMock()
-        dev.eng.backend.get_probabilities = MagicMock()
-        dev.eng.backend.get_probabilities.return_value = {'00': 0.1, '01': 0.3, '10': 0.2, '11': 0.4}
+        dev = ProjectQIBMBackend(wires=2, use_hardware=False, num_runs=8*1024, user='user', password='password', verbose=True)
+        dev._eng = MagicMock()
+        dev._eng.backend = MagicMock()
+        dev._eng.backend.get_probabilities = MagicMock()
+        dev._eng.backend.get_probabilities.return_value = {'00': 0.1, '01': 0.3, '10': 0.2, '11': 0.4}
 
         self.assertAlmostEqual(dev.expval('PauliZ', wires=[0], par=list()), -0.2, delta=self.tol)
         self.assertAlmostEqual(dev.expval('Identity', wires=[0], par=list()), 1.0, delta=self.tol)

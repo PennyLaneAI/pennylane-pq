@@ -42,7 +42,7 @@ class BasisStateTest(BaseTest):
 
         self.devices = []
         if self.args.device == 'simulator' or self.args.device == 'all':
-            self.devices.append(ProjectQSimulator(wires=self.num_subsystems))
+            self.devices.append(ProjectQSimulator(wires=self.num_subsystems, verbose=True))
         if self.args.device == 'ibm' or self.args.device == 'all':
             ibm_options = pennylane.default_config['projectq.ibm']
             if "user" in ibm_options and "password" in ibm_options:
@@ -50,7 +50,7 @@ class BasisStateTest(BaseTest):
             else:
                 log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
         if self.args.device == 'classical' or self.args.device == 'all':
-            self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems))
+            self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems, verbose=True))
 
     def test_basis_state(self):
         """Test BasisState with preparations on the whole system."""
