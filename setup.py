@@ -22,7 +22,7 @@ with open("pennylane_pq/_version.py") as f:
 with open("requirements.txt") as f:
     requirements = [ #pylint: disable=invalid-name
         'projectq>=0.4.1',
-        'pennylane'
+        'pennylane>=0.2'
     ]
 
 info = { #pylint: disable=invalid-name
