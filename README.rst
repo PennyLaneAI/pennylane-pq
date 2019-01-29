@@ -104,6 +104,16 @@ Running your code on an IBM Quantum Experience simulator or even a real hardware
     import pennylane as qml
     dev = qml.device('projectq.ibm', wires=2, user="XXX", password="XXX")
 
+In order to avoid accidentally publishing your credential, you should better specify them via the `PennyLane configuration file <https://pennylane.readthedocs.io/en/latest/code/configuration.html>`_ by adding a section such as
+
+.. code::
+
+  [projectq.global]
+
+    [projectq.ibm]
+    user = "XXX"
+    password = "XXX"
+
 .. gettingstarted-end-inclusion-marker-do-not-remove
 
 Please refer to the `documentation of the PennyLane ProjectQ Plugin <https://pennylane-pq.readthedocs.io/>`_ as well as well as to the `documentation of PennyLane <https://pennylane.readthedocs.io/>`_ for further reference.
