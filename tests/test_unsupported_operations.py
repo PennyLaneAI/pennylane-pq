@@ -30,6 +30,7 @@ from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, 
 
 log.getLogger('defaults')
 
+
 class UnsupportedOperationTest(BaseTest):
     """test that unsupported operations/expectations raise DeviceErrors.
     """
