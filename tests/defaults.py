@@ -23,7 +23,7 @@ else:
     DEVICE = "all"
 OPTIMIZER = "GradientDescentOptimizer"
 if DEVICE == "all" or DEVICE == "ibm":
-    TOLERANCE = 3e-2
+    TOLERANCE = 5e-2
 else:
     TOLERANCE = 1e-3
 
