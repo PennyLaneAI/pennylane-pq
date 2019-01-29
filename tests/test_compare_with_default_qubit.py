@@ -31,12 +31,14 @@ from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, 
 
 log.getLogger('defaults')
 
+
 class CompareWithDefaultQubitTest(BaseTest):
     """Compares the behavior of the ProjectQ plugin devices with the default qubit device.
     """
     num_subsystems = 3 #This should be as large as the largest gate/observable, but we cannot know that before instantiating the device. We thus check later that all gates/observables fit.
 
     devices = None
+
     def setUp(self):
         super().setUp()
 
@@ -136,7 +138,7 @@ class CompareWithDefaultQubitTest(BaseTest):
         #if we could run the circuit on more than one device assert that both should have given the same output
         for (key,val) in outputs.items():
             if len(val) >= 2:
-                self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs "+str(list(val.values()))+" of devices ["+''.join(list(val.keys()))+"] do not agree for a circuit consisting of a "+str(key[0])+" Operation followed by a "+str(key[1])+" Expectation." )
+                self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs "+str(list(val.values()))+" of devices ["+', '.join(list(val.keys()))+"] do not agree for a circuit consisting of a "+str(key[0])+" Operation followed by a "+str(key[1])+" Expectation." )
 
 
 if __name__ == '__main__':

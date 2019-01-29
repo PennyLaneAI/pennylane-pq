@@ -30,6 +30,7 @@ from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, 
 
 log.getLogger('defaults')
 
+
 class DeviceInitialization(BaseTest):
     """test aspects of the device initialization.
     """
