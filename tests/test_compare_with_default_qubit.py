@@ -31,12 +31,14 @@ from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, 
 
 log.getLogger('defaults')
 
+
 class CompareWithDefaultQubitTest(BaseTest):
     """Compares the behavior of the ProjectQ plugin devices with the default qubit device.
     """
     num_subsystems = 3 #This should be as large as the largest gate/observable, but we cannot know that before instantiating the device. We thus check later that all gates/observables fit.
 
     devices = None
+
     def setUp(self):
         super().setUp()
 
