@@ -124,7 +124,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
     pennylane_requires = '>=0.2.0'
-    version = '0.2.0'
+    version = '0.2.1'
     plugin_version = __version__
     author = 'Christian Gogolin'
     _capabilities = {'backend': list(["Simulator", "ClassicalSimulator", "IBMBackend"])}
