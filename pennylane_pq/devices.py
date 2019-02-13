@@ -123,7 +123,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     """
     name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
-    pennylane_requires = '0.2.0'
+    pennylane_requires = '>=0.2.0'
     version = '0.2.0'
     plugin_version = __version__
     author = 'Christian Gogolin'
