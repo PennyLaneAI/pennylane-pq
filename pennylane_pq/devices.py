@@ -310,31 +310,33 @@ class ProjectQSimulator(_ProjectQDevice):
         super().reset()
 
     def pre_expval(self):
-        """Flush the device before retrieving expectation values.
+        """Rotate qubits to the right basis before measurement, apply a measure all
+        operation and flush the device before retrieving expectation values.
         """
-        self._eng.flush(deallocate_qubits=False)
+        if hasattr(self, 'expval_queue'): #we raise an except below in case there is no expval_queue but we are asked to measure in a basis different from PauliZ
+            for e in self.expval_queue:
+                if e.name == 'PauliX':
+                    self.apply('Hadamard', e.wires, list())
+                elif e.name == 'PauliY':
+                    self.apply('PauliZ', e.wires, list())
+                    self.apply('S', e.wires, list())
+                    self.apply('Hadamard', e.wires, list())
+                elif e.name == 'Hadamard':
+                    self.apply('RY', e.wires, [-np.pi/4])
+                elif e.name == 'Hermitian':
+                    raise NotImplementedError
+
+        self._eng.flush()
 
     def expval(self, expectation, wires, par):
         """Retrieve the requested expectation value.
         """
-        if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ':
-            expval = self._eng.backend.get_expectation_value(
-                pq.ops.QubitOperator(str(expectation)[-1]+'0'),
-                [self._reg[wires[0]]])
-            # variance = 1 - expval**2
-        elif expectation == 'Hadamard':
-            expval = self._eng.backend.get_expectation_value(
-                1/np.sqrt(2)*pq.ops.QubitOperator('X0')+1/np.sqrt(2)*pq.ops.QubitOperator('Z0'),
-                [self._reg[wires[0]]])
-            # variance = 1 - expval**2
-        elif expectation == 'Identity':
+        if expectation == 'Identity':
             expval = 1
-            # variance = 1 - expval**2
-        # elif expectation == 'AllPauliZ':
-        #     expval = [self._eng.backend.get_expectation_value(
-        #         pq.ops.QubitOperator("Z"+'0'), [qubit])
-        #                for qubit in self._reg]
-        #     variance = [1 - e**2 for e in expval]
+        elif expectation != 'PauliZ' and not hasattr(self, 'expval_queue'):
+            raise DeviceError("Measurements in basis other than PauliZ are only supported when this plugin is used with versions of PennyLane that expose the expval_queue. Please update PennyLane and this plugin.")
+        else:
+            expval = self._eng.backend.get_probability([0], [self._reg[wires[0]]]) - self._eng.backend.get_probability([1], [self._reg[wires[0]]])
 
         if self.shots != 0 and expectation != 'Identity':
             p0 = (expval+1)/2
