@@ -338,10 +338,7 @@ class ProjectQSimulator(_ProjectQDevice):
 
         if self.shots != 0 and expectation != 'Identity':
             p0 = (expval+1)/2
-            if p0 < 0:
-                p0 = 0
-            if p0 > 1:
-                p0 = 1
+            p0 = max(min(p0, 1), 0)
             n0 = np.random.binomial(self.shots, p0)
             expval = (n0 - (self.shots-n0)) / self.shots
 
