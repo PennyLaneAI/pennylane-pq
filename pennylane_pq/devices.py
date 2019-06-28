@@ -461,16 +461,16 @@ class ProjectQIBMBackend(_ProjectQDevice):
         operation and flush the device before retrieving expectation values.
         """
         if hasattr(self, 'obs_queue'): #we raise an except below in case there is no obs_queue but we are asked to measure in a basis different from PauliZ
-            for e in self.obs_queue:
-                if e.name == 'PauliX':
-                    self.apply('Hadamard', e.wires, list())
-                elif e.name == 'PauliY':
-                    self.apply('PauliZ', e.wires, list())
-                    self.apply('S', e.wires, list())
-                    self.apply('Hadamard', e.wires, list())
-                elif e.name == 'Hadamard':
-                    self.apply('RY', e.wires, [-np.pi/4])
-                elif e.name == 'Hermitian':
+            for obs in self.obs_queue:
+                if obs.name == 'PauliX':
+                    self.apply('Hadamard', obs.wires, list())
+                elif obs.name == 'PauliY':
+                    self.apply('PauliZ', obs.wires, list())
+                    self.apply('S', obs.wires, list())
+                    self.apply('Hadamard', obs.wires, list())
+                elif obs.name == 'Hadamard':
+                    self.apply('RY', obs.wires, [-np.pi/4])
+                elif obs.name == 'Hermitian':
                     raise NotImplementedError
 
         pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
