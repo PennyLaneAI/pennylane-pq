@@ -28,7 +28,7 @@ corresponding PennyLane devices:
    ProjectQIBMBackend
    ProjectQClassicalSimulator
 
-See below for a description of the devices and the supported Operations and Expectations.
+See below for a description of the devices and the supported Operations and Observables.
 
 ProjectQSimulator
 #################
@@ -123,8 +123,8 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     """
     name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
-    pennylane_requires = '>=0.2.0'
-    version = '0.2.1'
+    pennylane_requires = '>=0.4.0'
+    version = '0.4.0'
     plugin_version = __version__
     author = 'Christian Gogolin'
     _capabilities = {'backend': list(["Simulator", "ClassicalSimulator", "IBMBackend"])}
@@ -134,7 +134,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         raise NotImplementedError
 
     @abc.abstractproperty
-    def _expectation_map(self):
+    def _observable_map(self):
         raise NotImplementedError
 
     @abc.abstractproperty
@@ -171,7 +171,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     def __str__(self):
         return super().__str__() +'Backend: ' +self._backend +'\n'
 
-    def post_expval(self):
+    def post_measure(self):
         """Deallocate the qubits after expectation values have been retrieved.
         """
         self._deallocate()
@@ -225,13 +225,13 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         return set(self._operation_map.keys())
 
     @property
-    def expectations(self):
-        """Get the supported set of expectations.
+    def observables(self):
+        """Get the supported set of observables.
 
         Returns:
-            set[str]: the set of PennyLane expectation names the device supports
+            set[str]: the set of PennyLane observable names the device supports
         """
-        return set(self._expectation_map.keys())
+        return set(self._observable_map.keys())
 
 
 
@@ -275,12 +275,12 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`pennylane.QubitUnitary`,
       :class:`pennylane.BasisState`
 
-    Supported PennyLane Expectations:
-      :class:`pennylane.expval.PauliX`,
-      :class:`pennylane.expval.PauliY`,
-      :class:`pennylane.expval.PauliZ`,
-      :class:`pennylane.expval.Hadamard`,
-      :class:`pennylane.expval.Identity`
+    Supported PennyLane observables:
+      :class:`pennylane.PauliX`,
+      :class:`pennylane.PauliY`,
+      :class:`pennylane.PauliZ`,
+      :class:`pennylane.Hadamard`,
+      :class:`pennylane.Identity`
 
     Extra Operations:
       :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
@@ -293,7 +293,7 @@ class ProjectQSimulator(_ProjectQDevice):
 
     short_name = 'projectq.simulator'
     _operation_map = PROJECTQ_OPERATION_MAP
-    _expectation_map = dict({key:val for key, val in _operation_map.items()
+    _observable_map = dict({key:val for key, val in _operation_map.items()
                              if val in [XGate, YGate, ZGate, HGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
@@ -309,40 +309,44 @@ class ProjectQSimulator(_ProjectQDevice):
         self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'])
         super().reset()
 
-    def pre_expval(self):
-        """Flush the device before retrieving expectation values.
+    def pre_measure(self):
+        """Flush the device before retrieving observable measurements.
         """
         self._eng.flush(deallocate_qubits=False)
 
-    def expval(self, expectation, wires, par):
-        """Retrieve the requested expectation value.
+    def expval(self, observable, wires, par):
+        """Retrieve the requested observable expectation value.
         """
-        if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ':
+        if observable == 'PauliX' or observable == 'PauliY' or observable == 'PauliZ':
             expval = self._eng.backend.get_expectation_value(
-                pq.ops.QubitOperator(str(expectation)[-1]+'0'),
+                pq.ops.QubitOperator(str(observable)[-1]+'0'),
                 [self._reg[wires[0]]])
-            # variance = 1 - expval**2
-        elif expectation == 'Hadamard':
+        elif observable == 'Hadamard':
             expval = self._eng.backend.get_expectation_value(
                 1/np.sqrt(2)*pq.ops.QubitOperator('X0')+1/np.sqrt(2)*pq.ops.QubitOperator('Z0'),
                 [self._reg[wires[0]]])
-            # variance = 1 - expval**2
-        elif expectation == 'Identity':
+        elif observable == 'Identity':
             expval = 1
-            # variance = 1 - expval**2
-        # elif expectation == 'AllPauliZ':
+        # elif observable == 'AllPauliZ':
         #     expval = [self._eng.backend.get_expectation_value(
         #         pq.ops.QubitOperator("Z"+'0'), [qubit])
         #                for qubit in self._reg]
-        #     variance = [1 - e**2 for e in expval]
 
-        if self.shots != 0 and expectation != 'Identity':
+        if self.shots != 0 and observable != 'Identity':
             p0 = (expval+1)/2
             p0 = max(min(p0, 1), 0)
             n0 = np.random.binomial(self.shots, p0)
             expval = (n0 - (self.shots-n0)) / self.shots
 
         return expval
+
+    def var(self, observable, wires, par):
+        """Retrieve the requested observable variance.
+        """
+        expval = self.expval(observable, wires, par)
+        variance = 1 - expval**2
+        # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
+        return variance
 
 class ProjectQIBMBackend(_ProjectQDevice):
     """A PennyLane :code:`projectq.ibm` device for the `ProjectQ IBMBackend
@@ -400,20 +404,20 @@ class ProjectQIBMBackend(_ProjectQDevice):
       :class:`pennylane.Rot`,
       :class:`pennylane.BasisState`
 
-    Supported PennyLane Expectations:
-      :class:`pennylane.expval.PauliX`,
-      :class:`pennylane.expval.PauliY`,
-      :class:`pennylane.expval.PauliZ`,
-      :class:`pennylane.expval.Hadamard`,
-      :class:`pennylane.expval.Identity`
+    Supported PennyLane observables:
+      :class:`pennylane.PauliX`,
+      :class:`pennylane.PauliY`,
+      :class:`pennylane.PauliZ`,
+      :class:`pennylane.Hadamard`,
+      :class:`pennylane.Identity`
 
     .. note::
-       The Expectations :class:`pennylane.expval.PauliY`, :class:`pennylane.expval.PauliZ`,
-       and :class:`pennylane.expval.Hadamard`, cannot be natively measured on the
+       The observables :class:`pennylane.PauliY`, :class:`pennylane.PauliZ`,
+       and :class:`pennylane.Hadamard`, cannot be natively measured on the
        hardware device. They are implemented by executing a few additional gates on the
        respective wire before the final measurement, which is always performed in the
-       :class:`pennylane.expval.PauliZ` basis. These measurements may thus be slightly more
-       noisy than native :class:`pennylane.expval.PauliZ` measurement.
+       :class:`pennylane.PauliZ` basis. These measurements may thus be slightly more
+       noisy than native :class:`pennylane.PauliZ` measurement.
 
 
     Extra Operations:
@@ -429,7 +433,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
                       if val in [HGate, XGate, YGate, ZGate, SGate, TGate,
                                  SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, CNOT,
                                  CZ, Rot, BasisState]}
-    _expectation_map = dict({key:val for key, val in _operation_map.items() if val in [HGate, XGate, YGate, ZGate]}, **{'Identity': None})
+    _observable_map = dict({key:val for key, val in _operation_map.items() if val in [HGate, XGate, YGate, ZGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device',
                        'retrieve_execution']
@@ -453,51 +457,58 @@ class ProjectQIBMBackend(_ProjectQDevice):
         self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'], engine_list=pq.setups.ibm.get_engine_list())
         super().reset()
 
-    def pre_expval(self):
+    def pre_measure(self):
         """Rotate qubits to the right basis before measurement, apply a measure all
         operation and flush the device before retrieving expectation values.
         """
-        if hasattr(self, 'expval_queue'): #we raise an except below in case there is no expval_queue but we are asked to measure in a basis different from PauliZ
-            for e in self.expval_queue:
-                if e.name == 'PauliX':
-                    self.apply('Hadamard', e.wires, list())
-                elif e.name == 'PauliY':
-                    self.apply('PauliZ', e.wires, list())
-                    self.apply('S', e.wires, list())
-                    self.apply('Hadamard', e.wires, list())
-                elif e.name == 'Hadamard':
-                    self.apply('RY', e.wires, [-np.pi/4])
-                elif e.name == 'Hermitian':
+        if hasattr(self, 'obs_queue'): #we raise an except below in case there is no obs_queue but we are asked to measure in a basis different from PauliZ
+            for obs in self.obs_queue:
+                if obs.name == 'PauliX':
+                    self.apply('Hadamard', obs.wires, list())
+                elif obs.name == 'PauliY':
+                    self.apply('PauliZ', obs.wires, list())
+                    self.apply('S', obs.wires, list())
+                    self.apply('Hadamard', obs.wires, list())
+                elif obs.name == 'Hadamard':
+                    self.apply('RY', obs.wires, [-np.pi/4])
+                elif obs.name == 'Hermitian':
                     raise NotImplementedError
 
         pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
         self._eng.flush()
 
-    def expval(self, expectation, wires, par):
-        """Retrieve the requested expectation value.
+    def expval(self, observable, wires, par):
+        """Retrieve the requested observable expectation value.
         """
         probabilities = self._eng.backend.get_probabilities(self._reg)
 
-        if expectation == 'PauliX' or expectation == 'PauliY' or expectation == 'PauliZ' or expectation == 'Hadamard':
+        if observable == 'PauliX' or observable == 'PauliY' or observable == 'PauliZ' or observable == 'Hadamard':
 
-            if expectation != 'PauliZ' and not hasattr(self, 'expval_queue'):
-                raise DeviceError("Measurements in basis other than PauliZ are only supported when this plugin is used with versions of PennyLane that expose the expval_queue. Please update PennyLane and this plugin.")
+            if observable != 'PauliZ' and not hasattr(self, 'obs_queue'):
+                raise DeviceError("Measurements in basis other than PauliZ are only supported when this plugin is used with versions of PennyLane that expose the obs_queue. Please update PennyLane and this plugin.")
 
             expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '0')))/2
-            #variance = 1 - ev**2
-        elif expectation == 'Hermitian':
+
+        elif observable == 'Hermitian':
             raise NotImplementedError
-        elif expectation == 'Identity':
+        elif observable == 'Identity':
             expval = sum(p for (state, p) in probabilities.items())
-            # variance = 1 - expval**2
-        # elif expectation == 'AllPauliZ':
+        # elif observable == 'AllPauliZ':
         #     expval = [((1-2*sum(p for (state, p) in probabilities.items()
         #                         if state[i] == '1'))
         #                -(1-2*sum(p for (state, p) in probabilities.items()
         #                          if state[i] == '0')))/2 for i in range(len(self._reg))]
-        #     variance = [1 - e**2 for e in expval]
 
         return expval
+
+    def var(self, observable, wires, par):
+        """Retrieve the requested observable variance.
+        """
+        expval = self.expval(observable, wires, par)
+        variance = 1 - expval**2
+        # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
+        return variance
+
 
 class ProjectQClassicalSimulator(_ProjectQDevice):
     """A PennyLane :code:`projectq.classical` device for the `ProjectQ ClassicalSimulator
@@ -522,16 +533,16 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
       :class:`pennylane.CNOT`,
       :class:`pennylane.BasisState`
 
-    Supported PennyLane Expectations:
-      :class:`pennylane.expval.PauliZ`,
-      :class:`pennylane.expval.Identity`
+    Supported PennyLane observables:
+      :class:`pennylane.PauliZ`,
+      :class:`pennylane.Identity`
 
     """
 
     short_name = 'projectq.classical'
     _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
                       if val in [XGate, CNOT, BasisState]}
-    _expectation_map = dict({key:val for key, val in PROJECTQ_OPERATION_MAP.items()
+    _observable_map = dict({key:val for key, val in PROJECTQ_OPERATION_MAP.items()
                              if val in [ZGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = []
@@ -547,25 +558,30 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'])
         super().reset()
 
-    def pre_expval(self):
-        """Apply a measure all operation and flush the device before retrieving expectation values.
+    def pre_measure(self):
+        """Apply a measure all operation and flush the device before retrieving observable measurements.
         """
         pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
         self._eng.flush()
 
-    def expval(self, expectation, wires, par):
-        """Retrieve the requested expectation value.
+    def expval(self, observable, wires, par):
+        """Retrieve the requested observable expectation values.
         """
-        if expectation == 'PauliZ':
+        if observable == 'PauliZ':
             wire = wires[0]
 
             expval = 1 - 2*int(self._reg[wire])
-            # variance = 1 - expval**2
-        elif expectation == 'Identity':
+        elif observable == 'Identity':
             expval = 1
-            # variance = 1 - expval**2
-        # elif expectation == 'AllPauliZ':
+        # elif observable == 'AllPauliZ':
         #     expval = [ 1 - 2*int(self._reg[wire]) for wire in self._reg]
-        #     #variance = [1 - e**2 for e in expval]
 
         return expval
+
+    def var(self, observable, wires, par):
+        """Retrieve the requested observable variance.
+        """
+        expval = self.expval(observable, wires, par)
+        variance = 1 - expval**2
+        # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
+        return variance

@@ -67,7 +67,7 @@ class BasisStateTest(BaseTest):
                 @qml.qnode(device)
                 def circuit():
                     qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems)))
-                    return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
+                    return qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliZ(1)), qml.expval(qml.PauliZ(2)), qml.expval(qml.PauliZ(3))
 
                 self.assertAllAlmostEqual([1]*self.num_subsystems-2*bits_to_flip, np.array(circuit()), delta=self.tol)
 
@@ -86,7 +86,7 @@ class BasisStateTest(BaseTest):
                 @qml.qnode(device)
                 def circuit():
                     qml.BasisState(bits_to_flip, wires=list(range(self.num_subsystems-1)))
-                    return qml.expval.PauliZ(0), qml.expval.PauliZ(1), qml.expval.PauliZ(2), qml.expval.PauliZ(3)
+                    return qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliZ(1)), qml.expval(qml.PauliZ(2)), qml.expval(qml.PauliZ(3))
 
                 self.assertAllAlmostEqual([1]*(self.num_subsystems-1)-2*bits_to_flip, np.array(circuit()[:-1]), delta=self.tol)
 
@@ -100,7 +100,7 @@ class BasisStateTest(BaseTest):
             def circuit():
                 qml.PauliX(wires=[0])
                 qml.BasisState(np.array([0, 1, 0, 1]), wires=list(range(self.num_subsystems)))
-                return qml.expval.PauliZ(0)
+                return qml.expval(qml.PauliZ(0))
 
             self.assertRaises(pennylane._device.DeviceError, circuit)
 

@@ -10,6 +10,7 @@ matrix:
 env:
   - LOGGING=info
 install:
+  - pip install pip --upgrade
   - pip install -e git+https://github.com/XanaduAI/pennylane.git#egg=pennylane
   - pip install -r requirements.txt
   - pip install wheel pytest pytest-cov codecov --upgrade

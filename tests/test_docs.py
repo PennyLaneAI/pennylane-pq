@@ -57,23 +57,23 @@ class DocumentationTest(BaseTest):
         for dev in self.devices:
             docstring = dev.__doc__
             supp_operations = dev.operations
-            supp_expectations = dev.expectations
+            supp_observables = dev.observables
             #print(docstring)
             documented_operations = ([ re.findall(r"(?:pennylane\.|pennylane_pq.ops\.)([^`> ]*)", string) for string in re.findall(r"(?:(?:Extra|Supported PennyLane) Operations:\n((?:\s*:class:`[^`]+`,?\n)*))", docstring, re.MULTILINE)])
             documented_operations = set([item for sublist in documented_operations for item in sublist])
 
-            documented_expectations = ([ re.findall(r"(?:pennylane\.expval\.|pennylane_pq\.expval\.)([^`> ]*)", string) for string in re.findall(r"(?:(?:Extra|Supported PennyLane) Expectations:\n((?:\s*:class:`[^`]+`,?\n)*))", docstring, re.MULTILINE)])
-            documented_expectations = set([item for sublist in documented_expectations for item in sublist])
+            documented_observables = ([ re.findall(r"(?:pennylane\.|pennylane_pq\.)([^`> ]*)", string) for string in re.findall(r"(?:(?:Extra|Supported PennyLane) observables:\n((?:\s*:class:`[^`]+`,?\n)*))", docstring, re.MULTILINE)])
+            documented_observables = set([item for sublist in documented_observables for item in sublist])
 
             supported_but_not_documented_operations = supp_operations.difference(documented_operations)
             self.assertFalse(supported_but_not_documented_operations, msg="For device "+dev.short_name+" the Operations "+str(supported_but_not_documented_operations)+" are supported but not documented.")
             documented_but_not_supported_operations = documented_operations.difference(supp_operations)
             self.assertFalse(documented_but_not_supported_operations, msg="For device "+dev.short_name+" the Operations "+str(documented_but_not_supported_operations)+" are documented but not actually supported.")
 
-            supported_but_not_documented_expectations = supp_expectations.difference(documented_expectations)
-            self.assertFalse(supported_but_not_documented_expectations, msg="For device "+dev.short_name+" the Expectations "+str(supported_but_not_documented_expectations)+" are supported but not documented.")
-            documented_but_not_supported_expectations = documented_expectations.difference(supp_expectations)
-            self.assertFalse(documented_but_not_supported_expectations, msg="For device "+dev.short_name+" the Expectations "+str(documented_but_not_supported_expectations)+" are documented but not actually supported.")
+            supported_but_not_documented_observables = supp_observables.difference(documented_observables)
+            self.assertFalse(supported_but_not_documented_observables, msg="For device "+dev.short_name+" the Observables "+str(supported_but_not_documented_observables)+" are supported but not documented.")
+            documented_but_not_supported_observables = documented_observables.difference(supp_observables)
+            self.assertFalse(documented_but_not_supported_observables, msg="For device "+dev.short_name+" the Observables "+str(documented_but_not_supported_observables)+" are documented but not actually supported.")
 
 
 if __name__ == '__main__':

@@ -40,7 +40,7 @@ Features
 
 * Provides three devices to be used with PennyLane: ``projectq.simulator``, ``projectq.ibm``, and ``projectq.classical``. These provide access to the respective ProjectQ backends.
 
-* Supports a wide range of PennyLane operations and expectation values across the devices.
+* Supports a wide range of PennyLane operations and observables across the devices.
 
 * Combine ProjectQ high performance simulator and hardware backend support with PennyLane's automatic differentiation and optimization.
 

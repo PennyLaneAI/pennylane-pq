@@ -1,2 +1,2 @@
 projectq
-pennylane
+pennylane>=0.4

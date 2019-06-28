@@ -74,7 +74,7 @@ class CompareWithDefaultQubitTest(BaseTest):
 
             # run all single operation circuits
             for operation in dev.operations:
-                for observable in dev.expectations:
+                for observable in dev.observables:
                     log.info("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by a "+observable+" Expectation")
 
                     @qml.qnode(dev)
@@ -83,8 +83,8 @@ class CompareWithDefaultQubitTest(BaseTest):
                             operation_class = getattr(qml, operation)
                         else:
                             operation_class = getattr(pennylane_pq, operation)
-                        if hasattr(qml.expval, observable):
-                            observable_class = getattr(qml.expval, observable)
+                        if hasattr(qml.ops, observable):
+                            observable_class = getattr(qml.ops, observable)
                         else:
                             observable_class = getattr(pennylane_pq.expval, observable)
 
@@ -126,8 +126,8 @@ class CompareWithDefaultQubitTest(BaseTest):
                         operation_wires = list(range(operation_class.num_wires)) if operation_class.num_wires > 1 else 0
                         observable_wires = list(range(observable_class.num_wires)) if observable_class.num_wires > 1 else 0
 
-                        operation_class(*operation_pars, operation_wires)
-                        return observable_class(*observable_pars, observable_wires)
+                        operation_class(*operation_pars, wires=operation_wires)
+                        return qml.expval(observable_class(*observable_pars, wires=observable_wires))
 
                     output = circuit()
                     if (operation, observable) not in outputs:
