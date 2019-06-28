@@ -72,8 +72,8 @@ def test_var_pauliz(dev, tol):
         dev._eng.backend.get_probabilities.return_value = {"0": 0, "1": 1}
 
     dev.pre_measure()
-    var = dev.var("PauliZ", [0], [])
-    mean = dev.expval("PauliZ", [0], [])
+    var = dev.var("PauliZ", wires=[0], par=[])
+    mean = dev.expval("PauliZ", wires=[0], par=[])
     dev.post_measure()
 
     assert np.allclose(var, 1 - mean ** 2, atol=tol, rtol=0)
@@ -95,7 +95,7 @@ def test_var_pauliz_rotated_state(dev, tol):
         }
 
     dev.pre_measure()
-    var = dev.var("PauliZ", [0], [])
+    var = dev.var("PauliZ", wires=[0], par=[])
     dev.post_measure()
     expected = 0.25 * (3 - np.cos(2 * theta) - 2 * np.cos(theta) ** 2 * np.cos(2 * phi))
 
