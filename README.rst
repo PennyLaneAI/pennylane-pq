@@ -89,7 +89,7 @@ This device can then be used just like other devices for the definition and eval
         qml.RY(y, wires=[0])
         qml.RX(x, wires=[0])
         qml.CNOT(wires=[0, 1])
-        return qml.expval.PauliZ(wires=1)
+        return qml.expval(qml.PauliZ(wires=1))
 
 You can then execute the circuit like any other function to get the quantum mechanical expectation value.
 
