@@ -123,8 +123,8 @@ class CompareWithDefaultQubitTest(BaseTest):
                             observable_pars = {}
 
                         # apply to the first wires
-                        operation_wires = list(range(operation_class.num_wires)) if operation_class.num_wires > 1 else 0
-                        observable_wires = list(range(observable_class.num_wires)) if observable_class.num_wires > 1 else 0
+                        operation_wires = list(range(operation_class.num_wires)) if operation_class.num_wires > 1 or operation_class.num_wires <= 0 else 0
+                        observable_wires = list(range(observable_class.num_wires)) if observable_class.num_wires > 1 or observable_class.num_wires <= 0 else 0
 
                         operation_class(*operation_pars, wires=operation_wires)
                         return qml.expval(observable_class(*observable_pars, wires=observable_wires))
