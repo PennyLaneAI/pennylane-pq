@@ -5,6 +5,12 @@
 * Remove opening of `requirements.txt` from within `setup.py`. This avoids a `FileNotFoundError` if installing via `pip`, as Python renames this file during packaging to `requires.txt`.
   ([#53](https://github.com/XanaduAI/pennylane-pq/pull/53))
 
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+Josh Izaac
+
 ---
 
 # Version 0.4.0
