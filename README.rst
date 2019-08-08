@@ -1,27 +1,27 @@
 PennyLane ProjectQ Plugin
 #########################
 
-.. image:: https://img.shields.io/travis/com/XanaduAI/pennylane-pq/master.svg?style=for-the-badge
+.. image:: https://img.shields.io/travis/com/XanaduAI/pennylane-pq/master.svg?style=popout-square
     :alt: Travis
     :target: https://travis-ci.com/XanaduAI/pennylane-pq
 
-.. image:: https://img.shields.io/codecov/c/github/xanaduai/pennylane-pq/master.svg?style=for-the-badge
+.. image:: https://img.shields.io/codecov/c/github/xanaduai/pennylane-pq/master.svg?style=popout-square
     :alt: Codecov coverage
     :target: https://codecov.io/gh/XanaduAI/pennylane-pq
 
-.. image:: https://img.shields.io/codacy/grade/6ed6d8397b814fbaa754757fed3ea536.svg?style=for-the-badge
+.. image:: https://img.shields.io/codacy/grade/6ed6d8397b814fbaa754757fed3ea536.svg?style=popout-square
     :alt: Codacy grade
     :target: https://app.codacy.com/app/XanaduAI/pennylane-pq?utm_source=github.com&utm_medium=referral&utm_content=XanaduAI/pennylane-pq&utm_campaign=badger
 
-.. image:: https://img.shields.io/readthedocs/pennylane-pq.svg?style=for-the-badge
+.. image:: https://img.shields.io/readthedocs/pennylane-pq.svg?style=popout-square
     :alt: Read the Docs
     :target: https://pennylane-pq.readthedocs.io
 
-.. image:: https://img.shields.io/pypi/v/PennyLane-PQ.svg?style=for-the-badge
+.. image:: https://img.shields.io/pypi/v/PennyLane-PQ.svg?style=popout-square
     :alt: PyPI
     :target: https://pypi.org/project/PennyLane-PQ
 
-.. image:: https://img.shields.io/pypi/pyversions/PennyLane-PQ.svg?style=for-the-badge
+.. image:: https://img.shields.io/pypi/pyversions/PennyLane-PQ.svg?style=popout-square
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/PennyLane-PQ
 
