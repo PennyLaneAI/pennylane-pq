@@ -94,10 +94,13 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
 
     Args:
       wires (int): The number of qubits of the device. Default 1 if not specified.
-      shots (int): number of circuit evaluations/random samples used to estimate
-        expectation values of observables. For simulator devices, a value of 0 (default)
-        results in the exact expectation value being returned. For the IBMBackend the
-        default is 1024.
+      shots (int): How many times the circuit should be evaluated (or sampled) to estimate
+          the expectation values. Defaults to 1024 if not specified.
+          If ``analytic == True``, then the number of shots is ignored
+          in the calculation of expectation values and variances, and only controls the number
+          of samples returned by ``sample``.
+      analytic (bool): indicates if the device should calculate expectations
+          and variances analytically
 
     Keyword Args:
       backend (string): Name of the backend, i.e., either "Simulator",
@@ -124,7 +127,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
     pennylane_requires = '>=0.4.0'
-    version = '0.4.0'
+    version = '0.4.2'
     plugin_version = __version__
     author = 'Christian Gogolin'
     _capabilities = {'backend': list(["Simulator", "ClassicalSimulator", "IBMBackend"])}
@@ -141,7 +144,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     def _backend_kwargs(self):
         raise NotImplementedError
 
-    def __init__(self, wires=1, shots=0, *, backend, **kwargs):
+    def __init__(self, wires=1, shots=1024, analytic=True, *, backend, **kwargs):
         # overwrite shots with num_runs if given
         if 'num_runs' in kwargs:
             shots = kwargs['num_runs']
@@ -152,6 +155,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         if 'verbose' not in kwargs:
             kwargs['verbose'] = False
 
+        self.analytic = analytic
         self._backend = backend
         self._kwargs = kwargs
         self._eng = None
@@ -242,9 +246,13 @@ class ProjectQSimulator(_ProjectQDevice):
 
     Args:
        wires (int): The number of qubits of the device. Default 1 if not specified.
-       shots (int): number of random samples used to estimate expectation values of
-         observables. A value of 0 (default) results in the exact expectation value
-         being returned.
+       shots (int): How many times the circuit should be evaluated (or sampled) to estimate
+           the expectation values. Defaults to 1000 if not specified.
+           If ``analytic == True``, then the number of shots is ignored
+           in the calculation of expectation values and variances, and only controls the number
+           of samples returned by ``sample``.
+       analytic (bool): indicates if the device should calculate expectations
+           and variances analytically
 
     Keyword Args:
       gate_fusion (bool): If True, operations are cached and only executed once a
@@ -298,9 +306,9 @@ class ProjectQSimulator(_ProjectQDevice):
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
-    def __init__(self, wires=1, shots=0, **kwargs):
+    def __init__(self, wires=1, shots=1024, analytic=True, **kwargs):
         kwargs['backend'] = 'Simulator'
-        super().__init__(wires=wires, shots=shots, **kwargs)
+        super().__init__(wires=wires, shots=shots, analytic=analytic, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
@@ -332,7 +340,7 @@ class ProjectQSimulator(_ProjectQDevice):
         #         pq.ops.QubitOperator("Z"+'0'), [qubit])
         #                for qubit in self._reg]
 
-        if self.shots != 0 and observable != 'Identity':
+        if not self.analytic and observable != 'Identity':
             p0 = (expval+1)/2
             p0 = max(min(p0, 1), 0)
             n0 = np.random.binomial(self.shots, p0)
@@ -448,7 +456,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         import projectq.setups.ibm #pylint: disable=unused-variable
 
         kwargs['backend'] = 'IBMBackend'
-        super().__init__(wires=wires, shots=shots, **kwargs)
+        super().__init__(wires=wires, shots=shots, analytic=False, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
@@ -549,7 +557,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     def __init__(self, wires=1, **kwargs):
         kwargs['backend'] = 'ClassicalSimulator'
-        super().__init__(wires=wires, shots=0, **kwargs)
+        super().__init__(wires=wires, shots=1024, analytic=True, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
