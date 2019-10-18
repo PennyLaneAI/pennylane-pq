@@ -1,3 +1,20 @@
+# Version 0.6.0
+
+### Bug fixes
+
+* The way measurement statistics works has changed in the latest version of PennyLane. Now, rather
+  than shots=0 referring to 'analytic' mode, there is a separate analytic argument.
+  Further, the num_shots argument has been removed from Device.samples().
+  ([#53](https://github.com/XanaduAI/pennylane-pq/pull/53))
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+Josh Izaac
+
+---
+
 # Version 0.4.1
 
 ### Bug fixes
