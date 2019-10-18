@@ -339,7 +339,7 @@ class ProjectQSimulator(_ProjectQDevice):
         #         pq.ops.QubitOperator("Z"+'0'), [qubit])
         #                for qubit in self._reg]
 
-        if self.shots != 0 and observable != 'Identity':
+        if not self.analytic and observable != 'Identity':
             p0 = (expval+1)/2
             p0 = max(min(p0, 1), 0)
             n0 = np.random.binomial(self.shots, p0)
