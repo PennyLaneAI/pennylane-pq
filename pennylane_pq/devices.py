@@ -155,6 +155,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         if 'verbose' not in kwargs:
             kwargs['verbose'] = False
 
+        self.analytic = analytic
         self._backend = backend
         self._kwargs = kwargs
         self._eng = None
