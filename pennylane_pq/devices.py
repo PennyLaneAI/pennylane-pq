@@ -144,7 +144,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     def _backend_kwargs(self):
         raise NotImplementedError
 
-    def __init__(self, wires=1, shots=0, analytic=True, *, backend, **kwargs):
+    def __init__(self, wires=1, shots=1024, analytic=True, *, backend, **kwargs):
         # overwrite shots with num_runs if given
         if 'num_runs' in kwargs:
             shots = kwargs['num_runs']
@@ -557,7 +557,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     def __init__(self, wires=1, **kwargs):
         kwargs['backend'] = 'ClassicalSimulator'
-        super().__init__(wires=wires, shots=1, analytic=True, **kwargs)
+        super().__init__(wires=wires, shots=1024, analytic=True, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
