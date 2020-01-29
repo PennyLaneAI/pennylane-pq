@@ -130,7 +130,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     version = '0.4.2'
     plugin_version = __version__
     author = 'Christian Gogolin'
-    _capabilities = {'backend': list(["Simulator", "ClassicalSimulator", "IBMBackend"])}
+    _capabilities = {'backend': list(["Simulator", "ClassicalSimulator", "IBMBackend"]), 'model': 'qubit'}
 
     @abc.abstractproperty
     def _operation_map(self):

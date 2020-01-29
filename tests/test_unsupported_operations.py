@@ -58,11 +58,16 @@ class UnsupportedOperationTest(BaseTest):
             return
         self.logTestName()
 
+        class SomeOperation(qml.operation.Operation):
+            num_params = 0
+            num_wires = 1
+            par_domain = 'A'
+
         for device in self.devices:
             @qml.qnode(device)
             def circuit():
-                qml.Beamsplitter(0.2, 0.1, wires=[0,1]) #this expectation will never be supported
-                return qml.expval(qml.QuadOperator(0.7, 0))
+                SomeOperation(wires=0)
+                return qml.expval(qml.PauliZ(0))
 
             self.assertRaises(pennylane._device.DeviceError, circuit)
 
@@ -71,10 +76,15 @@ class UnsupportedOperationTest(BaseTest):
             return
         self.logTestName()
 
+        class SomeObservable(qml.operation.Observable):
+            num_params = 0
+            num_wires = 1
+            par_domain = 'A'
+
         for device in self.devices:
             @qml.qnode(device)
             def circuit():
-                return qml.expval(qml.QuadOperator(0.7, 0)) #this expectation will never be supported
+                return qml.expval(SomeObservable(wires=0)) #this expectation will never be supported
 
             self.assertRaises(pennylane._device.DeviceError, circuit)
 
