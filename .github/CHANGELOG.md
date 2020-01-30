@@ -1,4 +1,4 @@
-# Release 0.7.0-dev
+# Release 0.8.0
 
 ### New features since last release
 
@@ -10,10 +10,14 @@
 
 ### Bug fixes
 
+* Adding the 'model': 'qubit' entry into the capabilities dictionary. Adjusting tests that previously used CV operators to use custom created operators.
+  [#56](https://github.com/XanaduAI/pennylane-pq/pull/56)
+
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
 
+Antal Szava
 ---
 
 # Version 0.6.0
