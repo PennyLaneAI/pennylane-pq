@@ -123,7 +123,7 @@ class QubitUnitary(BasicProjectQGate): # pylint: disable=too-few-public-methods
     """
     def __new__(*par):
         unitary_gate = BasicProjectQMatrixGate(par[0].__name__)
-        unitary_gate.matrix = np.matrix(par[1])
+        unitary_gate.matrix = np.array(par[1])
         return unitary_gate
 
 class BasisState(BasicProjectQGate, SelfInverseGate): # pylint: disable=too-few-public-methods
