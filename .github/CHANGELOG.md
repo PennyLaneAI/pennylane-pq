@@ -1,4 +1,4 @@
-# Release 0.7.0-dev
+# Release 0.8.0
 
 ### New features since last release
 
