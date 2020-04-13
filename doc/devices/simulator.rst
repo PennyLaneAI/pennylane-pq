@@ -6,10 +6,13 @@ You can instantiate a :code:`projectq.simulator` device for PennyLane with:
 .. code-block:: python
 
     import pennylane as qml
+
     dev = qml.device('projectq.simulator', wires=2)
 
 This device can then be used just like other devices for
-the definition and evaluation of QNodes within PennyLane. A simple quantum function that returns
+the definition and evaluation of QNodes within PennyLane.
+
+A simple quantum function that returns
 the expectation value of a measurement and depends on three classical input parameters would look like:
 
 .. code-block:: python

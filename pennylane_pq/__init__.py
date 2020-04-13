@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Top level PennyLane-ProjectQ module"""
 from ._version import __version__
 
 from .devices import ProjectQSimulator #pylint: disable=unused-import

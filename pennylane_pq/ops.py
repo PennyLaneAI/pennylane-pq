@@ -38,9 +38,9 @@ quantum functions:
 
 """
 
-from pennylane.operation import Operation
+import pennylane.operation as pl_ops
 
-class S(Operation): #pylint: disable=invalid-name,too-few-public-methods
+class S(pl_ops.Operation): #pylint: disable=invalid-name,too-few-public-methods
     r"""S gate.
 
     .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
@@ -53,7 +53,7 @@ class S(Operation): #pylint: disable=invalid-name,too-few-public-methods
     par_domain = None
 
 
-class T(Operation): #pylint: disable=invalid-name,too-few-public-methods
+class T(pl_ops.Operation): #pylint: disable=invalid-name,too-few-public-methods
     r"""T gate.
 
     .. math:: T = \begin{bmatrix}1&0\\0&\exp(i \pi / 4)\end{bmatrix}
@@ -65,7 +65,7 @@ class T(Operation): #pylint: disable=invalid-name,too-few-public-methods
     num_wires = 1
     par_domain = None
 
-class SqrtX(Operation):
+class SqrtX(pl_ops.Operation):
     r"""Square root X gate.
 
     .. math:: SqrtX = \begin{bmatrix}1+i&1-i\\1-i&1+i\end{bmatrix}
@@ -77,10 +77,10 @@ class SqrtX(Operation):
     num_wires = 1
     par_domain = None
 
-class SqrtSwap(Operation): #pylint: disable=too-few-public-methods
+class SqrtSwap(pl_ops.Operation): #pylint: disable=too-few-public-methods
     r"""Square root SWAP gate.
 
-    .. math:: SqrtSwap = \begin{bmatrix}1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\
+    .. math:: \mathrm{SqrtSwap} = \begin{bmatrix}1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\
                                         0&(1-i)/2 &(1+i)/2&0\\0&0&0&1\end{bmatrix}
 
     Args:
