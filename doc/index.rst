@@ -37,7 +37,6 @@ PennyLane-ProjectQ provides three ProjectQ devices for PennyLane:
     :description: Simple simulator for classical computations.
     :link: devices/classical.html
 
-
 .. raw:: html
 
         <div style='clear:both'></div>
