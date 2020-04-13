@@ -12,3 +12,4 @@ PennyLane_PQ.egg-info/
 .pytest_cache/
 coverage_html_report/
 .coverage
+doc/code/api/*
