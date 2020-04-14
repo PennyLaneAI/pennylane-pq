@@ -68,7 +68,7 @@ class T(plops.Operation): #pylint: disable=invalid-name,too-few-public-methods
 class SqrtX(plops.Operation):
     r"""Square root X gate.
 
-    .. math:: SqrtX = \begin{bmatrix}1+i&1-i\\1-i&1+i\end{bmatrix}
+    .. math:: \mathrm{SqrtX} = \begin{bmatrix}1+i&1-i\\1-i&1+i\end{bmatrix}
 
     Args:
         wires (int): the subsystem the gate acts on
