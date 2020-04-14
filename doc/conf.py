@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# PennyLane-PQ documentation build configuration file, created by
-# sphinx-quickstart on Tue Apr 17 11:43:51 2018.
+# PennyLane-PQ documentation build configuration file.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -20,6 +19,7 @@ import sys, os, re
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('_ext'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath('.')), 'doc'))
 
 # -- General configuration ------------------------------------------------
 
@@ -30,17 +30,22 @@ needs_sphinx = '1.6'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.inheritance_diagram',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.inheritance_diagram",
+    "sphinx.ext.intersphinx",
     'sphinx.ext.viewcode',
-    'sphinxcontrib.bibtex',
-    'edit_on_github'
+    "sphinx_automodapi.automodapi"
 ]
+
+autosummary_generate = True
+autosummary_imported_members = False
+automodapi_toctreedirnm = "code/api"
+automodsumm_inherited_members = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates', 'xanadu_theme']
@@ -56,8 +61,10 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'PennyLane-ProjectQ'
-copyright = "Copyright 2018, Xanadu Inc."
-author = 'Xanadu Inc.'
+copyright = "Copyright 2018-2020, Xanadu Inc."
+author = 'Xanadu'
+
+add_module_names = False
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -215,7 +222,7 @@ html_sidebars = {
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'PennyLanePQdoc'
 
-# # -- Xanadu theme ---------------------------------------------------------
+# -- Xanadu theme ---------------------------------------------------------
 html_theme = 'xanadu_theme'
 html_theme_path = ['.']
 
@@ -229,13 +236,13 @@ html_theme_options = {
     # "index_template": "special_index.html",
 
     # Set the name of the project to appear in the left sidebar.
-    "project_nav_name": "PennyLane-PQ",
+    "project_nav_name": "PennyLane-Cirq",
 
     # Set your Disqus short name to enable comments
-    # "disqus_comments_shortname": "pennylane-pq-1",
+    # "disqus_comments_shortname": "pennylane-1",
 
     # Set you GA account ID to enable tracking
-    # "google_analytics_account": "UA-116279123-2",
+    "google_analytics_account": "UA-130507810-2",
 
     # Path to a touch icon
     "touch_icon": "logo_new.png",
@@ -249,9 +256,22 @@ html_theme_options = {
 
     # Allow the project link to be overriden to a custom URL.
     # "projectlink": "http://myproject.url",
+
+    "large_toc": True,
+    # colors
+    "navigation_button": "#19b37b",
+    "navigation_button_hover": "#0e714d",
+    "toc_caption": "#19b37b",
+    "toc_hover": "#19b37b",
+    "table_header_bg": "#edf7f4",
+    "table_header_border": "#19b37b",
+    "download_button": "#19b37b",
+    # gallery options
+    # "github_repo": "XanaduAI/PennyLane",
+    # "gallery_dirs": "tutorials",
 }
 
-edit_on_github_project = 'XanaduAI/pennylane-pq'
+edit_on_github_project = 'XanaduAI/pennylane-cirq'
 edit_on_github_branch = 'master/doc'
 
 # -- Options for HTMLHelp output ------------------------------------------
@@ -286,8 +306,10 @@ latex_additional_files = ['macros.tex']
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'PennyLane-PQ.tex', 'PennyLane-ProjectQ Documentation',
-     'Xanadu Inc.', 'manual'),
+    (master_doc, 'PennyLane-PQ.tex',
+     'PennyLane-ProjectQ Documentation',
+     'Xanadu Inc.',
+     'manual'),
 ]
 
 
@@ -296,7 +318,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'pennylane-pq', 'PennyLane-ProjectQ Documentation',
+    (master_doc, 'pennylane-pq',
+     'PennyLane-ProjectQ Documentation',
      [author], 1)
 ]
 
@@ -307,8 +330,12 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'PennyLane-ProjectQ', 'PennyLane-ProjectQ Documentation',
-     author, 'PennyLane-ProjectQ', 'ProjectQ plugin for the PennyLane quantum machine learning library.',
+    (master_doc,
+     'PennyLane-ProjectQ',
+     'PennyLane-ProjectQ Documentation',
+     author,
+     'PennyLane-ProjectQ',
+     'ProjectQ plugin for the PennyLane quantum machine learning library.',
      'Miscellaneous'),
 ]
 
@@ -323,3 +350,9 @@ inheritance_node_attrs = dict(color='lightskyblue1', style='filled')
 
 #autodoc_default_flags = ['members']
 autosummary_generate = True
+
+from directives import CustomDeviceGalleryItemDirective
+
+def setup(app):
+    app.add_directive('devicegalleryitem', CustomDeviceGalleryItemDirective)
+
