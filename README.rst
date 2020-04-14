@@ -78,7 +78,7 @@ in the source folder. Tests restricted to a specific device can be run by execut
     Tests on the `ibm device <https://pennylane-pq.readthedocs.io/en/latest/devices.html#projectqibmbackend>`_
     can only be run if a :code:`user` and :code:`password` for the
     `IBM Q experience <https://quantumexperience.ng.bluemix.net/qx/experience>`_ are configured
-    in the `PennyLane configuration file <https://pennylane.readthedocs.io/en/latest/code/configuration.html>`_.
+    in the `PennyLane configuration file <https://pennylane.readthedocs.io/en/latest/code/api/pennylane.Configuration.html>`_.
     If this is the case, running :code:`make test` also executes tests on the :code:`ibm` device.
     By default tests on the :code:`ibm` device run with :code:`hardware=False`. At the time of writing this
     means that the test are "free". Please verify that this is also the case for your account.
