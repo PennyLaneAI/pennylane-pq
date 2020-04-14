@@ -16,7 +16,7 @@ device by giving your IBM Quantum Experience username and password:
 Storing your credentials
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to avoid accidentally publishing your credentials, you should better specify them
+In order to avoid accidentally publishing your credentials, you should specify them
 via the `PennyLane configuration file <https://pennylane.readthedocs.io/en/latest/code/configuration.html>`_
 by adding a section such as
 
