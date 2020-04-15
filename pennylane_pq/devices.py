@@ -443,15 +443,13 @@ class ProjectQIBMBackend(_ProjectQDevice):
                                  CZ, Rot, BasisState]}
     _observable_map = dict({key:val for key, val in _operation_map.items() if val in [HGate, XGate, YGate, ZGate]}, **{'Identity': None})
     _circuits = {}
-    _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'user', 'password', 'device',
+    _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'token', 'device',
                        'retrieve_execution']
 
     def __init__(self, wires=1, shots=1024, **kwargs):
         # check that necessary arguments are given
-        if 'user' not in kwargs:
-            raise ValueError('An IBM Quantum Experience user name specified via the "user" keyword argument is required') #pylint: disable=line-too-long
-        if 'password' not in kwargs:
-            raise ValueError('An IBM Quantum Experience password specified via the "password" keyword argument is required') #pylint: disable=line-too-long
+        if 'token' not in kwargs:
+            raise ValueError('An IBM Quantum Experience token specified via the "token" keyword argument is required') #pylint: disable=line-too-long
 
         import projectq.setups.ibm #pylint: disable=unused-variable
 

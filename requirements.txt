@@ -1,2 +1,2 @@
-projectq
+projectq>=0.5.0
 pennylane>=0.6

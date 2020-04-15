@@ -45,8 +45,7 @@ def dev(DevClass, monkeypatch):
             wires=1,
             use_hardware=False,
             num_runs=8 * 1024,
-            user="user",
-            password="password",
+            token="token",
             verbose=True,
         )
 
