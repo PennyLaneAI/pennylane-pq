@@ -378,10 +378,9 @@ class ProjectQIBMBackend(_ProjectQDevice):
         (instead of using the IBM simulator)
       num_runs (int): Number of runs to collect statistics (default is 1024).
         Is equivalent to but takes preference over the shots parameter.
-      user (string): IBM Quantum Experience user name
-      password (string): IBM Quantum Experience password
-      device (string): Device to use (‘ibmqx4’, or ‘ibmqx5’) if
-        :code:`use_hardware` is set to True. Default is 'ibmqx4'.
+      token (string): IBM Quantum Experience API token
+      device (string): IBMQ backend to use (ibmq_16_melbourne’, ‘ibmqx2’, 'ibmq_rome' 'ibmq_qasm_simulator') if
+        :code:`use_hardware` is set to True. Default is '‘ibmqx5’'.
       retrieve_execution (int): Job ID to retrieve instead of re-running
         a circuit (e.g., if previous run timed out).
       verbose (bool): If True, log messages are printed and exceptions are more verbose.
@@ -391,7 +390,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
     .. code-block:: python
 
         import pennylane as qml
-        dev = qml.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
+        dev = qml.device('projectq.ibm', wires=XXX, token="XXX")
 
     To avoid leaking your user name and password when sharing code,
     it is better to specify the user name and password in your
@@ -443,8 +442,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
                                  CZ, Rot, BasisState]}
     _observable_map = dict({key:val for key, val in _operation_map.items() if val in [HGate, XGate, YGate, ZGate]}, **{'Identity': None})
     _circuits = {}
-    _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'token', 'device',
-                       'retrieve_execution']
+    _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'token', 'device', 'retrieve_execution']
 
     def __init__(self, wires=1, shots=1024, **kwargs):
         # check that necessary arguments are given
@@ -460,7 +458,10 @@ class ProjectQIBMBackend(_ProjectQDevice):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
         """
         backend = pq.backends.IBMBackend(num_runs=self.shots, **self.filter_kwargs_for_backend(self._kwargs))
-        self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'], engine_list=pq.setups.ibm.get_engine_list())
+        token = self._kwargs.get("token", "")
+        hw = self._kwargs.get("use_hardware", False)
+        device = self._kwargs.get("device", "ibmq_qasm_simulator" if not hw else "ibmqx2")
+        self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'], engine_list=pq.setups.ibm.get_engine_list(token=token, device=device))
         super().reset()
 
     def pre_measure(self):

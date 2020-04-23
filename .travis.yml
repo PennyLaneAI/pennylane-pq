@@ -1,25 +1,28 @@
 language: python
 cache: pip
 python:
-  - 3.5
-  - 3.6
+- 3.5
+- 3.6
 matrix:
   include:
   - python: 3.7
     dist: xenial
 env:
+  matrix:
   - LOGGING=info
+  global:
+    secure: oqz5ttAecQULcjXco9spk9iUrvqkRoPEfeDV07WYECNJDfLh1XGLHbP5lGaqfG2EeHCnHaKyKkZHhL3h816G7LyWTKb1z7utQXwGmsCpoXBhHzoMxaxdcolea04cEVznp/h/op5wQTZUhbMMD/Cc+EcIRzrvddleTprEXq6wSZol8HLGWbaoIzekSO10/sySdmXAsY8vBY5LnAW7BLolIpbtlXqifb9olOt02gJTdR30aIvy0X/T4ihPIdZ0eymgT/MXfaSAYC/ngZ6G+q/YcWr3qeEUEaB7cRMDoeEnEAyas/b78S1CG3ROWAUqLz+SW3eietRr2PAE7ec7Y9SqycsBfwbYPj01UbRczpoiRDHes+MERFksoXLfzFFiTq3nJM7OxdV9BYR4UaAG8O6QpBFtka1rzn4Hock/w9azWqAlzXDo3hh3igZ8hkSavg+p5/IRPk9PjvnmtApEHD+pKTYlcAacBIAwGLUQbMLnddwfBwDl8FXG/zB764WZWLSmYOUfXjP/nD53NVVuFqZrgXi6K6Zv8Xr+ycb/Uzb6IHZu1nReHD4zxYc+Y8eBe17OafTMknmsT+GhoqVjrmkm6hMsYre6au3TXJz7MYoIX42Xp6VYElGOmpqd7jNH3Np112jE4dyKVAVeyw2W2pwZmVCpQgb3j5QlVIZxuthKhy4=
 install:
-  - pip install pip --upgrade
-  - pip install -e git+https://github.com/XanaduAI/pennylane.git#egg=pennylane
-  - pip install -r requirements.txt
-  - pip install wheel pytest pytest-cov codecov --upgrade
-  - python3 setup.py bdist_wheel
-  - pip install dist/PennyLane*.whl
+- pip install pip --upgrade
+- pip install -e git+https://github.com/XanaduAI/pennylane.git#egg=pennylane
+- pip install -r requirements.txt
+- pip install wheel pytest pytest-cov codecov --upgrade
+- python3 setup.py bdist_wheel
+- pip install dist/PennyLane*.whl
 script:
-  - make coverage
+- make coverage
 after_success:
-  - codecov
+- codecov
 notifications:
   slack:
     secure: FfvzFoLEPy+O1hkz+co7W/P2DAeGTqUYRTh7cA90wkhZNN+qHBXdhKzNOAZs4V462/AHHi13K95ltBCuW9nE6eJveZGQkPlLr9ojZtVKzIzNP2TgpnYRdAhogW1cmRdquPcPUXNBfs71DOPFTI2J8Kr1U3uZNkJ0HSURPlF05M11ESXPMzeMSNMjCAanFD+62+hsV8Jsx7vmLtiTCpMbatTgKYB/IE3nV2khILWMGcokxX5cSJ1/RRittLWMqLrmUPZnZ3f5G6YbkeV40Z//1/DK2/Mgw4ryZzZzCe3L4HQMxry5YeCJucnfGJmqJzRzB+JxNn0gRT4RX4SCJJBAa6BISwVvP89HFN5tkXGl8RYsKBJ0sdzbwQ0MFnS4rVoQP1IEAkx+TZ3fUzPZ68KDhspSxght6H+oRQCcaNFoHjh6xJSvAJQem6BQVyGErcjrmoxcPWmdNfiLs8lENcBSbN8fiZia8leCo5jzyl7dvBtlkRgvtx9pLSkevDLbPDMPVQokmXuVIG3psKCPZuAGAUTOP/FRYlZXCmXALsNAe7nuetXUSKL6P0YlA5PNPzstDEKe0LX50eiQV2olPPuLYed/Z6v7/VVIV4jgUXYVbnhbjY+g4pL1ikg58kbBY6afxXW4AGpvYoFEgdVmlBTvldlIXl84n3lH5hBHIVQiLiY=
