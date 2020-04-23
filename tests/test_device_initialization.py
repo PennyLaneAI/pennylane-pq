@@ -49,6 +49,7 @@ class DeviceInitialization(BaseTest):
     def test_shots(self):
         if self.args.device == 'ibm' or self.args.device == 'all':
             shots = 5
+            print(token)
             dev1 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots, use_hardware=False, token=token, verbose=True)
             self.assertEqual(shots, dev1.shots)
 
