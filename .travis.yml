@@ -13,6 +13,7 @@ env:
     secure: oqz5ttAecQULcjXco9spk9iUrvqkRoPEfeDV07WYECNJDfLh1XGLHbP5lGaqfG2EeHCnHaKyKkZHhL3h816G7LyWTKb1z7utQXwGmsCpoXBhHzoMxaxdcolea04cEVznp/h/op5wQTZUhbMMD/Cc+EcIRzrvddleTprEXq6wSZol8HLGWbaoIzekSO10/sySdmXAsY8vBY5LnAW7BLolIpbtlXqifb9olOt02gJTdR30aIvy0X/T4ihPIdZ0eymgT/MXfaSAYC/ngZ6G+q/YcWr3qeEUEaB7cRMDoeEnEAyas/b78S1CG3ROWAUqLz+SW3eietRr2PAE7ec7Y9SqycsBfwbYPj01UbRczpoiRDHes+MERFksoXLfzFFiTq3nJM7OxdV9BYR4UaAG8O6QpBFtka1rzn4Hock/w9azWqAlzXDo3hh3igZ8hkSavg+p5/IRPk9PjvnmtApEHD+pKTYlcAacBIAwGLUQbMLnddwfBwDl8FXG/zB764WZWLSmYOUfXjP/nD53NVVuFqZrgXi6K6Zv8Xr+ycb/Uzb6IHZu1nReHD4zxYc+Y8eBe17OafTMknmsT+GhoqVjrmkm6hMsYre6au3TXJz7MYoIX42Xp6VYElGOmpqd7jNH3Np112jE4dyKVAVeyw2W2pwZmVCpQgb3j5QlVIZxuthKhy4=
 install:
 - pip install pip --upgrade
+- pip install pybind11
 - pip install -e git+https://github.com/XanaduAI/pennylane.git#egg=pennylane
 - pip install -r requirements.txt
 - pip install wheel pytest pytest-cov codecov --upgrade
