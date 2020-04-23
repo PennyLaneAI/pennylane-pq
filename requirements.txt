@@ -1,2 +1,3 @@
 git+https://github.com/ProjectQ-Framework/ProjectQ.git#egg=projectq
 pennylane>=0.6
+pybind11
