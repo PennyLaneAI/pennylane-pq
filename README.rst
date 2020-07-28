@@ -1,29 +1,29 @@
 PennyLane ProjectQ Plugin
 #########################
 
-.. image:: https://img.shields.io/travis/com/XanaduAI/pennylane-pq/master.svg?style=popout-square
-    :alt: Travis
-    :target: https://travis-ci.com/XanaduAI/pennylane-pq
+.. image:: https://img.shields.io/github/workflow/status/PennyLaneAI/pennylane-pq/Tests/master?logo=github&style=flat-square
+    :alt: GitHub Workflow Status (branch)
+    :target: https://github.com/PennyLaneAI/pennylane-pq/actions?query=workflow%3ATests
 
-.. image:: https://img.shields.io/codecov/c/github/xanaduai/pennylane-pq/master.svg?style=popout-square
+.. image:: https://img.shields.io/codecov/c/github/PennyLaneAI/pennylane-pq/master.svg?logo=codecov&style=flat-square
     :alt: Codecov coverage
-    :target: https://codecov.io/gh/XanaduAI/pennylane-pq
+    :target: https://codecov.io/gh/PennyLaneAI/pennylane-pq
 
-.. image:: https://img.shields.io/codacy/grade/6ed6d8397b814fbaa754757fed3ea536.svg?style=popout-square
-    :alt: Codacy grade
-    :target: https://app.codacy.com/app/XanaduAI/pennylane-pq?utm_source=github.com&utm_medium=referral&utm_content=XanaduAI/pennylane-pq&utm_campaign=badger
+.. image:: https://img.shields.io/codefactor/grade/github/PennyLaneAI/pennylane-pq/master?logo=codefactor&style=flat-square
+    :alt: CodeFactor Grade
+    :target: https://www.codefactor.io/repository/github/pennylaneai/pennylane-pq
 
-.. image:: https://img.shields.io/readthedocs/pennylane-pq.svg?style=popout-square
+.. image:: https://img.shields.io/readthedocs/pennylane-pq.svg?logo=read-the-docs&style=flat-square
     :alt: Read the Docs
     :target: https://pennylane-pq.readthedocs.io
 
-.. image:: https://img.shields.io/pypi/v/PennyLane-PQ.svg?style=popout-square
+.. image:: https://img.shields.io/pypi/v/PennyLane-pq.svg?style=flat-square
     :alt: PyPI
-    :target: https://pypi.org/project/PennyLane-PQ
+    :target: https://pypi.org/project/PennyLane-pq
 
-.. image:: https://img.shields.io/pypi/pyversions/PennyLane-PQ.svg?style=popout-square
+.. image:: https://img.shields.io/pypi/pyversions/PennyLane-pq.svg?style=flat-square
     :alt: PyPI - Python Version
-    :target: https://pypi.org/project/PennyLane-PQ
+    :target: https://pypi.org/project/PennyLane-pq
 
 .. header-start-inclusion-marker-do-not-remove
 
@@ -120,8 +120,8 @@ Christian Gogolin, Maria Schuld, Josh Izaac, Nathan Killoran, and Ville Bergholm
 Support
 =======
 
-- **Source Code:** https://github.com/XanaduAI/pennylane-pq
-- **Issue Tracker:** https://github.com/XanaduAI/pennylane-pq/issues
+- **Source Code:** https://github.com/PennyLaneAI/pennylane-pq
+- **Issue Tracker:** https://github.com/PennyLaneAI/pennylane-pq/issues
 - **PennyLane Forum:** https://discuss.pennylane.ai
 
 If you are having issues, please let us know by posting the issue on our Github issue tracker, or
