@@ -66,11 +66,7 @@ class DeviceInitialization(BaseTest):
                 'projectq.ibm'
         ]:
             try:
-<<<<<<< HEAD
-                dev = qml.device(short_name, wires=2, token='token', verbose=True)
-=======
                 dev = qml.device(short_name, wires=2, token=token, verbose=True)
->>>>>>> fix_user_bug
             except DeviceError:
                 raise Exception("This test is expected to fail until pennylane-pq is installed.")
 
