@@ -50,6 +50,7 @@ ProjectQClassicalSimulator
 import abc
 import numpy as np
 import projectq as pq
+from projectq.setups.ibm import get_engine_list
 from projectq.ops import (
     HGate,
     XGate,
@@ -536,7 +537,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         self._eng = pq.MainEngine(
             backend,
             verbose=self._kwargs["verbose"],
-            engine_list=pq.setups.ibm.get_engine_list(token=token, device=device),
+            engine_list=get_engine_list(token=token, device=device),
         )
         super().reset()
 

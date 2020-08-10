@@ -17,22 +17,13 @@ Unit tests for the :mod:`pennylane_pq` device initialization
 
 import unittest
 import logging as log
-#import inspect
-#from unittest_data_provider import data_provider
-from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
-import pennylane
-from pennylane import Device, DeviceError
-from pennylane import numpy as np
-import pennylane_pq
-import pennylane_pq.expval
-from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
+from pennylane import DeviceError
+from pennylane_pq.devices import ProjectQIBMBackend
 import os
 
-token = os.environ.get("IBMQX_TOKEN", "")
-
+token = os.getenv("IBMQX_TOKEN")
 log.getLogger('defaults')
-
 
 
 class DeviceInitialization(BaseTest):

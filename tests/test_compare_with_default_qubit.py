@@ -17,11 +17,7 @@ Unit tests for the :mod:`pennylane_pq` devices.
 
 import unittest
 import logging as log
-#import inspect
-#from unittest_data_provider import data_provider
-from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
-from pennylane import Device
 from pennylane import numpy as np
 from pennylane.devices.default_qubit import DefaultQubit
 import pennylane

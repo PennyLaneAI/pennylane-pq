@@ -17,15 +17,9 @@ Unit tests for the :mod:`pennylane_pq` BasisState operation.
 
 import unittest
 import logging as log
-#import inspect
-#from unittest_data_provider import data_provider
-#from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
 import pennylane
-#from pennylane import Device
 from pennylane import numpy as np
-import pennylane_pq
-import pennylane_pq.expval
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 
 log.getLogger('defaults')

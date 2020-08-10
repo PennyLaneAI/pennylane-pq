@@ -18,18 +18,13 @@ Unit tests for the :mod:`pennylane_pq` device documentation
 import unittest
 import logging as log
 import re
-from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
-import pennylane
-from pennylane import Device, DeviceError
-from pennylane import numpy as np
-import pennylane_pq
-import pennylane_pq.expval
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 import os
 
-token = os.environ.get("IBMQX_TOKEN", "")
+token = os.getenv("IBMQX_TOKEN")
 log.getLogger('defaults')
+
 
 class DocumentationTest(BaseTest):
     """test documentation of the plugin.

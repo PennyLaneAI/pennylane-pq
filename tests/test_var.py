@@ -25,7 +25,7 @@ from defaults import TOLERANCE
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 import os
 
-token = os.environ.get("IBMQX_TOKEN", "")
+token = os.getenv("IBMQX_TOKEN")
 
 
 @pytest.fixture

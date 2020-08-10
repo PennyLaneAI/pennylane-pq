@@ -24,6 +24,7 @@ from defaults import pennylane as qml, BaseTest
 
 log.getLogger('defaults')
 
+
 class ProjectQImportTest(BaseTest):
     """test of projectq import.
     """
