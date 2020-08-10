@@ -26,7 +26,9 @@ from pennylane import numpy as np
 import pennylane_pq
 import pennylane_pq.expval
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
+import os
 
+token = os.environ.get("IBMQX_TOKEN", "")
 log.getLogger('defaults')
 
 class DocumentationTest(BaseTest):
@@ -45,13 +47,8 @@ class DocumentationTest(BaseTest):
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems))
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems, shots=20000000))
         if self.args.device == 'ibm' or self.args.device == 'all':
-            ibm_options = pennylane.default_config['projectq.ibm']
-            if "token" in ibm_options:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8 * 1024,
-                                                       token=ibm_options['token'], verbose=True))
-            else:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024,
-                                                       token='token'))
+            self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8 * 1024,
+                                                   token=token, verbose=True))
         if self.args.device == 'classical' or self.args.device == 'all':
             self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems))
 

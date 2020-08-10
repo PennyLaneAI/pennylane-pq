@@ -27,7 +27,9 @@ import pennylane_pq
 import pennylane_pq.expval
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 from unittest.mock import patch, MagicMock, PropertyMock, call
+import os
 
+token = os.environ.get("IBMQX_TOKEN", "")
 log.getLogger('defaults')
 
 class ExpvalAndPreExpvalMock(BaseTest):
@@ -51,7 +53,7 @@ class ExpvalAndPreExpvalMock(BaseTest):
                 mock_PauliY,
                 mock_Hadamard,
             ]
-            dev = ProjectQIBMBackend(wires=2, use_hardware=False, num_runs=8*1024, token='token', verbose=True)
+            dev = ProjectQIBMBackend(wires=2, use_hardware=False, num_runs=8*1024, token=token, verbose=True)
             dev._eng = MagicMock()
             dev.apply = MagicMock()
 
@@ -77,7 +79,7 @@ class ExpvalAndPreExpvalMock(BaseTest):
 
     def test_expval(self):
 
-        dev = ProjectQIBMBackend(wires=2, use_hardware=False, num_runs=8*1024, token='token', verbose=True)
+        dev = ProjectQIBMBackend(wires=2, use_hardware=False, num_runs=8*1024, token=token, verbose=True)
         dev._eng = MagicMock()
         dev._eng.backend = MagicMock()
         dev._eng.backend.get_probabilities = MagicMock()
@@ -95,7 +97,7 @@ class Expval(BaseTest):
     def test_expval_exception_if_no_obs_queue(self):
 
         if self.args.device == 'ibm' or self.args.device == 'all':
-            dev = ProjectQIBMBackend(wires=2, shots=1, use_hardware=False, token='token', verbose=True)
+            dev = ProjectQIBMBackend(wires=2, shots=1, use_hardware=False, token=token, verbose=True)
         else:
             return
 

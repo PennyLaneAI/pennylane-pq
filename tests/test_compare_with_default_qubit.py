@@ -76,6 +76,9 @@ class CompareWithDefaultQubitTest(BaseTest):
 
             # run all single operation circuits
             for operation in dev.operations:
+                if operation in ("DiagonalQubitUnitary"):
+                    continue
+
                 for observable in dev.observables:
                     log.info("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by a "+observable+" Expectation")
 
