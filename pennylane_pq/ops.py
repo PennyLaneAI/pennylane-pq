@@ -40,7 +40,8 @@ quantum functions:
 
 import pennylane.operation as plops
 
-class S(plops.Operation): #pylint: disable=invalid-name,too-few-public-methods
+
+class S(plops.Operation):  # pylint: disable=invalid-name,too-few-public-methods
     r"""S gate.
 
     .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
@@ -53,7 +54,7 @@ class S(plops.Operation): #pylint: disable=invalid-name,too-few-public-methods
     par_domain = None
 
 
-class T(plops.Operation): #pylint: disable=invalid-name,too-few-public-methods
+class T(plops.Operation):  # pylint: disable=invalid-name,too-few-public-methods
     r"""T gate.
 
     .. math:: T = \begin{bmatrix}1&0\\0&\exp(i \pi / 4)\end{bmatrix}
@@ -64,6 +65,7 @@ class T(plops.Operation): #pylint: disable=invalid-name,too-few-public-methods
     num_params = 0
     num_wires = 1
     par_domain = None
+
 
 class SqrtX(plops.Operation):
     r"""Square root X gate.
@@ -77,7 +79,8 @@ class SqrtX(plops.Operation):
     num_wires = 1
     par_domain = None
 
-class SqrtSwap(plops.Operation): #pylint: disable=too-few-public-methods
+
+class SqrtSwap(plops.Operation):  # pylint: disable=too-few-public-methods
     r"""Square root SWAP gate.
 
     .. math:: \mathrm{SqrtSwap} = \begin{bmatrix}1&0&0&0\\0&(1+i)/2&(1-i)/2&0\\
@@ -89,6 +92,7 @@ class SqrtSwap(plops.Operation): #pylint: disable=too-few-public-methods
     num_params = 0
     num_wires = 2
     par_domain = None
+
 
 # class Toffoli(Operation): #pylint: disable=too-few-public-methods
 #     r"""Apply the Tofoli gate.

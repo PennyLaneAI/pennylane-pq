@@ -50,47 +50,60 @@ ProjectQClassicalSimulator
 import abc
 import numpy as np
 import projectq as pq
-from projectq.ops import (HGate, XGate, YGate, ZGate, SGate, TGate, SqrtXGate,
-                          SwapGate, Rx, Ry, Rz, R, SqrtSwapGate)
+from projectq.ops import (
+    HGate,
+    XGate,
+    YGate,
+    ZGate,
+    SGate,
+    TGate,
+    SqrtXGate,
+    SwapGate,
+    Rx,
+    Ry,
+    Rz,
+    R,
+    SqrtSwapGate,
+)
 
 from pennylane import Device, DeviceError
 
-from .pqops import (CNOT, CZ, Rot, QubitUnitary, BasisState)
+from .pqops import CNOT, CZ, Rot, QubitUnitary, BasisState
 
 from ._version import __version__
 
 
 PROJECTQ_OPERATION_MAP = {
-    #native PennyLane operations also native to ProjectQ
-    'PauliX': XGate,
-    'PauliY': YGate,
-    'PauliZ': ZGate,
-    'CNOT': CNOT,
-    'CZ': CZ,
-    'SWAP': SwapGate,
-    'RX': Rx,
-    'RY': Ry,
-    'RZ': Rz,
-    'PhaseShift': R,
-    'Hadamard': HGate,
-    #operations not natively implemented in ProjectQ but provided in pqops.py
-    'Rot': Rot,
-    'QubitUnitary': QubitUnitary,
-    'BasisState': BasisState,
-    'S': SGate,
-    'T': TGate,
-    #additional operations not native to PennyLane but present in ProjectQ
-    'SqrtX': SqrtXGate,
-    'SqrtSwap': SqrtSwapGate,
-    #operations/expectations of ProjectQ that do not work with PennyLane
+    # native PennyLane operations also native to ProjectQ
+    "PauliX": XGate,
+    "PauliY": YGate,
+    "PauliZ": ZGate,
+    "CNOT": CNOT,
+    "CZ": CZ,
+    "SWAP": SwapGate,
+    "RX": Rx,
+    "RY": Ry,
+    "RZ": Rz,
+    "PhaseShift": R,
+    "Hadamard": HGate,
+    # operations not natively implemented in ProjectQ but provided in pqops.py
+    "Rot": Rot,
+    "QubitUnitary": QubitUnitary,
+    "BasisState": BasisState,
+    "S": SGate,
+    "T": TGate,
+    # additional operations not native to PennyLane but present in ProjectQ
+    "SqrtX": SqrtXGate,
+    "SqrtSwap": SqrtSwapGate,
+    # operations/expectations of ProjectQ that do not work with PennyLane
     #'AllPauliZ': AllZGate, #todo: enable when multiple return values are supported
-    #operations/expectations of PennyLane that do not work with ProjectQ
+    # operations/expectations of PennyLane that do not work with ProjectQ
     #'QubitStateVector': StatePreparation,
-    #In addition we support the Identity Expectation, but only as an expectation and not as an Operation, which is we we don't put it here.
+    # In addition we support the Identity Expectation, but only as an expectation and not as an Operation, which is we we don't put it here.
 }
 
 
-class _ProjectQDevice(Device): #pylint: disable=abstract-method
+class _ProjectQDevice(Device):  # pylint: disable=abstract-method
     """ProjectQ device for PennyLane.
 
     Args:
@@ -127,13 +140,17 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         retrieve_execution (int): Job ID to retrieve instead of re-running the circuit
         (e.g., if previous run timed out).
     """
-    name = 'ProjectQ PennyLane plugin'
-    short_name = 'projectq'
-    pennylane_requires = '>=0.11.0'
-    version = '0.4.2'
+
+    name = "ProjectQ PennyLane plugin"
+    short_name = "projectq"
+    pennylane_requires = ">=0.11.0"
+    version = "0.4.2"
     plugin_version = __version__
-    author = 'Christian Gogolin and Xanadu'
-    _capabilities = {'backend': list(["Simulator", "ClassicalSimulator", "IBMBackend"]), 'model': 'qubit'}
+    author = "Christian Gogolin and Xanadu"
+    _capabilities = {
+        "backend": list(["Simulator", "ClassicalSimulator", "IBMBackend"]),
+        "model": "qubit",
+    }
 
     @abc.abstractproperty
     def _operation_map(self):
@@ -149,14 +166,14 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
 
     def __init__(self, wires=1, shots=1024, analytic=True, *, backend, **kwargs):
         # overwrite shots with num_runs if given
-        if 'num_runs' in kwargs:
-            shots = kwargs['num_runs']
-            del kwargs['num_runs']
+        if "num_runs" in kwargs:
+            shots = kwargs["num_runs"]
+            del kwargs["num_runs"]
 
         super().__init__(wires=wires, shots=shots)
 
-        if 'verbose' not in kwargs:
-            kwargs['verbose'] = False
+        if "verbose" not in kwargs:
+            kwargs["verbose"] = False
 
         self.analytic = analytic
         self._backend = backend
@@ -164,7 +181,7 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         self._eng = None
         self._reg = None
         self._first_operation = True
-        self.reset() #the actual initialization is done in reset()
+        self.reset()  # the actual initialization is done in reset()
 
     def reset(self):
         """Reset/initialize the device by allocating qubits.
@@ -173,10 +190,10 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         self._first_operation = True
 
     def __repr__(self):
-        return super().__repr__() +'Backend: ' +self._backend +'\n'
+        return super().__repr__() + "Backend: " + self._backend + "\n"
 
     def __str__(self):
-        return super().__str__() +'Backend: ' +self._backend +'\n'
+        return super().__str__() + "Backend: " + self._backend + "\n"
 
     def post_measure(self):
         """Deallocate the qubits after expectation values have been retrieved.
@@ -195,19 +212,26 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         """
         operation = self._operation_map[operation](*par)
         if isinstance(operation, BasisState) and not self._first_operation:
-            raise DeviceError("Operation {} cannot be used after other Operations have already "
-                              "been applied on a {} device.".format(operation, self.short_name))
+            raise DeviceError(
+                "Operation {} cannot be used after other Operations have already "
+                "been applied on a {} device.".format(operation, self.short_name)
+            )
         self._first_operation = False
 
         # translate wires to reflect labels on the device
         device_wires = self.map_wires(wires)
 
         qureg = [self._reg[i] for i in device_wires.labels]
-        if isinstance(operation, (pq.ops._metagates.ControlledGate, #pylint: disable=protected-access
-                                  pq.ops._gates.SqrtSwapGate, #pylint: disable=protected-access
-                                  pq.ops._gates.SwapGate)): #pylint: disable=protected-access
+        if isinstance(
+            operation,
+            (
+                pq.ops._metagates.ControlledGate,  # pylint: disable=protected-access
+                pq.ops._gates.SqrtSwapGate,  # pylint: disable=protected-access
+                pq.ops._gates.SwapGate,
+            ),
+        ):  # pylint: disable=protected-access
             qureg = tuple(qureg)
-        operation | qureg #pylint: disable=pointless-statement
+        operation | qureg  # pylint: disable=pointless-statement
 
     def _deallocate(self):
         """Deallocate all qubits to make ProjectQ happy
@@ -216,15 +240,15 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
 
         Drawback: This is probably rather resource intensive.
         """
-        if self._eng is not None and self._backend == 'Simulator':
-            #avoid an "unfriendly error message":
-            #https://github.com/ProjectQ-Framework/ProjectQ/issues/2
-            pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
+        if self._eng is not None and self._backend == "Simulator":
+            # avoid an "unfriendly error message":
+            # https://github.com/ProjectQ-Framework/ProjectQ/issues/2
+            pq.ops.All(pq.ops.Measure) | self._reg  # pylint: disable=expression-not-assigned
 
     def filter_kwargs_for_backend(self, kwargs):
         """Filter the given kwargs for those relevant for the respective device/backend.
         """
-        return {key:value for key, value in kwargs.items() if key in self._backend_kwargs}
+        return {key: value for key, value in kwargs.items() if key in self._backend_kwargs}
 
     @property
     def operations(self):
@@ -306,22 +330,24 @@ class ProjectQSimulator(_ProjectQDevice):
 
     """
 
-    short_name = 'projectq.simulator'
+    short_name = "projectq.simulator"
     _operation_map = PROJECTQ_OPERATION_MAP
-    _observable_map = dict({key: val for key, val in _operation_map.items()
-                            if val in [XGate, YGate, ZGate, HGate]}, **{'Identity': None})
+    _observable_map = dict(
+        {key: val for key, val in _operation_map.items() if val in [XGate, YGate, ZGate, HGate]},
+        **{"Identity": None}
+    )
     _circuits = {}
-    _backend_kwargs = ['gate_fusion', 'rnd_seed']
+    _backend_kwargs = ["gate_fusion", "rnd_seed"]
 
     def __init__(self, wires=1, shots=1024, analytic=True, **kwargs):
-        kwargs['backend'] = 'Simulator'
+        kwargs["backend"] = "Simulator"
         super().__init__(wires=wires, shots=shots, analytic=analytic, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
         """
         backend = pq.backends.Simulator(**self.filter_kwargs_for_backend(self._kwargs))
-        self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'])
+        self._eng = pq.MainEngine(backend, verbose=self._kwargs["verbose"])
         super().reset()
 
     def pre_measure(self):
@@ -334,26 +360,28 @@ class ProjectQSimulator(_ProjectQDevice):
         """
         device_wires = self.map_wires(wires)
 
-        if observable == 'PauliX' or observable == 'PauliY' or observable == 'PauliZ':
+        if observable == "PauliX" or observable == "PauliY" or observable == "PauliZ":
             expval = self._eng.backend.get_expectation_value(
-                pq.ops.QubitOperator(str(observable)[-1]+'0'),
-                [self._reg[device_wires.labels[0]]])
-        elif observable == 'Hadamard':
+                pq.ops.QubitOperator(str(observable)[-1] + "0"), [self._reg[device_wires.labels[0]]]
+            )
+        elif observable == "Hadamard":
             expval = self._eng.backend.get_expectation_value(
-                1/np.sqrt(2)*pq.ops.QubitOperator('X0')+1/np.sqrt(2)*pq.ops.QubitOperator('Z0'),
-                [self._reg[device_wires.labels[0]]])
-        elif observable == 'Identity':
+                1 / np.sqrt(2) * pq.ops.QubitOperator("X0")
+                + 1 / np.sqrt(2) * pq.ops.QubitOperator("Z0"),
+                [self._reg[device_wires.labels[0]]],
+            )
+        elif observable == "Identity":
             expval = 1
         # elif observable == 'AllPauliZ':
         #     expval = [self._eng.backend.get_expectation_value(
         #         pq.ops.QubitOperator("Z"+'0'), [qubit])
         #                for qubit in self._reg]
 
-        if not self.analytic and observable != 'Identity':
-            p0 = (expval+1)/2
+        if not self.analytic and observable != "Identity":
+            p0 = (expval + 1) / 2
             p0 = max(min(p0, 1), 0)
             n0 = np.random.binomial(self.shots, p0)
-            expval = (n0 - (self.shots-n0)) / self.shots
+            expval = (n0 - (self.shots - n0)) / self.shots
 
         return expval
 
@@ -361,7 +389,7 @@ class ProjectQSimulator(_ProjectQDevice):
         """Retrieve the requested observable variance.
         """
         expval = self.expval(observable, wires, par)
-        variance = 1 - expval**2
+        variance = 1 - expval ** 2
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
         return variance
 
@@ -447,53 +475,93 @@ class ProjectQIBMBackend(_ProjectQDevice):
 
     """
 
-    short_name = 'projectq.ibm'
-    _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
-                      if val in [HGate, XGate, YGate, ZGate, SGate, TGate,
-                                 SqrtXGate, SwapGate, SqrtSwapGate, Rx, Ry, Rz, R, CNOT,
-                                 CZ, Rot, BasisState]}
-    _observable_map = dict({key:val for key, val in _operation_map.items() if val in [HGate, XGate, YGate, ZGate]}, **{'Identity': None})
+    short_name = "projectq.ibm"
+    _operation_map = {
+        key: val
+        for key, val in PROJECTQ_OPERATION_MAP.items()
+        if val
+        in [
+            HGate,
+            XGate,
+            YGate,
+            ZGate,
+            SGate,
+            TGate,
+            SqrtXGate,
+            SwapGate,
+            SqrtSwapGate,
+            Rx,
+            Ry,
+            Rz,
+            R,
+            CNOT,
+            CZ,
+            Rot,
+            BasisState,
+        ]
+    }
+    _observable_map = dict(
+        {key: val for key, val in _operation_map.items() if val in [HGate, XGate, YGate, ZGate]},
+        **{"Identity": None}
+    )
     _circuits = {}
-    _backend_kwargs = ['use_hardware', 'num_runs', 'verbose', 'token', 'device', 'retrieve_execution']
+    _backend_kwargs = [
+        "use_hardware",
+        "num_runs",
+        "verbose",
+        "token",
+        "device",
+        "retrieve_execution",
+    ]
 
     def __init__(self, wires=1, shots=1024, **kwargs):
         # check that necessary arguments are given
-        if 'token' not in kwargs:
-            raise ValueError('An IBM Quantum Experience token specified via the "token" keyword argument is required') #pylint: disable=line-too-long
+        if "token" not in kwargs:
+            raise ValueError(
+                'An IBM Quantum Experience token specified via the "token" keyword argument is required'
+            )  # pylint: disable=line-too-long
 
-        import projectq.setups.ibm #pylint: disable=unused-variable
+        import projectq.setups.ibm  # pylint: disable=unused-variable
 
-        kwargs['backend'] = 'IBMBackend'
+        kwargs["backend"] = "IBMBackend"
         super().__init__(wires=wires, shots=shots, analytic=False, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
         """
-        backend = pq.backends.IBMBackend(num_runs=self.shots, **self.filter_kwargs_for_backend(self._kwargs))
+        backend = pq.backends.IBMBackend(
+            num_runs=self.shots, **self.filter_kwargs_for_backend(self._kwargs)
+        )
         token = self._kwargs.get("token", "")
         hw = self._kwargs.get("use_hardware", False)
         device = self._kwargs.get("device", "ibmq_qasm_simulator" if not hw else "ibmqx2")
-        self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'], engine_list=pq.setups.ibm.get_engine_list(token=token, device=device))
+        self._eng = pq.MainEngine(
+            backend,
+            verbose=self._kwargs["verbose"],
+            engine_list=pq.setups.ibm.get_engine_list(token=token, device=device),
+        )
         super().reset()
 
     def pre_measure(self):
         """Rotate qubits to the right basis before measurement, apply a measure all
         operation and flush the device before retrieving expectation values.
         """
-        if hasattr(self, 'obs_queue'): #we raise an except below in case there is no obs_queue but we are asked to measure in a basis different from PauliZ
+        if hasattr(
+            self, "obs_queue"
+        ):  # we raise an except below in case there is no obs_queue but we are asked to measure in a basis different from PauliZ
             for obs in self.obs_queue:
-                if obs.name == 'PauliX':
-                    self.apply('Hadamard', obs.wires, list())
-                elif obs.name == 'PauliY':
-                    self.apply('PauliZ', obs.wires, list())
-                    self.apply('S', obs.wires, list())
-                    self.apply('Hadamard', obs.wires, list())
-                elif obs.name == 'Hadamard':
-                    self.apply('RY', obs.wires, [-np.pi/4])
-                elif obs.name == 'Hermitian':
+                if obs.name == "PauliX":
+                    self.apply("Hadamard", obs.wires, list())
+                elif obs.name == "PauliY":
+                    self.apply("PauliZ", obs.wires, list())
+                    self.apply("S", obs.wires, list())
+                    self.apply("Hadamard", obs.wires, list())
+                elif obs.name == "Hadamard":
+                    self.apply("RY", obs.wires, [-np.pi / 4])
+                elif obs.name == "Hermitian":
                     raise NotImplementedError
 
-        pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
+        pq.ops.All(pq.ops.Measure) | self._reg  # pylint: disable=expression-not-assigned
         self._eng.flush()
 
     def expval(self, observable, wires, par):
@@ -504,20 +572,44 @@ class ProjectQIBMBackend(_ProjectQDevice):
 
         probabilities = self._eng.backend.get_probabilities(self._reg)
 
-        if observable == 'PauliX' or observable == 'PauliY' or observable == 'PauliZ' or observable == 'Hadamard':
+        if (
+            observable == "PauliX"
+            or observable == "PauliY"
+            or observable == "PauliZ"
+            or observable == "Hadamard"
+        ):
 
-            if observable != 'PauliZ' and not hasattr(self, 'obs_queue'):
-                raise DeviceError("Measurements in basis other than PauliZ are only supported when "
-                                  "this plugin is used with versions of PennyLane that expose the obs_queue. "
-                                  "Please update PennyLane and this plugin.")
+            if observable != "PauliZ" and not hasattr(self, "obs_queue"):
+                raise DeviceError(
+                    "Measurements in basis other than PauliZ are only supported when "
+                    "this plugin is used with versions of PennyLane that expose the obs_queue. "
+                    "Please update PennyLane and this plugin."
+                )
 
-            expval = (1-(2*sum(p for (state, p) in probabilities.items()
-                               if state[device_wires.labels[0]] == '1'))-(1-2*sum(p for (state, p) in probabilities.items()
-                                                                                  if state[device_wires.labels[0]] == '0')))/2
+            expval = (
+                1
+                - (
+                    2
+                    * sum(
+                        p
+                        for (state, p) in probabilities.items()
+                        if state[device_wires.labels[0]] == "1"
+                    )
+                )
+                - (
+                    1
+                    - 2
+                    * sum(
+                        p
+                        for (state, p) in probabilities.items()
+                        if state[device_wires.labels[0]] == "0"
+                    )
+                )
+            ) / 2
 
-        elif observable == 'Hermitian':
+        elif observable == "Hermitian":
             raise NotImplementedError
-        elif observable == 'Identity':
+        elif observable == "Identity":
             expval = sum(p for (state, p) in probabilities.items())
         # elif observable == 'AllPauliZ':
         #     expval = [((1-2*sum(p for (state, p) in probabilities.items()
@@ -531,7 +623,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         """Retrieve the requested observable variance.
         """
         expval = self.expval(observable, wires, par)
-        variance = 1 - expval**2
+        variance = 1 - expval ** 2
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
         return variance
 
@@ -568,29 +660,32 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     """
 
-    short_name = 'projectq.classical'
-    _operation_map = {key:val for key, val in PROJECTQ_OPERATION_MAP.items()
-                      if val in [XGate, CNOT, BasisState]}
-    _observable_map = dict({key:val for key, val in PROJECTQ_OPERATION_MAP.items()
-                             if val in [ZGate]}, **{'Identity': None})
+    short_name = "projectq.classical"
+    _operation_map = {
+        key: val for key, val in PROJECTQ_OPERATION_MAP.items() if val in [XGate, CNOT, BasisState]
+    }
+    _observable_map = dict(
+        {key: val for key, val in PROJECTQ_OPERATION_MAP.items() if val in [ZGate]},
+        **{"Identity": None}
+    )
     _circuits = {}
     _backend_kwargs = []
 
     def __init__(self, wires=1, **kwargs):
-        kwargs['backend'] = 'ClassicalSimulator'
+        kwargs["backend"] = "ClassicalSimulator"
         super().__init__(wires=wires, shots=1024, analytic=True, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
         """
         backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self._kwargs))
-        self._eng = pq.MainEngine(backend, verbose=self._kwargs['verbose'])
+        self._eng = pq.MainEngine(backend, verbose=self._kwargs["verbose"])
         super().reset()
 
     def pre_measure(self):
         """Apply a measure all operation and flush the device before retrieving observable measurements.
         """
-        pq.ops.All(pq.ops.Measure) | self._reg #pylint: disable=expression-not-assigned
+        pq.ops.All(pq.ops.Measure) | self._reg  # pylint: disable=expression-not-assigned
         self._eng.flush()
 
     def expval(self, observable, wires, par):
@@ -599,11 +694,11 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
         device_wires = self.map_wires(wires)
 
-        if observable == 'PauliZ':
+        if observable == "PauliZ":
             wire = device_wires.labels[0]
-            expval = 1 - 2*int(self._reg[wire])
-            
-        elif observable == 'Identity':
+            expval = 1 - 2 * int(self._reg[wire])
+
+        elif observable == "Identity":
             expval = 1
         # elif observable == 'AllPauliZ':
         #     expval = [ 1 - 2*int(self._reg[wire]) for wire in self._reg]
@@ -614,6 +709,6 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         """Retrieve the requested observable variance.
         """
         expval = self.expval(observable, wires, par)
-        variance = 1 - expval**2
+        variance = 1 - expval ** 2
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
         return variance
