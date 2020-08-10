@@ -227,7 +227,7 @@ class _ProjectQDevice(Device):  # pylint: disable=abstract-method
             (
                 pq.ops._metagates.ControlledGate,  # pylint: disable=protected-access
                 pq.ops._gates.SqrtSwapGate,  # pylint: disable=protected-access
-                pq.ops._gates.SwapGate,
+                pq.ops._gates.SwapGate,  # pylint: disable=protected-access
             ),
         ):  # pylint: disable=protected-access
             qureg = tuple(qureg)
@@ -360,7 +360,7 @@ class ProjectQSimulator(_ProjectQDevice):
         """
         device_wires = self.map_wires(wires)
 
-        if observable == "PauliX" or observable == "PauliY" or observable == "PauliZ":
+        if observable in ["PauliX", "PauliY", "PauliZ"]:
             expval = self._eng.backend.get_expectation_value(
                 pq.ops.QubitOperator(str(observable)[-1] + "0"), [self._reg[device_wires.labels[0]]]
             )
@@ -521,8 +521,6 @@ class ProjectQIBMBackend(_ProjectQDevice):
                 'An IBM Quantum Experience token specified via the "token" keyword argument is required'
             )  # pylint: disable=line-too-long
 
-        import projectq.setups.ibm  # pylint: disable=unused-variable
-
         kwargs["backend"] = "IBMBackend"
         super().__init__(wires=wires, shots=shots, analytic=False, **kwargs)
 
@@ -572,12 +570,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
 
         probabilities = self._eng.backend.get_probabilities(self._reg)
 
-        if (
-            observable == "PauliX"
-            or observable == "PauliY"
-            or observable == "PauliZ"
-            or observable == "Hadamard"
-        ):
+        if observable in ["PauliX", "PauliY", "PauliZ", "Hadamard"]:
 
             if observable != "PauliZ" and not hasattr(self, "obs_queue"):
                 raise DeviceError(
@@ -609,6 +602,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
 
         elif observable == "Hermitian":
             raise NotImplementedError
+
         elif observable == "Identity":
             expval = sum(p for (state, p) in probabilities.items())
         # elif observable == 'AllPauliZ':
