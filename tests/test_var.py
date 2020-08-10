@@ -19,6 +19,7 @@ import pytest
 
 import numpy as np
 import pennylane
+from pennylane.wires import Wires
 
 from defaults import TOLERANCE
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
@@ -45,8 +46,7 @@ def dev(DevClass, monkeypatch):
             wires=1,
             use_hardware=False,
             num_runs=8 * 1024,
-            user="user",
-            password="password",
+            token="token",
             verbose=True,
         )
 
@@ -66,14 +66,14 @@ def dev(DevClass, monkeypatch):
 )
 def test_var_pauliz(dev, tol):
     """Test that variance of PauliZ is the same as I-<Z>^2"""
-    dev.apply("PauliX", wires=[0], par=[])
+    dev.apply("PauliX", wires=Wires([0]), par=[])
 
     if isinstance(dev, ProjectQIBMBackend):
         dev._eng.backend.get_probabilities.return_value = {"0": 0, "1": 1}
 
     dev.pre_measure()
-    var = dev.var("PauliZ", wires=[0], par=[])
-    mean = dev.expval("PauliZ", wires=[0], par=[])
+    var = dev.var("PauliZ", wires=Wires([0]), par=[])
+    mean = dev.expval("PauliZ", wires=Wires([0]), par=[])
     dev.post_measure()
 
     assert np.allclose(var, 1 - mean ** 2, atol=tol, rtol=0)
@@ -85,8 +85,8 @@ def test_var_pauliz_rotated_state(dev, tol):
     phi = 0.543
     theta = 0.6543
 
-    dev.apply("RX", wires=[0], par=[phi])
-    dev.apply("RY", wires=[0], par=[theta])
+    dev.apply("RX", wires=Wires([0]), par=[phi])
+    dev.apply("RY", wires=Wires([0]), par=[theta])
 
     if isinstance(dev, ProjectQIBMBackend):
         dev._eng.backend.get_probabilities.return_value = {
@@ -95,7 +95,7 @@ def test_var_pauliz_rotated_state(dev, tol):
         }
 
     dev.pre_measure()
-    var = dev.var("PauliZ", wires=[0], par=[])
+    var = dev.var("PauliZ", wires=Wires([0]), par=[])
     dev.post_measure()
     expected = 0.25 * (3 - np.cos(2 * theta) - 2 * np.cos(theta) ** 2 * np.cos(2 * phi))
 

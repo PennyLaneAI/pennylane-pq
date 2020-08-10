@@ -47,7 +47,7 @@ class UnsupportedOperationTest(BaseTest):
         if self.args.device == 'ibm' or self.args.device == 'all':
             ibm_options = pennylane.default_config['projectq.ibm']
             if "user" in ibm_options and "password" in ibm_options:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password'], verbose=True))
+                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, token=ibm_options['token'], verbose=True))
             else:
                 log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
         if self.args.device == 'classical' or self.args.device == 'all':

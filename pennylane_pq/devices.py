@@ -77,9 +77,9 @@ PROJECTQ_OPERATION_MAP = {
     'Rot': Rot,
     'QubitUnitary': QubitUnitary,
     'BasisState': BasisState,
-    #additional operations not native to PennyLane but present in ProjectQ
     'S': SGate,
     'T': TGate,
+    #additional operations not native to PennyLane but present in ProjectQ
     'SqrtX': SqrtXGate,
     'SqrtSwap': SqrtSwapGate,
     #operations/expectations of ProjectQ that do not work with PennyLane
@@ -89,11 +89,14 @@ PROJECTQ_OPERATION_MAP = {
     #In addition we support the Identity Expectation, but only as an expectation and not as an Operation, which is we we don't put it here.
 }
 
+
 class _ProjectQDevice(Device): #pylint: disable=abstract-method
     """ProjectQ device for PennyLane.
 
     Args:
-      wires (int): The number of qubits of the device. Default 1 if not specified.
+      wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
+            or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
+            or strings (``['ancilla', 'q1', 'q2']``). Default 1 if not specified.
       shots (int): How many times the circuit should be evaluated (or sampled) to estimate
           the expectation values. Defaults to 1024 if not specified.
           If ``analytic == True``, then the number of shots is ignored
@@ -126,10 +129,10 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
     """
     name = 'ProjectQ PennyLane plugin'
     short_name = 'projectq'
-    pennylane_requires = '>=0.4.0'
+    pennylane_requires = '>=0.11.0'
     version = '0.4.2'
     plugin_version = __version__
-    author = 'Christian Gogolin'
+    author = 'Christian Gogolin and Xanadu'
     _capabilities = {'backend': list(["Simulator", "ClassicalSimulator", "IBMBackend"]), 'model': 'qubit'}
 
     @abc.abstractproperty
@@ -192,10 +195,14 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         """
         operation = self._operation_map[operation](*par)
         if isinstance(operation, BasisState) and not self._first_operation:
-            raise DeviceError("Operation {} cannot be used after other Operations have already been applied on a {} device.".format(operation, self.short_name)) #pylint: disable=line-too-long
+            raise DeviceError("Operation {} cannot be used after other Operations have already "
+                              "been applied on a {} device.".format(operation, self.short_name))
         self._first_operation = False
 
-        qureg = [self._reg[i] for i in wires]
+        # translate wires to reflect labels on the device
+        device_wires = self.map_wires(wires)
+
+        qureg = [self._reg[i] for i in device_wires.labels]
         if isinstance(operation, (pq.ops._metagates.ControlledGate, #pylint: disable=protected-access
                                   pq.ops._gates.SqrtSwapGate, #pylint: disable=protected-access
                                   pq.ops._gates.SwapGate)): #pylint: disable=protected-access
@@ -238,14 +245,15 @@ class _ProjectQDevice(Device): #pylint: disable=abstract-method
         return set(self._observable_map.keys())
 
 
-
 class ProjectQSimulator(_ProjectQDevice):
     """A PennyLane :code:`projectq.simulator` device for the `ProjectQ Simulator
     <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.Simulator>`_
     backend.
 
     Args:
-       wires (int): The number of qubits of the device. Default 1 if not specified.
+        wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
+            or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
+            or strings (``['ancilla', 'q1', 'q2']``).
        shots (int): How many times the circuit should be evaluated (or sampled) to estimate
            the expectation values. Defaults to 1000 if not specified.
            If ``analytic == True``, then the number of shots is ignored
@@ -281,7 +289,9 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`pennylane.Hadamard`,
       :class:`pennylane.Rot`,
       :class:`pennylane.QubitUnitary`,
-      :class:`pennylane.BasisState`
+      :class:`pennylane.BasisState`,
+      :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
+      :class:`pennylane_pq.T <pennylane_pq.ops.T>`,
 
     Supported PennyLane observables:
       :class:`pennylane.PauliX`,
@@ -291,9 +301,6 @@ class ProjectQSimulator(_ProjectQDevice):
       :class:`pennylane.Identity`
 
     Extra Operations:
-      :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
-      :class:`pennylane_pq.S <pennylane_pq.ops.S>`,
-      :class:`pennylane_pq.T <pennylane_pq.ops.T>`,
       :class:`pennylane_pq.SqrtX <pennylane_pq.ops.SqrtX>`,
       :class:`pennylane_pq.SqrtSwap <pennylane_pq.ops.SqrtSwap>`
 
@@ -301,8 +308,8 @@ class ProjectQSimulator(_ProjectQDevice):
 
     short_name = 'projectq.simulator'
     _operation_map = PROJECTQ_OPERATION_MAP
-    _observable_map = dict({key:val for key, val in _operation_map.items()
-                             if val in [XGate, YGate, ZGate, HGate]}, **{'Identity': None})
+    _observable_map = dict({key: val for key, val in _operation_map.items()
+                            if val in [XGate, YGate, ZGate, HGate]}, **{'Identity': None})
     _circuits = {}
     _backend_kwargs = ['gate_fusion', 'rnd_seed']
 
@@ -325,14 +332,16 @@ class ProjectQSimulator(_ProjectQDevice):
     def expval(self, observable, wires, par):
         """Retrieve the requested observable expectation value.
         """
+        device_wires = self.map_wires(wires)
+
         if observable == 'PauliX' or observable == 'PauliY' or observable == 'PauliZ':
             expval = self._eng.backend.get_expectation_value(
                 pq.ops.QubitOperator(str(observable)[-1]+'0'),
-                [self._reg[wires[0]]])
+                [self._reg[device_wires.labels[0]]])
         elif observable == 'Hadamard':
             expval = self._eng.backend.get_expectation_value(
                 1/np.sqrt(2)*pq.ops.QubitOperator('X0')+1/np.sqrt(2)*pq.ops.QubitOperator('Z0'),
-                [self._reg[wires[0]]])
+                [self._reg[device_wires.labels[0]]])
         elif observable == 'Identity':
             expval = 1
         # elif observable == 'AllPauliZ':
@@ -356,6 +365,7 @@ class ProjectQSimulator(_ProjectQDevice):
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
         return variance
 
+
 class ProjectQIBMBackend(_ProjectQDevice):
     """A PennyLane :code:`projectq.ibm` device for the `ProjectQ IBMBackend
     <https://projectq.readthedocs.io/en/latest/projectq.backends.html#projectq.backends.IBMBackend>`_
@@ -369,7 +379,9 @@ class ProjectQIBMBackend(_ProjectQDevice):
         a finite accuracy and fluctuate from run to run.
 
     Args:
-       wires (int): The number of qubits of the device. Default 1 if not specified.
+        wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
+         or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
+         or strings (``['ancilla', 'q1', 'q2']``).
        shots (int): number of circuit evaluations used to estimate expectation values
          of observables. Default value is 1024.
 
@@ -391,7 +403,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
     .. code-block:: python
 
         import pennylane as qml
-        dev = qml.device('projectq.ibm', wires=XXX, user="XXX", password="XXX")
+        dev = qml.device('projectq.ibm', wires=XXX, token="XXX")
 
     To avoid leaking your user name and password when sharing code,
     it is better to specify the user name and password in your
@@ -448,10 +460,8 @@ class ProjectQIBMBackend(_ProjectQDevice):
 
     def __init__(self, wires=1, shots=1024, **kwargs):
         # check that necessary arguments are given
-        if 'user' not in kwargs:
-            raise ValueError('An IBM Quantum Experience user name specified via the "user" keyword argument is required') #pylint: disable=line-too-long
-        if 'password' not in kwargs:
-            raise ValueError('An IBM Quantum Experience password specified via the "password" keyword argument is required') #pylint: disable=line-too-long
+        if 'token' not in kwargs:
+            raise ValueError('An IBM Quantum Experience token specified via the "token" keyword argument is required')
 
         import projectq.setups.ibm #pylint: disable=unused-variable
 
@@ -488,14 +498,21 @@ class ProjectQIBMBackend(_ProjectQDevice):
     def expval(self, observable, wires, par):
         """Retrieve the requested observable expectation value.
         """
+
+        device_wires = self.map_wires(wires)
+
         probabilities = self._eng.backend.get_probabilities(self._reg)
 
         if observable == 'PauliX' or observable == 'PauliY' or observable == 'PauliZ' or observable == 'Hadamard':
 
             if observable != 'PauliZ' and not hasattr(self, 'obs_queue'):
-                raise DeviceError("Measurements in basis other than PauliZ are only supported when this plugin is used with versions of PennyLane that expose the obs_queue. Please update PennyLane and this plugin.")
+                raise DeviceError("Measurements in basis other than PauliZ are only supported when "
+                                  "this plugin is used with versions of PennyLane that expose the obs_queue. "
+                                  "Please update PennyLane and this plugin.")
 
-            expval = (1-(2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '1'))-(1-2*sum(p for (state, p) in probabilities.items() if state[wires[0]] == '0')))/2
+            expval = (1-(2*sum(p for (state, p) in probabilities.items()
+                               if state[device_wires.labels[0]] == '1'))-(1-2*sum(p for (state, p) in probabilities.items()
+                                                                                  if state[device_wires.labels[0]] == '0')))/2
 
         elif observable == 'Hermitian':
             raise NotImplementedError
@@ -524,7 +541,10 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     backend.
 
     Args:
-       wires (int): The number of qubits of the device. Default 1 if not specified.
+        wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
+            or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
+            or strings (``['ancilla', 'q1', 'q2']``).
+
 
     Keyword Args:
       verbose (bool): If True, log messages are printed and exceptions are more verbose.
@@ -575,10 +595,13 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     def expval(self, observable, wires, par):
         """Retrieve the requested observable expectation values.
         """
-        if observable == 'PauliZ':
-            wire = wires[0]
 
+        device_wires = self.map_wires(wires)
+
+        if observable == 'PauliZ':
+            wire = device_wires.labels[0]
             expval = 1 - 2*int(self._reg[wire])
+            
         elif observable == 'Identity':
             expval = 1
         # elif observable == 'AllPauliZ':

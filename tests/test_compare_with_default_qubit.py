@@ -23,7 +23,7 @@ from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
 from pennylane import Device
 from pennylane import numpy as np
-from pennylane.plugins.default_qubit import DefaultQubit
+from pennylane.devices.default_qubit import DefaultQubit
 import pennylane
 import pennylane_pq
 import pennylane_pq.expval
@@ -49,7 +49,7 @@ class CompareWithDefaultQubitTest(BaseTest):
         if self.args.device == 'ibm' or self.args.device == 'all':
             ibm_options = pennylane.default_config['projectq.ibm']
             if "user" in ibm_options and "password" in ibm_options:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password'], verbose=True))
+                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, token=ibm_options['token'], verbose=True))
             else:
                 log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
         if self.args.device == 'classical' or self.args.device == 'all':
