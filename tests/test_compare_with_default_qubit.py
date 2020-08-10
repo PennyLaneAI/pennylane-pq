@@ -23,7 +23,7 @@ from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
 from pennylane import Device
 from pennylane import numpy as np
-from pennylane.plugins.default_qubit import DefaultQubit
+from pennylane.devices.default_qubit import DefaultQubit
 import pennylane
 import pennylane_pq
 import pennylane_pq.expval
