@@ -23,6 +23,9 @@ from pennylane.wires import Wires
 
 from defaults import TOLERANCE
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
+import os
+
+token = os.environ.get("IBMQX_TOKEN", "")
 
 
 @pytest.fixture
@@ -46,7 +49,7 @@ def dev(DevClass, monkeypatch):
             wires=1,
             use_hardware=False,
             num_runs=8 * 1024,
-            token="token",
+            token=token,
             verbose=True,
         )
 

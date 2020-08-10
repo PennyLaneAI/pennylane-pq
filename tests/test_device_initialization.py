@@ -27,8 +27,12 @@ from pennylane import numpy as np
 import pennylane_pq
 import pennylane_pq.expval
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
+import os
+
+token = os.environ.get("IBMQX_TOKEN", "")
 
 log.getLogger('defaults')
+
 
 
 class DeviceInitialization(BaseTest):
@@ -45,13 +49,14 @@ class DeviceInitialization(BaseTest):
     def test_shots(self):
         if self.args.device == 'ibm' or self.args.device == 'all':
             shots = 5
-            dev1 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots, use_hardware=False, token='token')
+            dev1 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots, use_hardware=False, token=token, verbose=True)
             self.assertEqual(shots, dev1.shots)
 
-            dev2 = ProjectQIBMBackend(wires=self.num_subsystems, num_runs=shots, use_hardware=False, token='token')
+            dev2 = ProjectQIBMBackend(wires=self.num_subsystems, num_runs=shots, use_hardware=False, token=token)
             self.assertEqual(shots, dev2.shots)
 
-            dev2 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots+2, num_runs=shots, use_hardware=False, token='token')
+            dev2 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots+2, num_runs=shots, use_hardware=False,
+                                      token=token)
             self.assertEqual(shots, dev2.shots)
 
     def test_initiatlization_via_pennylane(self):
@@ -61,7 +66,11 @@ class DeviceInitialization(BaseTest):
                 'projectq.ibm'
         ]:
             try:
+<<<<<<< HEAD
                 dev = qml.device(short_name, wires=2, token='token', verbose=True)
+=======
+                dev = qml.device(short_name, wires=2, token=token, verbose=True)
+>>>>>>> fix_user_bug
             except DeviceError:
                 raise Exception("This test is expected to fail until pennylane-pq is installed.")
 

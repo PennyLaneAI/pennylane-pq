@@ -48,10 +48,13 @@ class CompareWithDefaultQubitTest(BaseTest):
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems, shots=20000000, verbose=True))
         if self.args.device == 'ibm' or self.args.device == 'all':
             ibm_options = pennylane.default_config['projectq.ibm']
-            if "user" in ibm_options and "password" in ibm_options:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, token=ibm_options['token'], verbose=True))
+
+            if "token" in ibm_options:
+                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024,
+                                                       token=ibm_options['token'], verbose=True))
             else:
-                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
+                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials "
+                            "could not be found in the PennyLane configuration file.")
         if self.args.device == 'classical' or self.args.device == 'all':
             self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems, verbose=True))
 
@@ -74,6 +77,9 @@ class CompareWithDefaultQubitTest(BaseTest):
 
             # run all single operation circuits
             for operation in dev.operations:
+                if operation in ("DiagonalQubitUnitary"):
+                    continue
+
                 for observable in dev.observables:
                     log.info("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by a "+observable+" Expectation")
 
