@@ -26,7 +26,6 @@ from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, 
 import os
 
 token = os.getenv("IBMQX_TOKEN")
-print("Token here hello", token)
 
 
 @pytest.fixture
