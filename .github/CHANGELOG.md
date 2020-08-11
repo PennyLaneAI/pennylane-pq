@@ -21,7 +21,7 @@
 
 This release contains contributions from (in alphabetical order):
 
-Maria Schuld
+Josh Izaac, Maria Schuld
 
 ---
 
