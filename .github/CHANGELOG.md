@@ -8,11 +8,20 @@
 
 ### Documentation
 
+* The documentation theme has been updated, and the documentation structure
+  reorganized.
+  [(#60)](https://github.com/XanaduAI/pennylane-pq/pull/60)
+
 ### Bug fixes
+
+* Updated the plugin to use the latest IBMQBackend from ProjectQ.
+  [(#62)](https://github.com/XanaduAI/pennylane-pq/pull/61)
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Josh Izaac, Maria Schuld
 
 ---
 

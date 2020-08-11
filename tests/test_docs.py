@@ -18,16 +18,13 @@ Unit tests for the :mod:`pennylane_pq` device documentation
 import unittest
 import logging as log
 import re
-from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
-import pennylane
-from pennylane import Device, DeviceError
-from pennylane import numpy as np
-import pennylane_pq
-import pennylane_pq.expval
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
+import os
 
+token = os.getenv("IBMQX_TOKEN")
 log.getLogger('defaults')
+
 
 class DocumentationTest(BaseTest):
     """test documentation of the plugin.
@@ -45,11 +42,8 @@ class DocumentationTest(BaseTest):
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems))
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems, shots=20000000))
         if self.args.device == 'ibm' or self.args.device == 'all':
-            ibm_options = pennylane.default_config['projectq.ibm']
-            if "user" in ibm_options and "password" in ibm_options:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password']))
-            else:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user='user', password='password'))
+            self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8 * 1024,
+                                                   token=token, verbose=True))
         if self.args.device == 'classical' or self.args.device == 'all':
             self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems))
 

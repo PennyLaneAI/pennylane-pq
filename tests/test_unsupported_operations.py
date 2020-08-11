@@ -17,15 +17,8 @@ Unit tests for the :mod:`pennylane_pq` devices' behavior when applying unsupport
 
 import unittest
 import logging as log
-#import inspect
-#from unittest_data_provider import data_provider
-from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
 import pennylane
-from pennylane import Device
-from pennylane import numpy as np
-import pennylane_pq
-import pennylane_pq.expval
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 
 log.getLogger('defaults')
@@ -46,10 +39,12 @@ class UnsupportedOperationTest(BaseTest):
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems, verbose=True))
         if self.args.device == 'ibm' or self.args.device == 'all':
             ibm_options = pennylane.default_config['projectq.ibm']
-            if "user" in ibm_options and "password" in ibm_options:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024, user=ibm_options['user'], password=ibm_options['password'], verbose=True))
+            if "token" in ibm_options:
+                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8 * 1024,
+                                                       token=ibm_options['token'], verbose=True))
             else:
-                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials could not be found in the PennyLane configuration file.")
+                log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials "
+                            "could not be found in the PennyLane configuration file.")
         if self.args.device == 'classical' or self.args.device == 'all':
             self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems, verbose=True))
 

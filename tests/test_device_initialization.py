@@ -17,17 +17,12 @@ Unit tests for the :mod:`pennylane_pq` device initialization
 
 import unittest
 import logging as log
-#import inspect
-#from unittest_data_provider import data_provider
-from pkg_resources import iter_entry_points
 from defaults import pennylane as qml, BaseTest
-import pennylane
-from pennylane import Device, DeviceError
-from pennylane import numpy as np
-import pennylane_pq
-import pennylane_pq.expval
-from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
+from pennylane import DeviceError
+from pennylane_pq.devices import ProjectQIBMBackend
+import os
 
+token = os.getenv("IBMQX_TOKEN")
 log.getLogger('defaults')
 
 
@@ -38,24 +33,21 @@ class DeviceInitialization(BaseTest):
     num_subsystems = 4
     devices = None
 
-    def test_ibm_no_user(self):
+    def test_ibm_no_token(self):
         if self.args.device == 'ibm' or self.args.device == 'all':
-            self.assertRaises(ValueError, ProjectQIBMBackend, wires=self.num_subsystems, use_hardware=False, password='password')
-
-    def test_ibm_no_password(self):
-        if self.args.device == 'ibm' or self.args.device == 'all':
-            self.assertRaises(ValueError, ProjectQIBMBackend, wires=self.num_subsystems, use_hardware=False, user='user')
+            self.assertRaises(ValueError, ProjectQIBMBackend, wires=self.num_subsystems, use_hardware=False)
 
     def test_shots(self):
         if self.args.device == 'ibm' or self.args.device == 'all':
             shots = 5
-            dev1 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots, use_hardware=False, user="user", password='password')
+            dev1 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots, use_hardware=False, token=token, verbose=True)
             self.assertEqual(shots, dev1.shots)
 
-            dev2 = ProjectQIBMBackend(wires=self.num_subsystems, num_runs=shots, use_hardware=False, user="user", password='password')
+            dev2 = ProjectQIBMBackend(wires=self.num_subsystems, num_runs=shots, use_hardware=False, token=token)
             self.assertEqual(shots, dev2.shots)
 
-            dev2 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots+2, num_runs=shots, use_hardware=False, user="user", password='password')
+            dev2 = ProjectQIBMBackend(wires=self.num_subsystems, shots=shots+2, num_runs=shots, use_hardware=False,
+                                      token=token)
             self.assertEqual(shots, dev2.shots)
 
     def test_initiatlization_via_pennylane(self):
@@ -65,9 +57,10 @@ class DeviceInitialization(BaseTest):
                 'projectq.ibm'
         ]:
             try:
-                dev = dev = qml.device(short_name, wires=2, user='user', password='password', verbose=True)
+                dev = qml.device(short_name, wires=2, token=token, verbose=True)
             except DeviceError:
                 raise Exception("This test is expected to fail until pennylane-pq is installed.")
+
 
 if __name__ == '__main__':
     print('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', device initialization.')
