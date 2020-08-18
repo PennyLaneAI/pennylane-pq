@@ -1,10 +1,12 @@
-# Release 0.9.0-dev
-
-### New features since last release
-
-### Breaking changes
+# Release 0.11.0
 
 ### Improvements
+
+* The PennyLane-PQ plugin now supports ProjectQ v0.5.1
+  [(#62)](https://github.com/XanaduAI/pennylane-pq/pull/62)
+
+* Updates the device to support lists of custom wire labels.
+  [(#65)](https://github.com/PennyLaneAI/pennylane-pq/pull/65)
 
 ### Documentation
 
@@ -15,7 +17,7 @@
 ### Bug fixes
 
 * Updated the plugin to use the latest IBMQBackend from ProjectQ.
-  [(#62)](https://github.com/XanaduAI/pennylane-pq/pull/61)
+  [(#62)](https://github.com/XanaduAI/pennylane-pq/pull/62)
 
 ### Contributors
 
