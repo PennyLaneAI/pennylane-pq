@@ -39,6 +39,7 @@ info = {  # pylint: disable=invalid-name
     },
     "description": "PennyLane plugin for ProjectQ",
     "long_description": open("README.rst").read(),
+    'long_description_content_type': "text/x-rst",
     "provides": ["pennylane_pq"],
     "install_requires": requirements,
 }
