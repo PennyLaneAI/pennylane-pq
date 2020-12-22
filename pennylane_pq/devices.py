@@ -185,8 +185,7 @@ class _ProjectQDevice(Device):  # pylint: disable=abstract-method
         self.reset()  # the actual initialization is done in reset()
 
     def reset(self):
-        """Reset/initialize the device by allocating qubits.
-        """
+        """Reset/initialize the device by allocating qubits."""
         self._reg = self._eng.allocate_qureg(self.num_wires)
         self._first_operation = True
 
@@ -197,8 +196,7 @@ class _ProjectQDevice(Device):  # pylint: disable=abstract-method
         return super().__str__() + "Backend: " + self._backend + "\n"
 
     def post_measure(self):
-        """Deallocate the qubits after expectation values have been retrieved.
-        """
+        """Deallocate the qubits after expectation values have been retrieved."""
         self._deallocate()
 
     def apply(self, operation, wires, par):
@@ -247,8 +245,7 @@ class _ProjectQDevice(Device):  # pylint: disable=abstract-method
             pq.ops.All(pq.ops.Measure) | self._reg  # pylint: disable=expression-not-assigned
 
     def filter_kwargs_for_backend(self, kwargs):
-        """Filter the given kwargs for those relevant for the respective device/backend.
-        """
+        """Filter the given kwargs for those relevant for the respective device/backend."""
         return {key: value for key, value in kwargs.items() if key in self._backend_kwargs}
 
     @property
@@ -345,20 +342,17 @@ class ProjectQSimulator(_ProjectQDevice):
         super().__init__(wires=wires, shots=shots, analytic=analytic, **kwargs)
 
     def reset(self):
-        """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
-        """
+        """Reset/initialize the device by initializing the backend and engine, and allocating qubits."""
         backend = pq.backends.Simulator(**self.filter_kwargs_for_backend(self._kwargs))
         self._eng = pq.MainEngine(backend, verbose=self._kwargs["verbose"])
         super().reset()
 
     def pre_measure(self):
-        """Flush the device before retrieving observable measurements.
-        """
+        """Flush the device before retrieving observable measurements."""
         self._eng.flush(deallocate_qubits=False)
 
     def expval(self, observable, wires, par):
-        """Retrieve the requested observable expectation value.
-        """
+        """Retrieve the requested observable expectation value."""
         device_wires = self.map_wires(wires)
 
         if observable in ["PauliX", "PauliY", "PauliZ"]:
@@ -387,8 +381,7 @@ class ProjectQSimulator(_ProjectQDevice):
         return expval
 
     def var(self, observable, wires, par):
-        """Retrieve the requested observable variance.
-        """
+        """Retrieve the requested observable variance."""
         expval = self.expval(observable, wires, par)
         variance = 1 - expval ** 2
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
@@ -526,8 +519,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         super().__init__(wires=wires, shots=shots, analytic=False, **kwargs)
 
     def reset(self):
-        """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
-        """
+        """Reset/initialize the device by initializing the backend and engine, and allocating qubits."""
         backend = pq.backends.IBMBackend(
             num_runs=self.shots, **self.filter_kwargs_for_backend(self._kwargs)
         )
@@ -564,8 +556,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         self._eng.flush()
 
     def expval(self, observable, wires, par):
-        """Retrieve the requested observable expectation value.
-        """
+        """Retrieve the requested observable expectation value."""
 
         device_wires = self.map_wires(wires)
 
@@ -615,8 +606,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
         return expval
 
     def var(self, observable, wires, par):
-        """Retrieve the requested observable variance.
-        """
+        """Retrieve the requested observable variance."""
         expval = self.expval(observable, wires, par)
         variance = 1 - expval ** 2
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
@@ -671,21 +661,18 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         super().__init__(wires=wires, shots=1024, analytic=True, **kwargs)
 
     def reset(self):
-        """Reset/initialize the device by initializing the backend and engine, and allocating qubits.
-        """
+        """Reset/initialize the device by initializing the backend and engine, and allocating qubits."""
         backend = pq.backends.ClassicalSimulator(**self.filter_kwargs_for_backend(self._kwargs))
         self._eng = pq.MainEngine(backend, verbose=self._kwargs["verbose"])
         super().reset()
 
     def pre_measure(self):
-        """Apply a measure all operation and flush the device before retrieving observable measurements.
-        """
+        """Apply a measure all operation and flush the device before retrieving observable measurements."""
         pq.ops.All(pq.ops.Measure) | self._reg  # pylint: disable=expression-not-assigned
         self._eng.flush()
 
     def expval(self, observable, wires, par):
-        """Retrieve the requested observable expectation values.
-        """
+        """Retrieve the requested observable expectation values."""
 
         device_wires = self.map_wires(wires)
 
@@ -701,8 +688,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
         return expval
 
     def var(self, observable, wires, par):
-        """Retrieve the requested observable variance.
-        """
+        """Retrieve the requested observable variance."""
         expval = self.expval(observable, wires, par)
         variance = 1 - expval ** 2
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
