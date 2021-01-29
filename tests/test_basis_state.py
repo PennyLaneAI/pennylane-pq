@@ -98,7 +98,7 @@ class BasisStateTest(BaseTest):
                 qml.BasisState(np.array([0, 1, 0, 1]), wires=list(range(self.num_subsystems)))
                 return qml.expval(qml.PauliZ(0))
 
-            self.assertRaises(pennylane._device.DeviceError, circuit)
+            self.assertRaises(ValueError, circuit)
 
 
 if __name__ == '__main__':
