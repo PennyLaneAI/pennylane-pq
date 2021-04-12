@@ -8,6 +8,8 @@
   still be computed by setting `shots=None`.
   [(#69)](https://github.com/XanaduAI/pennylane-pq/pull/69)
 
+### Contributors
+
 This release contains contributions from (in alphabetical order):
 
 Josh Izaac
