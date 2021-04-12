@@ -111,13 +111,9 @@ class _ProjectQDevice(Device):  # pylint: disable=abstract-method
       wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
             or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
             or strings (``['ancilla', 'q1', 'q2']``). Default 1 if not specified.
-      shots (int): How many times the circuit should be evaluated (or sampled) to estimate
-          the expectation values. Defaults to 1024 if not specified.
-          If ``analytic == True``, then the number of shots is ignored
-          in the calculation of expectation values and variances, and only controls the number
-          of samples returned by ``sample``.
-      analytic (bool): indicates if the device should calculate expectations
-          and variances analytically
+        shots (None, int): How many times the circuit should be evaluated (or sampled) to estimate
+            the expectation values. Defaults to ``None`` if not specified, which means that the device
+            returns analytical results.
 
     Keyword Args:
       backend (string): Name of the backend, i.e., either "Simulator",
@@ -165,7 +161,7 @@ class _ProjectQDevice(Device):  # pylint: disable=abstract-method
     def _backend_kwargs(self):
         raise NotImplementedError
 
-    def __init__(self, wires=1, shots=1024, analytic=True, *, backend, **kwargs):
+    def __init__(self, wires=1, shots=None, *, backend, **kwargs):
         # overwrite shots with num_runs if given
         if "num_runs" in kwargs:
             shots = kwargs["num_runs"]
@@ -176,7 +172,6 @@ class _ProjectQDevice(Device):  # pylint: disable=abstract-method
         if "verbose" not in kwargs:
             kwargs["verbose"] = False
 
-        self.analytic = analytic
         self._backend = backend
         self._kwargs = kwargs
         self._eng = None
@@ -276,13 +271,9 @@ class ProjectQSimulator(_ProjectQDevice):
         wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
             or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
             or strings (``['ancilla', 'q1', 'q2']``).
-       shots (int): How many times the circuit should be evaluated (or sampled) to estimate
-           the expectation values. Defaults to 1000 if not specified.
-           If ``analytic == True``, then the number of shots is ignored
-           in the calculation of expectation values and variances, and only controls the number
-           of samples returned by ``sample``.
-       analytic (bool): indicates if the device should calculate expectations
-           and variances analytically
+        shots (None, int): How many times the circuit should be evaluated (or sampled) to estimate
+            the expectation values. Defaults to ``None`` if not specified, which means that the device
+            returns analytical results.
 
     Keyword Args:
       gate_fusion (bool): If True, operations are cached and only executed once a
@@ -337,9 +328,9 @@ class ProjectQSimulator(_ProjectQDevice):
     _circuits = {}
     _backend_kwargs = ["gate_fusion", "rnd_seed"]
 
-    def __init__(self, wires=1, shots=1024, analytic=True, **kwargs):
+    def __init__(self, wires=1, shots=None, **kwargs):
         kwargs["backend"] = "Simulator"
-        super().__init__(wires=wires, shots=shots, analytic=analytic, **kwargs)
+        super().__init__(wires=wires, shots=shots, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits."""
@@ -372,7 +363,7 @@ class ProjectQSimulator(_ProjectQDevice):
         #         pq.ops.QubitOperator("Z"+'0'), [qubit])
         #                for qubit in self._reg]
 
-        if not self.analytic and observable != "Identity":
+        if not self.shots is None and observable != "Identity":
             p0 = (expval + 1) / 2
             p0 = max(min(p0, 1), 0)
             n0 = np.random.binomial(self.shots, p0)
@@ -516,7 +507,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
             )  # pylint: disable=line-too-long
 
         kwargs["backend"] = "IBMBackend"
-        super().__init__(wires=wires, shots=shots, analytic=False, **kwargs)
+        super().__init__(wires=wires, shots=shots, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits."""
@@ -658,7 +649,7 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
 
     def __init__(self, wires=1, **kwargs):
         kwargs["backend"] = "ClassicalSimulator"
-        super().__init__(wires=wires, shots=1024, analytic=True, **kwargs)
+        super().__init__(wires=wires, shots=None, **kwargs)
 
     def reset(self):
         """Reset/initialize the device by initializing the backend and engine, and allocating qubits."""
