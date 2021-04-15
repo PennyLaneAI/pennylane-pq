@@ -91,9 +91,9 @@ class CompareWithDefaultQubitTest(BaseTest):
                             observable_class = getattr(pennylane_pq.expval, observable)
 
                         if operation_class.num_wires > self.num_subsystems:
-                            raise IgnoreOperationException('Skipping in automatic test because the operation '+operation+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
+                            pytest.skip('Skipping in automatic test because the operation '+operation+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
                         if observable_class.num_wires > self.num_subsystems:
-                            raise IgnoreOperationException('Skipping in automatic test because the observable '+observable+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
+                            pytest.skip('Skipping in automatic test because the observable '+observable+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
 
                         if operation_class.par_domain == 'N':
                             operation_pars = rnd_int_pool[:operation_class.num_params]
@@ -108,7 +108,7 @@ class CompareWithDefaultQubitTest(BaseTest):
                                 operation_pars = [random_zero_one_pool[:self.num_subsystems]]
                                 operation_class.num_wires = self.num_subsystems
                             else:
-                                raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the operation '+operation)
+                                pytest.skip('Skipping in automatic test because I don\'t know how to generate parameters for the operation '+operation)
                         else:
                             operation_pars = {}
 
@@ -120,7 +120,7 @@ class CompareWithDefaultQubitTest(BaseTest):
                             if str(observable) == "Hermitian":
                                 observable_pars = [np.array([[1,1j],[-1j,0]])]
                             else:
-                                raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the observable '+observable+" with par_domain="+str(observable_class.par_domain))
+                                pytest.skip('Skipping in automatic test because I don\'t know how to generate parameters for the observable '+observable+" with par_domain="+str(observable_class.par_domain))
                         else:
                             observable_pars = {}
 
