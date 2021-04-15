@@ -19,7 +19,10 @@ with open("pennylane_pq/_version.py") as f:
     version = f.readlines()[-1].split()[-1].strip("\"'")  # pylint: disable=invalid-name
 
 
-requirements = ["projectq>=0.5.1", "pennylane>=0.11"]  # pylint: disable=invalid-name
+requirements = [
+    "projectq>=0.5.1",
+    "pennylane @ git+https://github.com/PennyLaneAI/pennylane.git@master"
+]  # pylint: disable=invalid-name
 
 
 info = {  # pylint: disable=invalid-name

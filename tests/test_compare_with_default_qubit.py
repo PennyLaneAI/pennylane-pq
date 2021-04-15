@@ -134,7 +134,11 @@ class CompareWithDefaultQubitTest(BaseTest):
                         operation_class(*operation_pars, wires=operation_wires)
                         return qml.expval(observable_class(*observable_pars, wires=observable_wires))
 
-                    output = circuit()
+                    try:
+                        output = circuit()
+                    except IgnoreOperationException:
+                        continue
+
                     if (operation, observable) not in outputs:
                         outputs[(operation, observable)] = {}
 
