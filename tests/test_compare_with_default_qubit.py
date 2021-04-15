@@ -16,6 +16,7 @@ Unit tests for the :mod:`pennylane_pq` devices.
 """
 
 import unittest
+import pytest
 import logging as log
 from defaults import pennylane as qml, BaseTest
 from pennylane import numpy as np
