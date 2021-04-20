@@ -21,7 +21,7 @@ with open("pennylane_pq/_version.py") as f:
 
 requirements = [
     "projectq>=0.5.1",
-    "pennylane @ git+https://github.com/PennyLaneAI/pennylane.git@master"
+    "pennylane>=0.15"
 ]  # pylint: disable=invalid-name
 
 
