@@ -11,7 +11,7 @@
 ### Bug fixes
 
 * Remove `SparseHamiltonian` from possible observables in test.
-  [(#70)](https://github.com/XanaduAI/pennylane-pq/pull/70)
+  [(#71)](https://github.com/XanaduAI/pennylane-pq/pull/71)
 
 ### Contributors
 
