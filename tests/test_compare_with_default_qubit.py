@@ -68,9 +68,7 @@ class CompareWithDefaultQubitTest(BaseTest):
         random_ket = np.random.uniform(-1,1,2**self.num_subsystems)
         random_ket = random_ket / np.linalg.norm(random_ket)
         random_zero_one_pool = np.random.randint(2, size=100)
-
         for dev in self.devices:
-
             # run all single operation circuits
             for operation in dev.operations:
                 if operation in ("DiagonalQubitUnitary"):
@@ -121,6 +119,8 @@ class CompareWithDefaultQubitTest(BaseTest):
                                 observable_pars = [np.array([[1,1j],[-1j,0]])]
                             else:
                                 raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the observable '+observable+" with par_domain="+str(observable_class.par_domain))
+                        elif observable_class.par_domain == None:
+                            raise IgnoreOperationException('Skipping in automatic test because' + observable + " with par_domain=" + str(observable_class.par_domain) + 'is not valid in ProjectQ.')
                         else:
                             observable_pars = {}
 
