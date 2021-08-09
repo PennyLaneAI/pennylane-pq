@@ -121,10 +121,9 @@ class CompareWithDefaultQubitTest(BaseTest):
                                 observable_pars = [np.array([[1,1j],[-1j,0]])]
                             else:
                                 raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the observable '+observable+" with par_domain="+str(observable_class.par_domain))
-                        elif observable_class.par_domain is None:
+                        elif str(observable) == "SparseHamiltonian":
                             raise IgnoreOperationException(
-                                'Skipping in automatic test because' + observable + " with par_domain=" + str(
-                                    observable_class.par_domain) + 'is not valid in ProjectQ.')
+                                'Skipping in automatic test because' + observable + 'is not valid in ProjectQ.')
                         else:
                             observable_pars = {}
 
