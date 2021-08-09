@@ -4,15 +4,23 @@
 
 ### Breaking changes
 
+* Remove Python 3.5 / 3.6 and add the compatibility tag for Python 3.8 / 3.9.
+  [(#72)](https://github.com/XanaduAI/pennylane-pq/pull/72)
+
 ### Improvements
 
 ### Documentation
 
 ### Bug fixes
 
+* Remove `SparseHamiltonian` from possible observables in tests.
+  [(#72)](https://github.com/XanaduAI/pennylane-pq/pull/72)
+  
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Romain Moyard
 
 ---
 
