@@ -4,7 +4,7 @@
 
 ### Breaking changes
 
-* Remove Python 3.6 and add the compatibility tag for Python 3.9.
+* Remove Python 3.5 / 3.6 and add the compatibility tag for Python 3.8 / 3.9.
   [(#72)](https://github.com/XanaduAI/pennylane-pq/pull/72)
 
 ### Improvements
