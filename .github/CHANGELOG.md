@@ -1,16 +1,10 @@
-# Release 0.16.0-dev0
-
-### New features since last release
+# Release 0.16.0
 
 ### Breaking changes
 
 * Remove Python 3.5 / 3.6 and add the compatibility tag for Python 3.8 / 3.9.
   [(#72)](https://github.com/XanaduAI/pennylane-pq/pull/72)
-
-### Improvements
-
-### Documentation
-
+  
 ### Bug fixes
 
 * Remove `SparseHamiltonian` from possible observables in tests.
