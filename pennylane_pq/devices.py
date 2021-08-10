@@ -47,7 +47,6 @@ ProjectQClassicalSimulator
 
 
 """
-import abc
 import numpy as np
 import projectq as pq
 from projectq.setups.ibm import get_engine_list
