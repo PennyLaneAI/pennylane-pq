@@ -47,7 +47,6 @@ ProjectQClassicalSimulator
 
 
 """
-import abc
 import numpy as np
 import projectq as pq
 from projectq.setups.ibm import get_engine_list
@@ -140,7 +139,7 @@ class _ProjectQDevice(Device):  # pylint: disable=abstract-method
 
     name = "ProjectQ PennyLane plugin"
     short_name = "projectq"
-    pennylane_requires = ">=0.11.0"
+    pennylane_requires = ">=0.15.0"
     version = "0.4.2"
     plugin_version = __version__
     author = "Christian Gogolin and Xanadu"
@@ -149,15 +148,15 @@ class _ProjectQDevice(Device):  # pylint: disable=abstract-method
         "model": "qubit",
     }
 
-    @abc.abstractproperty
+    @property
     def _operation_map(self):
         raise NotImplementedError
 
-    @abc.abstractproperty
+    @property
     def _observable_map(self):
         raise NotImplementedError
 
-    @abc.abstractproperty
+    @property
     def _backend_kwargs(self):
         raise NotImplementedError
 
