@@ -31,7 +31,7 @@ log.getLogger('defaults')
 class CompareWithDefaultQubitTest(BaseTest):
     """Compares the behavior of the ProjectQ plugin devices with the default qubit device.
     """
-    num_subsystems = 3 #This should be as large as the largest gate/observable, but we cannot know that before instantiating the device. We thus check later that all gates/observables fit.
+    num_subsystems = 4 #This should be as large as the largest gate/observable, but we cannot know that before instantiating the device. We thus check later that all gates/observables fit.
 
     devices = None
 
@@ -55,102 +55,51 @@ class CompareWithDefaultQubitTest(BaseTest):
             self.devices.append(ProjectQClassicalSimulator(wires=self.num_subsystems, verbose=True))
 
     def test_simple_circuits(self):
-        """Automatically compare the behavior on simple circuits"""
-        self.logTestName()
 
-        class IgnoreOperationException(Exception):
-            pass
-
-        outputs = {}
-
-        rnd_int_pool = np.random.randint(0, 5, 100)
-        rnd_float_pool = np.random.randn(100)
-        random_ket = np.random.uniform(-1,1,2**self.num_subsystems)
-        random_ket = random_ket / np.linalg.norm(random_ket)
-        random_zero_one_pool = np.random.randint(2, size=100)
+        default_qubit = qml.device('default.qubit', wires=4)
 
         for dev in self.devices:
+            gates = [
+                qml.PauliX(wires=0),
+                qml.PauliY(wires=1),
+                qml.PauliZ(wires=2),
+                qml.S(wires=3),
+                qml.T(wires=0),
+                qml.RX(2.3, wires=1),
+                qml.RY(1.3, wires=2),
+                qml.RZ(3.3, wires=3),
+                qml.Hadamard(wires=0),
+                qml.Rot(0.1, 0.2, 0.3, wires=1),
+                qml.CRot(0.1, 0.2, 0.3, wires=[2, 3]),
+                qml.Toffoli(wires=[0, 1, 2]),
+                qml.SWAP(wires=[1, 2]),
+                qml.CSWAP(wires=[1, 2, 3]),
+                qml.U1(1.0, wires=0),
+                qml.U2(1.0, 2.0, wires=2),
+                qml.U3(1.0, 2.0, 3.0, wires=3),
+                qml.CRX(0.1, wires=[1, 2]),
+                qml.CRY(0.2, wires=[2, 3]),
+                qml.CRZ(0.3, wires=[3, 1]),
+            ]
 
-            # run all single operation circuits
-            for operation in dev.operations:
-                if operation in ("DiagonalQubitUnitary"):
-                    continue
+            layers = 3
+            np.random.seed(1967)
+            gates_per_layers = [np.random.permutation(gates).numpy() for _ in range(layers)]
 
-                for observable in dev.observables:
-                    log.info("Running device "+dev.short_name+" with a circuit consisting of a "+operation+" Operation followed by a "+observable+" Expectation")
+            def circuit():
+                """4-qubit circuit with layers of randomly selected gates and random connections for
+                multi-qubit gates."""
+                np.random.seed(1967)
+                for gates in gates_per_layers:
+                    for gate in gates:
+                        if gate.name in dev.operations:
+                            qml.apply(gate)
+                return qml.expval(qml.PauliZ(0))
 
-                    @qml.qnode(dev)
-                    def circuit():
-                        if hasattr(qml, operation):
-                            operation_class = getattr(qml, operation)
-                        else:
-                            operation_class = getattr(pennylane_pq, operation)
-                        if hasattr(qml.ops, observable):
-                            observable_class = getattr(qml.ops, observable)
-                        else:
-                            observable_class = getattr(pennylane_pq.expval, observable)
+            qnode_default= qml.QNode(circuit, default_qubit)
+            qnode = qml.QNode(circuit, dev)
 
-                        if operation_class.num_wires > self.num_subsystems:
-                            raise IgnoreOperationException('Skipping in automatic test because the operation '+operation+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
-                        if observable_class.num_wires > self.num_subsystems:
-                            raise IgnoreOperationException('Skipping in automatic test because the observable '+observable+" acts on more than the default number of wires "+str(self.num_subsystems)+". Maybe you want to increase that?")
-
-                        if operation_class.par_domain == 'N':
-                            operation_pars = rnd_int_pool[:operation_class.num_params]
-                        elif operation_class.par_domain == 'R':
-                            operation_pars = np.abs(rnd_float_pool[:operation_class.num_params]) #todo: some operations/expectations fail when parameters are negative (e.g. thermal state) but par_domain is not fine grained enough to capture this
-                        elif operation_class.par_domain == 'A':
-                            if str(operation) == "QubitUnitary":
-                                operation_pars = [np.array([[1,0],[0,-1]])]
-                            elif str(operation) == "QubitStateVector":
-                                operation_pars = [np.array(random_ket)]
-                            elif str(operation) == "BasisState":
-                                operation_pars = [random_zero_one_pool[:self.num_subsystems]]
-                                operation_class.num_wires = self.num_subsystems
-                            else:
-                                raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the operation '+operation)
-                        else:
-                            operation_pars = {}
-
-                        if observable_class.par_domain == 'N':
-                            observable_pars = rnd_int_pool[:observable_class.num_params]
-                        elif observable_class.par_domain == 'R':
-                            observable_pars = np.abs(rnd_float_pool[:observable_class.num_params]) #todo: some operations/expectations fail when parameters are negative (e.g. thermal state) but par_domain is not fine grained enough to capture this
-                        elif observable_class.par_domain == 'A':
-                            if str(observable) == "Hermitian":
-                                observable_pars = [np.array([[1,1j],[-1j,0]])]
-                            else:
-                                raise IgnoreOperationException('Skipping in automatic test because I don\'t know how to generate parameters for the observable '+observable+" with par_domain="+str(observable_class.par_domain))
-                        elif str(observable) == "SparseHamiltonian":
-                            raise IgnoreOperationException(
-                                'Skipping in automatic test because' + observable + 'is not valid in ProjectQ.')
-                        else:
-                            observable_pars = {}
-
-                        # apply to the first wires
-                        operation_wires = list(range(operation_class.num_wires)) if operation_class.num_wires > 1 else 0
-                        observable_wires = list(range(observable_class.num_wires)) if observable_class.num_wires > 1 else 0
-
-                        if str(operation) == "QubitStateVector":
-                            operation_wires = range(self.num_subsystems)
-
-                        operation_class(*operation_pars, wires=operation_wires)
-                        return qml.expval(observable_class(*observable_pars, wires=observable_wires))
-
-                    try:
-                        output = circuit()
-                    except IgnoreOperationException:
-                        continue
-
-                    if (operation, observable) not in outputs:
-                        outputs[(operation, observable)] = {}
-
-                    outputs[(operation, observable)][str(type(dev).__name__)+"(shots="+str(dev.shots)+")"] = output
-
-        #if we could run the circuit on more than one device assert that both should have given the same output
-        for (key,val) in outputs.items():
-            if len(val) >= 2:
-                self.assertAllElementsAlmostEqual(val.values(), delta=self.tol, msg="Outputs "+str(list(val.values()))+" of devices ["+', '.join(list(val.keys()))+"] do not agree for a circuit consisting of a "+str(key[0])+" Operation followed by a "+str(key[1])+" Expectation." )
+            assert np.allclose(qnode(), qnode_default(), atol=1e-3)
 
 
 if __name__ == '__main__':
