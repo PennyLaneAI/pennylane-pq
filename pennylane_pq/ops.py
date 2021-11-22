@@ -23,8 +23,6 @@ that can be used alongside the native PennyLane operations when defining
 quantum functions:
 
 .. autosummary::
-   S
-   T
    SqrtX
    SqrtSwap
    .. AllPauliZ
@@ -33,38 +31,12 @@ quantum functions:
     For convenience, and to mirror the behavior of the operations built into
     PennyLane, the operations defined here are also accessible directly under
     the top-level :code:`pennylane_pq` context, i.e., you can use
-    :code:`pennylane_pq.S([0])` instead of :code:`pennylane_pq.ops.S([0])`
+    :code:`pennylane_pq.SqrtX([0])` instead of :code:`pennylane_pq.ops.SqrtX([0])`
     when defining a :code:`QNode` using the :code:`qnode` decorator.
 
 """
 
 import pennylane.operation as plops
-
-
-class S(plops.Operation):  # pylint: disable=invalid-name,too-few-public-methods
-    r"""S gate.
-
-    .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
-
-    Args:
-        wires (int): the subsystem the gate acts on
-    """
-    num_params = 0
-    num_wires = 1
-    par_domain = None
-
-
-class T(plops.Operation):  # pylint: disable=invalid-name,too-few-public-methods
-    r"""T gate.
-
-    .. math:: T = \begin{bmatrix}1&0\\0&\exp(i \pi / 4)\end{bmatrix}
-
-    Args:
-        wires (int): the subsystem the gate acts on
-    """
-    num_params = 0
-    num_wires = 1
-    par_domain = None
 
 
 class SqrtX(plops.Operation):
