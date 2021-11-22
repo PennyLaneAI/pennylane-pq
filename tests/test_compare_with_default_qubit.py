@@ -131,3 +131,4 @@ class CompareWithDefaultQubitTest(BaseTest):
 
             qnode = qml.QNode(circuit, dev)
             assert np.allclose(qnode(), results[i], atol=1e-3)
+            
