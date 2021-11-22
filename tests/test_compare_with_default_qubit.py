@@ -58,7 +58,6 @@ class CompareWithDefaultQubitTest(BaseTest):
         default_qubit = qml.device('default.qubit', wires=4)
 
         for dev in self.devices:
-
             gates = [
                 qml.PauliX(wires=0),
                 qml.PauliY(wires=1),
@@ -88,21 +87,23 @@ class CompareWithDefaultQubitTest(BaseTest):
             np.random.seed(1967)
             gates_per_layers = [np.random.permutation(gates).numpy() for _ in range(layers)]
 
-            def circuit():
-                """4-qubit circuit with layers of randomly selected gates and random connections for
-                multi-qubit gates."""
-                qml.BasisState(np.array([1, 0, 0, 0]), wires=[0, 1, 2, 3])
-                np.random.seed(1967)
-                for gates in gates_per_layers:
-                    for gate in gates:
-                        if gate.name in dev.operations:
-                            qml.apply(gate)
-                return qml.expval(qml.PauliZ(0))
+            for obs in {qml.PauliX(wires=0), qml.PauliY(wires=0), qml.PauliZ(wires=0), qml.Identity(wires=0), qml.Hadamard(wires=0)}:
+                if obs.name in dev.observables:
+                    def circuit():
+                        """4-qubit circuit with layers of randomly selected gates and random connections for
+                        multi-qubit gates."""
+                        qml.BasisState(np.array([1, 0, 0, 0]), wires=[0, 1, 2, 3])
+                        np.random.seed(1967)
+                        for gates in gates_per_layers:
+                            for gate in gates:
+                                if gate.name in dev.operations:
+                                    qml.apply(gate)
+                        return qml.expval(obs)
 
-            qnode_default = qml.QNode(circuit, default_qubit)
-            qnode = qml.QNode(circuit, dev)
+                    qnode_default = qml.QNode(circuit, default_qubit)
+                    qnode = qml.QNode(circuit, dev)
 
-            assert np.allclose(qnode(), qnode_default(), atol=1e-3)
+                    assert np.allclose(qnode(), qnode_default(), atol=1e-3)
 
     def test_projectq_ops(self):
 
