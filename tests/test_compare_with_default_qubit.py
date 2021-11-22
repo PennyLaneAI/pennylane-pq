@@ -21,8 +21,7 @@ from defaults import pennylane as qml, BaseTest
 from pennylane import numpy as np
 from pennylane.devices.default_qubit import DefaultQubit
 import pennylane
-import pennylane_pq
-import pennylane_pq.expval
+from pennylane_pq.ops import SqrtSwap, SqrtX
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
 
 log.getLogger('defaults')
@@ -31,7 +30,7 @@ log.getLogger('defaults')
 class CompareWithDefaultQubitTest(BaseTest):
     """Compares the behavior of the ProjectQ plugin devices with the default qubit device.
     """
-    num_subsystems = 4 #This should be as large as the largest gate/observable, but we cannot know that before instantiating the device. We thus check later that all gates/observables fit.
+    num_subsystems = 4  # This should be as large as the largest gate/observable, but we cannot know that before instantiating the device. We thus check later that all gates/observables fit.
 
     devices = None
 
@@ -46,7 +45,7 @@ class CompareWithDefaultQubitTest(BaseTest):
             ibm_options = pennylane.default_config['projectq.ibm']
 
             if "token" in ibm_options:
-                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8*1024,
+                self.devices.append(ProjectQIBMBackend(wires=self.num_subsystems, use_hardware=False, num_runs=8 * 1024,
                                                        token=ibm_options['token'], verbose=True))
             else:
                 log.warning("Skipping test of the ProjectQIBMBackend device because IBM login credentials "
@@ -59,6 +58,7 @@ class CompareWithDefaultQubitTest(BaseTest):
         default_qubit = qml.device('default.qubit', wires=4)
 
         for dev in self.devices:
+
             gates = [
                 qml.PauliX(wires=0),
                 qml.PauliY(wires=1),
@@ -80,6 +80,41 @@ class CompareWithDefaultQubitTest(BaseTest):
                 qml.CRX(0.1, wires=[1, 2]),
                 qml.CRY(0.2, wires=[2, 3]),
                 qml.CRZ(0.3, wires=[3, 1]),
+                qml.CZ(wires=[2, 3]),
+                qml.QubitUnitary([[1, 0], [0, 1]], wires=2),
+            ]
+
+            layers = 3
+            np.random.seed(1967)
+            gates_per_layers = [np.random.permutation(gates).numpy() for _ in range(layers)]
+
+            def circuit():
+                """4-qubit circuit with layers of randomly selected gates and random connections for
+                multi-qubit gates."""
+                qml.BasisState(np.array([1, 0, 0, 0]), wires=[0, 1, 2, 3])
+                np.random.seed(1967)
+                for gates in gates_per_layers:
+                    for gate in gates:
+                        if gate.name in dev.operations:
+                            qml.apply(gate)
+                return qml.expval(qml.PauliZ(0))
+
+            qnode_default = qml.QNode(circuit, default_qubit)
+            qnode = qml.QNode(circuit, dev)
+
+            assert np.allclose(qnode(), qnode_default(), atol=1e-3)
+
+    def test_projectq_ops(self):
+
+        results = [-1.0, -1.0]
+        for i, dev in enumerate(self.devices[1:3]):
+
+            gates = [
+                qml.PauliX(wires=0),
+                qml.PauliY(wires=1),
+                qml.PauliZ(wires=2),
+                SqrtX(wires=0),
+                SqrtSwap(wires=[3, 0]),
             ]
 
             layers = 3
@@ -96,18 +131,5 @@ class CompareWithDefaultQubitTest(BaseTest):
                             qml.apply(gate)
                 return qml.expval(qml.PauliZ(0))
 
-            qnode_default= qml.QNode(circuit, default_qubit)
             qnode = qml.QNode(circuit, dev)
-
-            assert np.allclose(qnode(), qnode_default(), atol=1e-3)
-
-
-if __name__ == '__main__':
-    log.info('Testing PennyLane ProjectQ Plugin version ' + qml.version() + ', Device class.')
-    # run the tests in this file
-    suite = unittest.TestSuite()
-    for t in (CompareWithDefaultQubitTest, ):
-        ttt = unittest.TestLoader().loadTestsFromTestCase(t)
-        suite.addTests(ttt)
-
-    unittest.TextTestRunner().run(suite)
+            assert np.allclose(qnode(), results[i], atol=1e-3)

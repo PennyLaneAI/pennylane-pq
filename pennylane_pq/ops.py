@@ -41,32 +41,6 @@ quantum functions:
 import pennylane.operation as plops
 
 
-class S(plops.Operation):  # pylint: disable=invalid-name,too-few-public-methods
-    r"""S gate.
-
-    .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
-
-    Args:
-        wires (int): the subsystem the gate acts on
-    """
-    num_params = 0
-    num_wires = 1
-    par_domain = None
-
-
-class T(plops.Operation):  # pylint: disable=invalid-name,too-few-public-methods
-    r"""T gate.
-
-    .. math:: T = \begin{bmatrix}1&0\\0&\exp(i \pi / 4)\end{bmatrix}
-
-    Args:
-        wires (int): the subsystem the gate acts on
-    """
-    num_params = 0
-    num_wires = 1
-    par_domain = None
-
-
 class SqrtX(plops.Operation):
     r"""Square root X gate.
 
