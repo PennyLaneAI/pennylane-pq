@@ -81,7 +81,7 @@ class CompareWithDefaultQubitTest(BaseTest):
                 qml.CRY(0.2, wires=[2, 3]),
                 qml.CRZ(0.3, wires=[3, 1]),
                 qml.CZ(wires=[2, 3]),
-                qml.QubitUnitary([[1, 0], [0, 1]], wires=2),
+                qml.QubitUnitary(np.array([[1, 0], [0, 1]]), wires=2),
             ]
 
             layers = 3
