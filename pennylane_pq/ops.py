@@ -23,8 +23,6 @@ that can be used alongside the native PennyLane operations when defining
 quantum functions:
 
 .. autosummary::
-   S
-   T
    SqrtX
    SqrtSwap
    .. AllPauliZ
@@ -33,7 +31,7 @@ quantum functions:
     For convenience, and to mirror the behavior of the operations built into
     PennyLane, the operations defined here are also accessible directly under
     the top-level :code:`pennylane_pq` context, i.e., you can use
-    :code:`pennylane_pq.S([0])` instead of :code:`pennylane_pq.ops.S([0])`
+    :code:`pennylane_pq.SqrtX([0])` instead of :code:`pennylane_pq.ops.SqrtX([0])`
     when defining a :code:`QNode` using the :code:`qnode` decorator.
 
 """

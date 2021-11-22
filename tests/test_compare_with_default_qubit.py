@@ -93,7 +93,6 @@ class CompareWithDefaultQubitTest(BaseTest):
                         """4-qubit circuit with layers of randomly selected gates and random connections for
                         multi-qubit gates."""
                         qml.BasisState(np.array([1, 0, 0, 0]), wires=[0, 1, 2, 3])
-                        np.random.seed(1967)
                         for gates in gates_per_layers:
                             for gate in gates:
                                 if gate.name in dev.operations:
@@ -123,9 +122,7 @@ class CompareWithDefaultQubitTest(BaseTest):
             gates_per_layers = [np.random.permutation(gates).numpy() for _ in range(layers)]
 
             def circuit():
-                """4-qubit circuit with layers of randomly selected gates and random connections for
-                multi-qubit gates."""
-                np.random.seed(1967)
+                """4-qubit circuit with layers of randomly selected gates."""
                 for gates in gates_per_layers:
                     for gate in gates:
                         if gate.name in dev.operations:
