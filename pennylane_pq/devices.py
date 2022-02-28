@@ -373,7 +373,7 @@ class ProjectQSimulator(_ProjectQDevice):
     def var(self, observable, wires, par):
         """Retrieve the requested observable variance."""
         expval = self.expval(observable, wires, par)
-        variance = 1 - expval ** 2
+        variance = 1 - expval**2
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
         return variance
 
@@ -598,7 +598,7 @@ class ProjectQIBMBackend(_ProjectQDevice):
     def var(self, observable, wires, par):
         """Retrieve the requested observable variance."""
         expval = self.expval(observable, wires, par)
-        variance = 1 - expval ** 2
+        variance = 1 - expval**2
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
         return variance
 
@@ -680,6 +680,6 @@ class ProjectQClassicalSimulator(_ProjectQDevice):
     def var(self, observable, wires, par):
         """Retrieve the requested observable variance."""
         expval = self.expval(observable, wires, par)
-        variance = 1 - expval ** 2
+        variance = 1 - expval**2
         # TODO: if this plugin supports non-involutory observables in future, may need to refactor this function
         return variance
