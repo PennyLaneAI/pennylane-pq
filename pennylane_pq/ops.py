@@ -79,7 +79,7 @@ class SqrtSwap(plops.Operation):  # pylint: disable=too-few-public-methods
 #     .. math:: AllPauliZ = \sigma_z \otimes\dots\otimes \sigma_z
 
 #     .. todo:: Potentially remove this gate depending on how
-#               https://github.com/XanaduAI/pennylane/issues/61 is resolved.
+#               https://github.com/PennyLaneAI/pennylane/issues/61 is resolved.
 
 #     """
 #     num_params = 0

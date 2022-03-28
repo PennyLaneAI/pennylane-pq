@@ -236,7 +236,7 @@ html_theme_options = {
     # "index_template": "special_index.html",
 
     # Set the name of the project to appear in the left sidebar.
-    "project_nav_name": "PennyLane-Cirq",
+    "project_nav_name": "PennyLane-ProjectQ",
 
     # Set your Disqus short name to enable comments
     # "disqus_comments_shortname": "pennylane-1",
@@ -267,12 +267,12 @@ html_theme_options = {
     "table_header_border": "#19b37b",
     "download_button": "#19b37b",
     # gallery options
-    # "github_repo": "XanaduAI/PennyLane",
+    # "github_repo": "PennyLaneAI/PennyLane",
     # "gallery_dirs": "tutorials",
 }
 
-edit_on_github_project = 'XanaduAI/pennylane-cirq'
-edit_on_github_branch = 'master/doc'
+edit_on_github_project = "PennyLaneAI/pennylane-pq"
+edit_on_github_branch = "master/doc"
 
 # -- Options for HTMLHelp output ------------------------------------------
 

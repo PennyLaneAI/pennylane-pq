@@ -1,14 +1,14 @@
 #### Before posting an issue
 
 Search existing GitHub issues to make sure the issue does not already exist:
-  https://github.com/xanaduai/pennylane-sf/issues
+  https://github.com/PennyLaneAI/pennylane-pq/issues
 
 If posting a PennyLane-PQ issue, delete everything above the dashed line, and fill in the template.
 
 If making a feature request, delete the following template and describe, in detail, the feature and why it is needed.
 
 For general technical details:
-* Check out our documentation: https://pennylane-sf.readthedocs.io
+* Check out our documentation: https://pennylane-pq.readthedocs.io
 
 -----------------------------------------------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ Description of the issue - include code snippets and screenshots here if relevan
 
 * **PennyLane-PQ version:**
   This can be found by running
-  python -c "import pennylane_sf as sf; print(sf.version())"
+  python -c "import pennylane_pq as pq; print(pq.__version__)"
 
 * **Python version:**
   This can be found by running: python --version

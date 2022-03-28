@@ -21,13 +21,13 @@ This release contains contributions from (in alphabetical order):
 ### Breaking changes
 
 * Remove Python 3.5 / 3.6 and add the compatibility tag for Python 3.8 / 3.9.
-  [(#72)](https://github.com/XanaduAI/pennylane-pq/pull/72)
-  
+  [(#72)](https://github.com/PennyLaneAI/pennylane-pq/pull/72)
+
 ### Bug fixes
 
 * Remove `SparseHamiltonian` from authorized observables in tests.
-  [(#72)](https://github.com/XanaduAI/pennylane-pq/pull/72)
-  
+  [(#72)](https://github.com/PennyLaneAI/pennylane-pq/pull/72)
+
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
@@ -43,7 +43,7 @@ Romain Moyard
 * For compatibility with PennyLane v0.15, the `analytic` keyword argument
   has been removed from all devices. Analytic expectation values can
   still be computed by setting `shots=None`.
-  [(#69)](https://github.com/XanaduAI/pennylane-pq/pull/69)
+  [(#69)](https://github.com/PennyLaneAI/pennylane-pq/pull/69)
 
 ### Contributors
 
@@ -58,7 +58,7 @@ Josh Izaac
 ### Improvements
 
 * The PennyLane-PQ plugin now supports ProjectQ v0.5.1
-  [(#62)](https://github.com/XanaduAI/pennylane-pq/pull/62)
+  [(#62)](https://github.com/PennyLaneAI/pennylane-pq/pull/62)
 
 * Updates the device to support lists of custom wire labels.
   [(#65)](https://github.com/PennyLaneAI/pennylane-pq/pull/65)
@@ -67,12 +67,12 @@ Josh Izaac
 
 * The documentation theme has been updated, and the documentation structure
   reorganized.
-  [(#60)](https://github.com/XanaduAI/pennylane-pq/pull/60)
+  [(#60)](https://github.com/PennyLaneAI/pennylane-pq/pull/60)
 
 ### Bug fixes
 
 * Updated the plugin to use the latest IBMQBackend from ProjectQ.
-  [(#62)](https://github.com/XanaduAI/pennylane-pq/pull/62)
+  [(#62)](https://github.com/PennyLaneAI/pennylane-pq/pull/62)
 
 ### Contributors
 
@@ -87,7 +87,7 @@ Josh Izaac, Maria Schuld
 ### Bug fixes
 
 * Adding the 'model': 'qubit' entry into the capabilities dictionary. Adjusting tests that previously used CV operators to use custom created operators.
-  ([#56](https://github.com/XanaduAI/pennylane-pq/pull/56))
+  ([#56](https://github.com/PennyLaneAI/pennylane-pq/pull/56))
 
 ### Contributors
 
@@ -104,7 +104,7 @@ Antal Szava
 * The way measurement statistics works has changed in the latest version of PennyLane. Now, rather
   than `shots=0` referring to 'analytic' mode, there is a separate analytic argument.
   Further, the num_shots argument has been removed from Device.samples().
-  ([#53](https://github.com/XanaduAI/pennylane-pq/pull/53))
+  ([#53](https://github.com/PennyLaneAI/pennylane-pq/pull/53))
 
 ### Contributors
 
@@ -119,7 +119,7 @@ Josh Izaac
 ### Bug fixes
 
 * Remove opening of `requirements.txt` from within `setup.py`. This avoids a `FileNotFoundError` if installing via `pip`, as Python renames this file during packaging to `requires.txt`.
-  ([#53](https://github.com/XanaduAI/pennylane-pq/pull/53))
+  ([#53](https://github.com/PennyLaneAI/pennylane-pq/pull/53))
 
 ### Contributors
 

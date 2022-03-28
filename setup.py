@@ -30,7 +30,7 @@ info = {  # pylint: disable=invalid-name
     "version": version,
     "maintainer": "Xanadu Inc.",
     "maintainer_email": "software@xanadu.ai",
-    "url": "https://github.com/XanaduAI/PennyLane-PQ",
+    "url": "https://github.com/PennyLaneAI/PennyLane-PQ",
     "license": "Apache License 2.0",
     "packages": ["pennylane_pq"],
     "entry_points": {
