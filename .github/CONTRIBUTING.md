@@ -15,7 +15,7 @@ If you want to contribute but don't know where to start, start by checking out t
 and having a look at the PennyLane API and code documentation to see how things work under the hood.
 
 Finally, check out the contributing guidelines in the main
-[PennyLane repository](https://github.com/XanaduAI/pennylane/blob/master/.github/CONTRIBUTING.md).
+[PennyLane repository](https://github.com/PennyLaneAI/pennylane/blob/master/.github/CONTRIBUTING.md).
 
 If you are interested in contributing to the PennyLane-PQ plugin directly, continue reading below.
 
@@ -37,7 +37,7 @@ and submitting pull requests.
 
 ## Reporting bugs
 
-We use the [GitHub issue tracker](https://github.com/XanaduAI/pennylane-sf/issues) to keep track of all reported
+We use the [GitHub issue tracker](https://github.com/PennyLaneAI/pennylane-sf/issues) to keep track of all reported
 bugs and issues. If you find a bug, or have an issue with PennyLane-PQ, please submit a bug report! User
 reports help us make PennyLane better on all fronts.
 
@@ -109,13 +109,11 @@ Before submitting a pull request, please make sure the following is done:
 
 * Once you have submitted the pull request, three things will automatically occur:
 
-  - The **test suite** will automatically run on [Travis CI](https://travis-ci.org/XanaduAI/pennylane)
-    to ensure that the all tests continue to pass.
+  - The **test suite** will automatically run to ensure that the all tests continue to pass.
   - Once the test suite is finished, a **code coverage report** will be generated on
-    [Codecov](https://codecov.io/gh/XanaduAI/pennylane). This will calculate the percentage of PennyLane
+    [Codecov](https://codecov.io/gh/PennyLaneAI/pennylane). This will calculate the percentage of PennyLane
     covered by the test suite, to ensure that all new code additions are adequately tested.
-  - Finally, the **code quality** is calculated by [Codacy](https://app.codacy.com/app/XanaduAI/pennylane/dashboard),
-    to ensure all new code additions adhere to our code quality standards.
+  - Finally, the **code quality** is calculated to ensure all new code additions adhere to our code quality standards.
 
   Based on these reports, we may ask you to make small changes to your branch before merging the pull request into the master branch. Alternatively, you can also
   [grant us permission to make changes to your pull request branch](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork/).
