@@ -37,7 +37,7 @@ and submitting pull requests.
 
 ## Reporting bugs
 
-We use the [GitHub issue tracker](https://github.com/PennyLaneAI/pennylane-sf/issues) to keep track of all reported
+We use the [GitHub issue tracker](https://github.com/PennyLaneAI/pennylane-pq/issues) to keep track of all reported
 bugs and issues. If you find a bug, or have an issue with PennyLane-PQ, please submit a bug report! User
 reports help us make PennyLane better on all fronts.
 
