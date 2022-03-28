@@ -31,7 +31,7 @@ Description of the issue - include code snippets and screenshots here if relevan
 
 * **PennyLane-PQ version:**
   This can be found by running
-  python -c "import pennylane_sf as sf; print(sf.version())"
+  python -c "import pennylane_pq as pq; print(pq.__version__)"
 
 * **Python version:**
   This can be found by running: python --version
