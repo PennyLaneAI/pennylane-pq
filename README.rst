@@ -15,7 +15,7 @@ PennyLane ProjectQ Plugin
 
 .. image:: https://img.shields.io/readthedocs/pennylane-pq.svg?logo=read-the-docs&style=flat-square
     :alt: Read the Docs
-    :target: https://pennylane-pq.readthedocs.io
+    :target: https://docs.pennylane.ai/projects/projectq
 
 .. image:: https://img.shields.io/pypi/v/PennyLane-pq.svg?style=flat-square
     :alt: PyPI
@@ -41,7 +41,7 @@ This PennyLane plugin allows to use both the software and hardware backends of P
 
 .. header-end-inclusion-marker-do-not-remove
 
-The documentation can be found at https://pennylane-pq.readthedocs.io.
+The documentation can be found at https://docs.pennylane.ai/projects/projectq.
 
 
 Features
