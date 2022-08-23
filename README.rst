@@ -13,9 +13,9 @@ PennyLane ProjectQ Plugin
     :alt: CodeFactor Grade
     :target: https://www.codefactor.io/repository/github/pennylaneai/pennylane-pq
 
-.. image:: https://img.shields.io/readthedocs/pennylane-pq.svg?logo=read-the-docs&style=flat-square
+.. image:: https://readthedocs.com/projects/xanaduai-pennylane-pq/badge/?version=latest&style=flat-square
     :alt: Read the Docs
-    :target: https://pennylane-pq.readthedocs.io
+    :target: https://docs.pennylane.ai/projects/projectq
 
 .. image:: https://img.shields.io/pypi/v/PennyLane-pq.svg?style=flat-square
     :alt: PyPI
