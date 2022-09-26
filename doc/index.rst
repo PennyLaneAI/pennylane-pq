@@ -22,17 +22,17 @@ Devices
 
 PennyLane-ProjectQ provides three ProjectQ devices for PennyLane:
 
-.. devicegalleryitem::
+.. title-card::
     :name: 'projectq.simulator'
     :description: ProjectQ's basic simulator backend.
     :link: devices/simulator.html
 
-.. devicegalleryitem::
+.. title-card::
     :name: 'projectq.ibm'
     :description: ProjectQ's integration with the IBM Quantum Experience.
     :link: devices/ibm.html
 
-.. devicegalleryitem::
+.. title-card::
     :name: 'projectq.classical'
     :description: Simple simulator for classical computations.
     :link: devices/classical.html
