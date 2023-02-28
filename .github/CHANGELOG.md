@@ -1,18 +1,19 @@
-# Release 0.18.0-dev
-
-### New features since last release
-
-### Breaking changes
+# Release 0.29.0
 
 ### Improvements
 
-### Documentation
+* Update and simplify tests comparing with default.qubit to be compatible with
+  a more recent version of PennyLane.
+  [(#75)](https://github.com/PennyLaneAI/pennylane-pq/pull/75)
 
-### Bug fixes
+* Use the S an T gates provided by PennyLane instead of custom gates defined by the plugin.
+  [(#75)](https://github.com/PennyLaneAI/pennylane-pq/pull/75)
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Romain Moyard
 
 ---
 
