@@ -553,7 +553,6 @@ class ProjectQIBMBackend(_ProjectQDevice):
         probabilities = self._eng.backend.get_probabilities(self._reg)
 
         if observable in ["PauliX", "PauliY", "PauliZ", "Hadamard"]:
-
             if observable != "PauliZ" and not hasattr(self, "obs_queue"):
                 raise DeviceError(
                     "Measurements in basis other than PauliZ are only supported when "
