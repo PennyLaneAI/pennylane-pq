@@ -1,5 +1,10 @@
 # Release 0.29.0
 
+### Breaking changes
+
+* Remove python 3.7 support.
+  [(#81)](https://github.com/PennyLaneAI/pennylane-pq/pull/81)
+
 ### Improvements
 
 * Update and simplify tests comparing with default.qubit to be compatible with
