@@ -20,7 +20,7 @@ with open("pennylane_pq/_version.py") as f:
 
 
 requirements = [
-    "projectq>=0.5.1,<0.8.0",
+    "projectq>=0.5.1",
     "pennylane>=0.15"
 ]  # pylint: disable=invalid-name
 
