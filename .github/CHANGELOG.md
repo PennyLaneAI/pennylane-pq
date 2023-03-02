@@ -1,4 +1,6 @@
-# Release 0.29.0
+# Release 0.18.0-dev
+
+### New features since last release
 
 ### Breaking changes
 
@@ -13,6 +15,10 @@
 
 * Use the S an T gates provided by PennyLane instead of custom gates defined by the plugin.
   [(#75)](https://github.com/PennyLaneAI/pennylane-pq/pull/75)
+
+### Documentation
+
+### Bug fixes
 
 ### Contributors
 
