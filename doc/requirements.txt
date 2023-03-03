@@ -4,5 +4,6 @@ ipykernel
 nbsphinx
 pygments-github-lexers
 pybind11
+setuptools-scm
 sphinx-automodapi
 pennylane-sphinx-theme

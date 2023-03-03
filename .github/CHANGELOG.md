@@ -4,7 +4,17 @@
 
 ### Breaking changes
 
+* Remove python 3.7 support.
+  [(#81)](https://github.com/PennyLaneAI/pennylane-pq/pull/81)
+
 ### Improvements
+
+* Update and simplify tests comparing with default.qubit to be compatible with
+  a more recent version of PennyLane.
+  [(#75)](https://github.com/PennyLaneAI/pennylane-pq/pull/75)
+
+* Use the S an T gates provided by PennyLane instead of custom gates defined by the plugin.
+  [(#75)](https://github.com/PennyLaneAI/pennylane-pq/pull/75)
 
 ### Documentation
 
@@ -13,6 +23,8 @@
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Romain Moyard
 
 ---
 
