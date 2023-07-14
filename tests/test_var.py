@@ -56,7 +56,7 @@ def dev(DevClass, monkeypatch):
         with monkeypatch.context() as m:
             m.setattr(
                 "pennylane_pq.devices.ProjectQIBMBackend.obs_queue",
-                [pennylane.PauliZ(wires=0, do_queue=False)],
+                [pennylane.PauliZ(wires=0)],
             )
             init_device._eng = MagicMock()
             init_device._eng.backend = MagicMock()
