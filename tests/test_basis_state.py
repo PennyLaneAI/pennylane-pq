@@ -91,7 +91,11 @@ class BasisStateTest(BaseTest):
             return
         self.logTestName()
 
+        if int(qml.__version__[3]) < 3:
+            self.skipTest("mid circuit measurements not yet supported.")
+
         for device in self.devices:
+
             @qml.qnode(device)
             def circuit():
                 qml.PauliX(wires=[0])
