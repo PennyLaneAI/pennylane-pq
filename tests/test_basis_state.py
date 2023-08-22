@@ -96,7 +96,7 @@ class BasisStateTest(BaseTest):
             def circuit():
                 qml.PauliX(wires=[0])
                 qml.BasisState(np.array([1, 1, 0, 1]), wires=list(range(self.num_subsystems)))
-                return qml.expval(qml.PauliZ(1))
+                return qml.expval(qml.PauliZ(0))
 
             assert qml.math.allclose(circuit(), 1)
 
