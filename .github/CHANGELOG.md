@@ -6,8 +6,8 @@
 
 ### Breaking changes 💔
 
-* Support for Python 3.8 has been removed.
-  [(#)]()
+* Support for Python 3.8 has been removed, and support for Python 3.11 has been added.
+  [(#88)](https://github.com/PennyLaneAI/pennylane-pq/pull/88)
 
 ### Deprecations 👋
 
