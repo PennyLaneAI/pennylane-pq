@@ -91,7 +91,7 @@ class BasisStateTest(BaseTest):
             return
         self.logTestName()
 
-        if int(qml.__version__[3]) < 3:
+        if int(qml.__version__[3]) < 2:
             self.skipTest("mid circuit measurements not yet supported.")
 
         for device in self.devices:
