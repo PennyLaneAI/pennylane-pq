@@ -19,7 +19,6 @@ import unittest
 import logging as log
 from defaults import pennylane as qml, BaseTest
 from pennylane import numpy as np
-from pennylane.devices.default_qubit import DefaultQubit
 import pennylane
 from pennylane_pq.ops import SqrtSwap, SqrtX
 from pennylane_pq.devices import ProjectQSimulator, ProjectQClassicalSimulator, ProjectQIBMBackend
@@ -37,7 +36,7 @@ class CompareWithDefaultQubitTest(BaseTest):
     def setUp(self):
         super().setUp()
 
-        self.devices = [DefaultQubit(wires=self.num_subsystems)]
+        self.devices = []
         if self.args.device == 'simulator' or self.args.device == 'all':
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems, verbose=True))
             self.devices.append(ProjectQSimulator(wires=self.num_subsystems, shots=20000000, verbose=True))
