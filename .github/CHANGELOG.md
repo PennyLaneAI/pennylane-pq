@@ -1,4 +1,4 @@
-# Release 0.32.0-dev
+# Release 0.34.0-dev
 
 ### New features since last release
 
@@ -6,14 +6,23 @@
 
 ### Breaking changes 💔
 
-* Support for Python 3.8 has been removed, and support for Python 3.11 has been added.
-  [(#88)](https://github.com/PennyLaneAI/pennylane-pq/pull/88)
-
 ### Deprecations 👋
 
 ### Documentation 📝
 
 ### Bug fixes 🐛
+
+### Contributors ✍️
+
+This release contains contributions from (in alphabetical order):
+
+---
+# Release 0.33.0
+
+### Breaking changes 💔
+
+* Support for Python 3.8 has been removed, and support for Python 3.11 has been added.
+  [(#88)](https://github.com/PennyLaneAI/pennylane-pq/pull/88)
 
 ### Contributors ✍️
 
