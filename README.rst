@@ -41,7 +41,7 @@ This PennyLane plugin allows to use both the software and hardware backends of P
 
 .. header-end-inclusion-marker-do-not-remove
 
-The documentation can be found at https://pennylane-pq.readthedocs.io.
+The documentation can be found at https://docs.pennylane.ai/projects/projectq.
 
 
 Features
