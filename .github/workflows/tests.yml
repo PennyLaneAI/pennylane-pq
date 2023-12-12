@@ -34,7 +34,7 @@ jobs:
           pip install dist/PennyLane*.whl
       - name: Run tests
         env:
-          IBMQX_TOKEN: ${{ secrets.IBMQX_TOKEN }}
+          IBMQX_TOKEN: ${{ secrets.IBMQX_TOKEN_TEST }}
         run: python -m pytest tests --cov=pennylane_pq --cov-report=term-missing --cov-report=xml -p no:warnings --tb=native
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.12
