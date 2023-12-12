@@ -86,19 +86,23 @@ class BasisStateTest(BaseTest):
 
                 self.assertAllAlmostEqual([1]*(self.num_subsystems-1)-2*bits_to_flip, np.array(circuit()[:-1]), delta=self.tol)
 
-    def test_disallow_basis_state_after_other_operation(self):
+    def test_basis_state_after_other_operation(self):
         if self.devices is None:
             return
         self.logTestName()
 
+        if int(qml.__version__[3]) < 2:
+            self.skipTest("mid circuit measurements not yet supported.")
+
         for device in self.devices:
+
             @qml.qnode(device)
             def circuit():
                 qml.PauliX(wires=[0])
-                qml.BasisState(np.array([0, 1, 0, 1]), wires=list(range(self.num_subsystems)))
+                qml.BasisState(np.array([1, 1, 0, 1]), wires=list(range(self.num_subsystems)))
                 return qml.expval(qml.PauliZ(0))
 
-            self.assertRaises(ValueError, circuit)
+            assert qml.math.allclose(circuit(), 1)
 
 
 if __name__ == '__main__':
