@@ -1,20 +1,15 @@
-# Release 0.34.0-dev
-
-### New features since last release
-
-### Improvements 🛠
+# Release 0.34.0
 
 ### Breaking changes 💔
 
-### Deprecations 👋
-
-### Documentation 📝
-
-### Bug fixes 🐛
+* Pin the PennyLane version to <0.34
+  [(#98)](https://github.com/PennyLaneAI/pennylane-pq/pull/98)
 
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Matthew Silverman
 
 ---
 # Release 0.33.0
