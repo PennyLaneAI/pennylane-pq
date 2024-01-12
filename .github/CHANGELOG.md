@@ -2,7 +2,7 @@
 
 ### Breaking changes 💔
 
-* Pin the PennyLane version to <0.34
+* Pin the PennyLane version to <0.35
   [(#98)](https://github.com/PennyLaneAI/pennylane-pq/pull/98)
 
 ### Contributors ✍️
