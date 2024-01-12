@@ -3,6 +3,11 @@ PennyLane-ProjectQ Plugin
 
 :Release: |release|
 
+.. warning::
+
+    This plugin will not be supported in newer versions of PennyLane. It is compatible with versions
+    of PennyLane up to and including 0.34.
+
 .. image:: _static/puzzle_pq.png
     :align: center
     :width: 70%

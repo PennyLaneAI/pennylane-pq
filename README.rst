@@ -25,6 +25,11 @@ PennyLane ProjectQ Plugin
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/PennyLane-pq
 
+\
+
+    **❗ This plugin will not be supported in newer versions of PennyLane. It is compatible with versions
+    of PennyLane up to and including 0.34❗**
+
 .. header-start-inclusion-marker-do-not-remove
 
 The PennyLane-ProjectQ plugin integrates the ProjectQ quantum computing library with PennyLane's
