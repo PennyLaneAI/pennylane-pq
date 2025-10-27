@@ -7,3 +7,4 @@ pybind11
 setuptools-scm
 sphinx-automodapi
 pennylane-sphinx-theme
+sphinx==8.1
